@@ -7,18 +7,22 @@
   "name": "Cabineo 8",
   "supplier": "Lamello",
   "url": "https://lamello.com/products/drilling-system/cabineo-8",
-  "asserts": [ "@thickness_a >= 33.5", "@thickness_b >= 12" ],
+  "variables": {
+    "thickness_a_min": "33.5",
+    "drilling_depth": "11"
+  },
+  "asserts": [ "@thickness_a >= @thickness_a_min", "@thickness_b >= 12" ],
   "components": {
     "a": {
       "hardware": "connectors/lamello/cabineo/shared/cabineo-8.skp",
       "machining": { "drillings": [
-        { "axis": "y", "z": "-3.6", "diameter": "15", "depth": "11" },
-        { "axis": "y", "z": "-14.8", "diameter": "15", "depth": "11" },
-        { "axis": "y", "z": "-26", "diameter": "15", "depth": "11" }
+        { "axis": "y", "z": "-3.6", "diameter": "15", "depth": "@drilling_depth", "material": "$OCL/materials/machinings/DRILLING.skm" },
+        { "axis": "y", "z": "-14.8", "diameter": "15", "depth": "@drilling_depth", "material": "$OCL/materials/machinings/DRILLING.skm" },
+        { "axis": "y", "z": "-26", "diameter": "15", "depth": "@drilling_depth", "material": "$OCL/materials/machinings/DRILLING.skm" }
       ] },
       "attributes": { "symmetrical":  true }
     },
-    "b": { "machining": { "drillings": [ { "diameter": "5", "depth": "8" } ] } }
+    "b": { "machining": { "drillings": [ { "diameter": "5", "depth": "8", "material": "$OCL/materials/machinings/DRILLING.skm" } ] } }
   },
   "options": { "height": "5", "start_offset": "50", "end_offset": "50", "min_spacing": "80", "max_spacing": "300" }
 }

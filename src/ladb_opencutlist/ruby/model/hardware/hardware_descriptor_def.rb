@@ -100,7 +100,10 @@ module Ladb::OpenCutList
   #    { "drillings": [ { "x": "-64mm", "y": 0, "diameter": "5mm", "depth": "through" | "12mm" } ],
   #      "mortises": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "depth": "15mm" } ] }
   #    from the face into the part - a mortise length long along X and
-  #    width wide along Y, or the other way round with "length_axis": "y" ;
+  #    width wide along Y, or the other way round with "length_axis": "y".
+  #    Each operation may give its "material" - a name or a '.skm' ref, as
+  #    the material options - over the tool's machining material, which
+  #    paints the others : "material": "CNC machining" ;
   #  - along Y - "axis": "y" - a drilling or a mortise goes from the face
   #    of the part +Y of the laying frame leads to - @height away, see
   #    measures - toward -Y. It is then placed by x and z - z toward -Z,
@@ -300,6 +303,11 @@ module Ladb::OpenCutList
     HARDWARE_PRISMS = 'prisms'.freeze
     MACHINING_POCKETS = 'pockets'.freeze
 
+    # The material an operation of a machining is painted with - a name or a
+    # '.skm' ref, as MATERIAL_OPTIONS - the tool's machining material when
+    # absent. See PrimitiveCylinderDef#material.
+    PRIMITIVE_MATERIAL = 'material'.freeze
+
     # The primitives given as a prism - see HARDWARE_PRISMS - a pocket is
     # one hollowed out of the part, depth deep from the face like a drilling.
     PRISM_KEYS = [ HARDWARE_PRISMS, MACHINING_POCKETS ].freeze
@@ -467,12 +475,14 @@ module Ladb::OpenCutList
     # turned so that its X goes along -Z and its Z along Y, a point
     # [ x, y, z ] of it is [ -y, z, -x ] in the laying frame.
     # key : the primitives it is one of - MACHINING_DRILLINGS, … .
+    # material : the ref of the material an operation of a machining gives
+    # - see PRIMITIVE_MATERIAL - nil when it gives none.
     # outline : a prism's - PRISM_KEYS - [ [ u, v, r ] ] corners, r 0
     # when it isn't rounded, see prism_corners. It is extruded along its Z
     # from z_min to z_max, in the frame its axis - nil, AXIS_PRISM_X or
     # AXIS_PRISM_Y - gives, x and y 0, length and diameter the extents of
     # its outline along u and v.
-    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile, :axis, :key, :outline) do
+    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile, :axis, :key, :outline, :material) do
       def prism?
         !outline.nil?
       end
@@ -790,7 +800,8 @@ module Ladb::OpenCutList
     def self.primitive_cylinders(primitives, variables = {}, height_reversed = false)
       return nil unless primitives?(primitives)
       variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
-      _primitive_items(primitives).map { |key, item|
+      items = _primitive_items(primitives)
+      items.map { |key, item|
         next _primitive_prism(key, item, variables, height_reversed) if PRISM_KEYS.include?(key)
         axis = item['axis'] == AXIS_Y && (key == MACHINING_DRILLINGS || key == MACHINING_MORTISES) ? AXIS_Y : nil
         along_y = !axis.nil?
@@ -847,7 +858,18 @@ module Ladb::OpenCutList
           next nil if profile.nil?
         end
         PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length, profile, axis, key)
+      }.each_with_index.map { |cylinder, index|
+        cylinder.material = primitive_material(*items[index]) unless cylinder.nil?
+        cylinder
       }.compact
+    end
+
+    # The material the given item of the given primitives - an operation of
+    # a machining - gives, see PRIMITIVE_MATERIAL : its ref, nil when none.
+    def self.primitive_material(key, item)
+      return nil unless PRIMITIVES[PART_MACHINING].include?(key) && item.is_a?(Hash)
+      material = item[PRIMITIVE_MATERIAL]
+      material.is_a?(String) && !material.strip.empty? ? material : nil
     end
 
     # A corner of the outline of a prism - see prism_corners - from start
@@ -1549,6 +1571,11 @@ module Ladb::OpenCutList
         if machining.is_a?(Hash) && machining.key?(MACHINING_SKP)
           machining[MACHINING_SKP] = fn_part.call(slot, variant, PART_MACHINING, machining[MACHINING_SKP])
         end
+        if machining.is_a?(Hash)
+          self.class.send(:_primitive_items, machining).each do |_, item|
+            item[PRIMITIVE_MATERIAL] = fn_ref.call(item[PRIMITIVE_MATERIAL]) if item.key?(PRIMITIVE_MATERIAL)
+          end
+        end
       end
       if data['options'].is_a?(Hash)
         MATERIAL_OPTIONS.each { |name| data['options'][name] = fn_ref.call(data['options'][name]) if data['options'].key?(name) }
@@ -1685,6 +1712,7 @@ module Ladb::OpenCutList
         articles = _resolve_articles(slot, variant, value)
         return [ nil, articles.empty? ? nil : slot, articles, nil ]
       end
+      value = _resolve_primitive_materials(value) if part == PART_MACHINING
       if part == PART_MACHINING && value.is_a?(Hash) && value.key?(MACHINING_SKP)
         primitives = value.reject { |key, _| key == MACHINING_SKP }
         primitives = nil if primitives.empty?
@@ -1693,6 +1721,20 @@ module Ladb::OpenCutList
       end
       ref = _resolve_part_ref(slot, variant, part, value)
       [ ref, ref.nil? ? nil : slot, nil, part == PART_MACHINING && ref.is_a?(Hash) ? ref : nil ]
+    end
+
+    # The given machining value - see "machining" - its operations' './'
+    # material refs - see PRIMITIVE_MATERIAL - made relative to the
+    # descriptor's place, as the ones of its options : a copy when it holds
+    # any. Those of its ancestors already are, see _localize.
+    def _resolve_primitive_materials(value)
+      return value unless value.is_a?(Hash) && self.class.send(:_primitive_items, value).any? { |_, item| item[PRIMITIVE_MATERIAL].is_a?(String) && item[PRIMITIVE_MATERIAL].start_with?('./') }
+      value = Marshal.load(Marshal.dump(value))
+      self.class.send(:_primitive_items, value).each do |_, item|
+        material = item[PRIMITIVE_MATERIAL]
+        item[PRIMITIVE_MATERIAL] = _resolve_option_ref(material) if material.is_a?(String) && material.start_with?('./')
+      end
+      value
     end
 
     # The articles of the given slot's component - or of its given variant -
@@ -2219,12 +2261,12 @@ module Ladb::OpenCutList
         # Checkable only without variables : they change with where it is laid
         errors << "#{label} to is not above from" if !from.nil? && !to.nil? && to <= from && !_variable_lengths?(item['from'], item['to'])
       end
-      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[axis x y z diameter depth] + HEADS, %w[diameter], errors) do |item, label|
+      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[axis x y z diameter depth] + HEADS + [ PRIMITIVE_MATERIAL ], %w[diameter], errors) do |item, label|
         fn_depth.call(item, label)
         _validate_axis(item, label, errors)
         _validate_head(item, label, 'face', HEAD_FACES, errors)
       end
-      _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[axis length_axis x y z length width depth], %w[length width], errors) do |item, label|
+      _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[axis length_axis x y z length width depth] + [ PRIMITIVE_MATERIAL ], %w[length width], errors) do |item, label|
         fn_depth.call(item, label)
         _validate_axis(item, label, errors)
         length_axes = LENGTH_AXES[item['axis'].nil? ? AXIS_Z : item['axis']]
@@ -2249,7 +2291,7 @@ module Ladb::OpenCutList
         fn_from_to.call(item, label)
         _validate_prism_outline(item, label, errors)
       end
-      _validate_primitive_list(path, part, value, MACHINING_POCKETS, 'pocket', %w[axis depth outline], [], errors) do |item, label|
+      _validate_primitive_list(path, part, value, MACHINING_POCKETS, 'pocket', %w[axis depth outline] + [ PRIMITIVE_MATERIAL ], [], errors) do |item, label|
         fn_depth.call(item, label)
         _validate_axis(item, label, errors)
         _validate_prism_outline(item, label, errors) if !item.key?('axis') || AXES.include?(item['axis'])
@@ -2428,8 +2470,12 @@ module Ladb::OpenCutList
         (item.keys - keys).each do |k|
           errors << "#{label} has an unknown key '#{k}'"
         end
+        if keys.include?(PRIMITIVE_MATERIAL) && item.key?(PRIMITIVE_MATERIAL) && self.class.primitive_material(key, item).nil?
+          errors << "#{label} material is not a material name nor a .skm ref"
+        end
         item.each do |k, v|
           next unless v.is_a?(String)
+          next if k == PRIMITIVE_MATERIAL   # A name : no variable in it
           _unknown_variables(v).each do |name|
             errors << "#{label} #{k} uses the unknown variable @#{name}"
           end

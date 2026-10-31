@@ -25,6 +25,17 @@
 #                  front, blocking the centre of the door and every point
 #                  halfway towards its corners : the back of the door is
 #                  still found, read off the section of the cavities ;
+#  - materials   : "machining" whose cup drilling gives its own material :
+#                  in each laid machining, the cup's group is painted with
+#                  it - created as a machining material - its screw holes'
+#                  left unpainted, the instance bearing the tool's ;
+#  - tool_material : "machining" laid again - after it, its definitions in
+#                  the model - with another machining material of the tool :
+#                  a definition of its own, its instance painted with it ;
+#  - own_materials : every drilling gives its own material - the cup one,
+#                  its screw holes and the plate's another : the instances
+#                  bear the one most of their drillings give, the tool's
+#                  machining material is never created ;
 #  - notched     : "full" on a narrow caisson whose left side, top and
 #                  bottom are set back while its right side is flush : the
 #                  compartment's mouth, a slanted hull bridge, still counts
@@ -60,6 +71,9 @@ module HingesRegression
     'shelf' => HingeFixture.descriptor('shelf'),
     'shelves' => HingeFixture.descriptor('shelves'),
     'notched' => HingeFixture.descriptor('notched'),
+    'materials' => HingeFixture.descriptor('materials', hardware: false, cup_material: 'Hinge fixture CNC'),
+    'tool_material' => HingeFixture.descriptor('tool_material', hardware: false),
+    'own_materials' => HingeFixture.descriptor('own_materials', hardware: false, cup_material: 'Hinge fixture CNC', screws_material: 'Hinge fixture screws', plate_material: 'Hinge fixture screws'),
   }
 
   # The options of HingeFixture.build of each case, none by default.
@@ -82,6 +96,28 @@ module HingesRegression
     'shelf' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'shelves' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'notched' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
+    'materials' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 2, 'side_l' => 2, 'side_r' => 0 },
+                     'door_materials' => [ [ :tool, 'Hinge fixture CNC', nil, nil ] ] },
+    'tool_material' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 2, 'side_l' => 2, 'side_r' => 0 },
+                         'door_materials' => [ [ 'Hinge fixture tool', nil, nil, nil ] ] },
+    'own_materials' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 2, 'side_l' => 2, 'side_r' => 0 },
+                         'door_materials' => [ [ 'Hinge fixture screws', 'Hinge fixture CNC', 'Hinge fixture screws', 'Hinge fixture screws' ] ],
+                         'side_materials' => [ [ 'Hinge fixture screws', 'Hinge fixture screws', 'Hinge fixture screws' ] ],
+                         'created' => [] },
+  }
+
+  # The material of the cases that give one - see 'materials' - and the
+  # machining material of the tool of 'tool_material'.
+  CUP_MATERIAL = 'Hinge fixture CNC'
+  SCREWS_MATERIAL = 'Hinge fixture screws'
+  TOOL_MATERIAL = 'Hinge fixture tool'
+  GHOST_MATERIAL = 'Hinge fixture ghost'   # The tool's of 'own_materials' : none of its drillings shows it
+  NAMED_MATERIALS = [ CUP_MATERIAL, SCREWS_MATERIAL, TOOL_MATERIAL, GHOST_MATERIAL ]
+
+  # The tool options of each case, none by default - see HingeFixture.with_handler.
+  TOOL_OPTIONS = {
+    'tool_material' => { 'machining_material_name' => TOOL_MATERIAL },
+    'own_materials' => { 'machining_material_name' => GHOST_MATERIAL },
   }
   REMOVED = { 'hinges' => 0, 'door' => false, 'door_entities' => 0, 'side_l' => 0, 'side_r' => 0 }
 
@@ -96,17 +132,49 @@ module HingesRegression
     }
   end
 
-  def self.run_case(model, descriptor_ref, fixture_options = {})
+  # The materials of each machining laid in the given part : the one of its
+  # instance, then the ones of the groups of its operations, the widest -
+  # the cup - first, once per distinct list. Each : :tool for a machining
+  # material of the tool's - not one of NAMED_MATERIALS - nil for none, the
+  # name of any other.
+  def self.part_materials(instance)
+    instance.definition.entities.grep(Sketchup::ComponentInstance).map { |machining|
+      groups = machining.definition.entities.grep(Sketchup::Group)
+      groups = groups.sort_by { |group| -group.bounds.width }   # The cup first : the widest
+      ([ machining ] + groups).map { |entity|
+        material = entity.material
+        if material.nil?
+          nil
+        elsif !NAMED_MATERIALS.include?(material.name) && OCL::MaterialAttributes.new(material).type == OCL::MaterialAttributes::TYPE_MACHINING
+          :tool
+        elsif NAMED_MATERIALS.include?(material.name) && OCL::MaterialAttributes.new(material).type != OCL::MaterialAttributes::TYPE_MACHINING
+          "#{material.name} (not a machining material)"
+        else
+          material.name
+        end
+      }
+    }.uniq
+  end
+
+  def self.door_materials(fixture)
+    part_materials(fixture['DOOR'])
+  end
+
+  def self.run_case(model, descriptor_ref, fixture_options = {}, tool_options = {})
     messages = []
+    materials_before = model.materials.map(&:name)
     fixture = HingeFixture.build(model, **fixture_options)
-    HingeFixture.with_handler(model, OCL::SmartJoinTool::ACTION_ADD_HINGES, messages, descriptor_ref) do |handler, tool|
+    HingeFixture.with_handler(model, OCL::SmartJoinTool::ACTION_ADD_HINGES, messages, descriptor_ref, tool_options) do |handler, tool|
       HingeFixture.hover_and_click(model, handler, tool, fixture)
     end
     laid = state(fixture)
+    door_materials = door_materials(fixture)
+    side_materials = part_materials(fixture['SIDE_L'])
+    created = model.materials.map(&:name) - materials_before
     HingeFixture.with_handler(model, OCL::SmartJoinTool::ACTION_REMOVE_HINGES, messages) do |handler, tool|
       HingeFixture.hover_and_click(model, handler, tool, fixture)
     end
-    { 'laid' => laid, 'removed' => state(fixture), 'messages' => messages }
+    { 'laid' => laid, 'door_materials' => door_materials, 'side_materials' => side_materials, 'created' => created - [ CUP_MATERIAL, SCREWS_MATERIAL ], 'removed' => state(fixture), 'messages' => messages }
   ensure
     HingeFixture.erase(fixture) unless fixture.nil?
   end
@@ -120,7 +188,7 @@ module HingesRegression
       CASES.each do |id, descriptor|
         ref = descriptor.is_a?(Hash) ? HingeFixture.write_descriptor(dir, descriptor) : descriptor
         begin
-          results[id] = run_case(model, ref, FIXTURE_OPTIONS.fetch(id, {}))
+          results[id] = run_case(model, ref, FIXTURE_OPTIONS.fetch(id, {}), TOOL_OPTIONS.fetch(id, {}))
         rescue Exception => e
           results[id] = { 'error' => "#{e.class}: #{e.message} @ #{e.backtrace.first(2).join(' < ')}" }
         end
@@ -133,6 +201,9 @@ module HingesRegression
   def self.failure(id, result)
     return result['error'] if result.key?('error')
     return "laid #{result['laid'].inspect}" unless result['laid'] == EXPECTED[id]['laid']
+    %w[door_materials side_materials created].each do |key|
+      return "#{key} #{result[key].inspect}" if EXPECTED[id].key?(key) && result[key] != EXPECTED[id][key]
+    end
     return "removed #{result['removed'].inspect}" unless result['removed'] == REMOVED
     return "messages #{result['messages'].inspect}" unless result['messages'].empty?
     nil

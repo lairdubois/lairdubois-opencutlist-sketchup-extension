@@ -85,15 +85,17 @@ module Ladb::OpenCutList
     TYPE_OPEN_PATHS = 4
     TYPE_CLOSED_PATHS = 5
     TYPE_BORDERS = 6
+    TYPE_MACHININGS = 7
 
     attr_reader :depth, :type, :name, :color, :poly_defs
 
-    def initialize(depth, type, poly_defs, name = nil, color = nil)
+    def initialize(depth, type, poly_defs, name = nil, color = nil, material_colored = true)
       @depth = depth
       @type = type
       @poly_defs = poly_defs
       @name = name
       @color = color
+      @material_colored = material_colored  # Machinings only : exported with their own color, else with the holes and depths colors
     end
 
     def type_upper?
@@ -124,12 +126,20 @@ module Ladb::OpenCutList
       @type == TYPE_CLOSED_PATHS
     end
 
+    def type_machinings?
+      @type == TYPE_MACHININGS
+    end
+
     def has_name?
       @name.is_a?(String) && !@name.empty?
     end
 
     def has_color?
       @color.is_a?(Sketchup::Color)
+    end
+
+    def material_colored?
+      @material_colored != false
     end
 
   end

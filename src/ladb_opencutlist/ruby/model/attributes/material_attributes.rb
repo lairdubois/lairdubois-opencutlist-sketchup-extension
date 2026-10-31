@@ -27,6 +27,7 @@
                   :length_increase, :width_increase, :thickness_increase,
                   :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :std_volumic_masses, :std_prices, :std_cut_prices,
                   :grained,  :edge_decremented, :raw_estimated,
+                  :machining_separated, :machining_material_colored,
                   :multiplier_coefficient
     attr_reader :material
 
@@ -560,6 +561,8 @@
         @grained = PLUGIN.get_attribute(@material, 'grained', defaults['grained'])
         @edge_decremented = PLUGIN.get_attribute(@material, 'edge_decremented', defaults['edge_decremented'])
         @raw_estimated = PLUGIN.get_attribute(@material, 'raw_estimated', defaults['raw_estimated'])
+        @machining_separated = PLUGIN.get_attribute(@material, 'machining_separated', defaults['machining_separated'])
+        @machining_material_colored = PLUGIN.get_attribute(@material, 'machining_material_colored', defaults['machining_material_colored'])
         @multiplier_coefficient = PLUGIN.get_attribute(@material, 'multiplier_coefficient', defaults['multiplier_coefficient'])
       else
         @description = ''
@@ -594,6 +597,8 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'raw_estimated', @raw_estimated)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'machining_separated', @machining_separated)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'machining_material_colored', @machining_material_colored)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'multiplier_coefficient', [ 1.0, @multiplier_coefficient.to_f ].max)
       end
     end

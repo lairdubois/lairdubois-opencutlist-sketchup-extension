@@ -35,6 +35,8 @@ module Ladb::OpenCutList
           :grained => false,
           :edge_decremented => false,
           :raw_estimated => true,
+          :machining_separated => false,
+          :machining_material_colored => true,
           :multiplier_coefficient => 1.0,
       }
 
@@ -58,6 +60,8 @@ module Ladb::OpenCutList
         response[:grained] = material_attributes.grained
         response[:edge_decremented] = material_attributes.edge_decremented
         response[:raw_estimated] = material_attributes.raw_estimated
+        response[:machining_separated] = material_attributes.machining_separated
+        response[:machining_material_colored] = material_attributes.machining_material_colored
         response[:multiplier_coefficient] = material_attributes.multiplier_coefficient
 
       end

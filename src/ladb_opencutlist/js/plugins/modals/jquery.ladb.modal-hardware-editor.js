@@ -50,6 +50,8 @@
     // a pocket hollowed out of the part, depth deep from the face.
     const PRISM_KEYS = [ 'prisms', 'pockets' ];
     const PRIMITIVE_HEADS = [ 'countersink', 'counterbore' ];
+    // The primitives of a machining - its operations - that can give their own material
+    const PRIMITIVE_MATERIAL_KEYS = [ 'drillings', 'mortises', 'pockets' ];
 
     // The axis a prism is extruded along, and the axes its points are given
     // by - see HardwareDescriptorDef::PRISM_OUTLINE_KEYS.
@@ -745,6 +747,24 @@
     // The data of its parents alone - see "extends" - null when it extends none.
     LadbModalHardwareEditor.prototype.parentData = function () {
         return this.response && this.response.inheritance ? this.response.inheritance.parent_data || null : null;
+    };
+
+    // What an operation of a machining without a material of its own is
+    // painted with, as a placeholder : the descriptor's default of the
+    // tool's machining material - its own, or its parents' - else the tool's.
+    LadbModalHardwareEditor.prototype.defaultMachiningMaterialText = function () {
+        let options = null;
+        try {
+            options = fnObject(JSON.parse(this.cm.getValue()).options);
+        } catch (e) {
+            // The JSON is being typed
+        }
+        let name = options ? options.machining_material_name : undefined;
+        if (typeof name !== 'string' || name.trim() === '') {
+            const inheritedData = this.inheritedData();
+            name = inheritedData ? fnObject(inheritedData.options).machining_material_name : undefined;
+        }
+        return typeof name === 'string' && name.trim() !== '' ? name : i18next.t('core.hardware_editor.primitive_material_default');
     };
 
     // Where the value at the given path comes from - see "extends" - , owned
@@ -2928,6 +2948,26 @@
                     : fnField(headPath, 'depth', false);
                 fnRow([ fnField(headPath, 'diameter', false, null, 'Ø'), $second ]);
             }
+        }
+
+        // Material : an operation's own - see HardwareDescriptorDef::PRIMITIVE_MATERIAL -
+        // the tool's machining material when empty, shown as its placeholder
+        if (PRIMITIVE_MATERIAL_KEYS.includes(key)) {
+            $editor.append($('<div class="ladb-hardware-editor-primitive-separator">'));
+            fnLabel('primitive_material');
+            const material = typeof item.material === 'string' ? item.material : '';
+            const $input = $('<input type="text" class="form-control input-sm">')
+                .attr('placeholder', this.defaultMachiningMaterialText());
+            fnRow($('<div class="ladb-hardware-editor-primitive-material">').append($input));
+            $input
+                .val(material)
+                .ladbTextinputFile({ library: true, resetValue: '' })
+                .on('change', function () {
+                    const newValue = $(this).val().trim();
+                    if (newValue !== material) {
+                        that.setJsonMember(itemPath, 'material', newValue === '' ? undefined : newValue);
+                    }
+                });
         }
 
         this.appendPrimitiveNames($editor, names);

@@ -535,6 +535,52 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     end
   end
 
+  # -- Operation materials --
+
+  def test_primitive_materials
+    machining = {
+      'drillings' => [ { 'diameter' => '35mm', 'depth' => '13mm', 'material' => 'CNC' }, { 'diameter' => '3mm', 'depth' => '10mm' } ],
+      'mortises' => [ { 'length' => '20mm', 'width' => '6mm', 'depth' => '10mm', 'material' => 'Router' } ],
+      'pockets' => [ { 'depth' => '2mm', 'outline' => [ { 'x' => 0, 'y' => 0 }, { 'x' => 10, 'y' => 0 }, { 'x' => 10, 'y' => 10 } ], 'material' => 'Pocket' } ],
+    }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'machining' => machining } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal([ 'CNC', nil, 'Router', 'Pocket' ], _primitive_cylinders(machining).map(&:material))
+    hardware = { 'cylinders' => [ { 'diameter' => '8mm', 'from' => 0, 'to' => 5 } ] }
+    assert_equal([ nil ], _primitive_cylinders(hardware).map(&:material))
+  end
+
+  def test_invalid_primitive_materials
+    fn = lambda { |item| _with(HINGE, 'components' => { 'a' => { 'machining' => { 'drillings' => [ { 'diameter' => '5mm', 'depth' => '5mm' }.merge(item) ] } } }) }
+    _assert_error(fn.call('material' => ''), 'drilling 1 material is not a material name nor a .skm ref')
+    _assert_error(fn.call('material' => 12), 'drilling 1 material is not a material name nor a .skm ref')
+    descriptor = _def(fn.call('material' => 'Usinage @CNC'))
+    assert(descriptor.valid?, descriptor.errors.inspect)   # A name : no variable in it
+    hardware = { 'cylinders' => [ { 'diameter' => '8mm', 'from' => 0, 'to' => 5, 'material' => 'Steel' } ] }
+    _assert_error(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }), "cylinder 1 has an unknown key 'material'")
+  end
+
+  def test_primitive_material_refs
+    machining = { 'skp' => true, 'drillings' => [ { 'diameter' => '5mm', 'depth' => '5mm', 'material' => './cnc.skm' }, { 'diameter' => '5mm', 'depth' => '5mm', 'material' => 'CNC' } ] }
+    data = _with(HINGE, 'components' => { 'a' => { 'machining' => machining }, 'b' => { 'machining' => { 'drillings' => machining['drillings'] } } })
+    descriptor = _def(data, '/lib/hinges/blum/clip-top.json', '$LIB/hinges/blum/clip-top.json')
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    [ 'a', 'b' ].each do |slot|
+      primitives = descriptor.resolve_component(slot).machining_primitives
+      assert_equal([ '$LIB/hinges/blum/cnc.skm', 'CNC' ], primitives['drillings'].map { |item| item['material'] }, slot)
+    end
+    assert_equal('./cnc.skm', descriptor.data['components']['a']['machining']['drillings'][0]['material'])   # The data as written
+  end
+
+  def test_primitive_material_refs_inherited
+    machining = { 'drillings' => [ { 'diameter' => '5mm', 'depth' => '5mm', 'material' => './cnc.skm' } ] }
+    _with_library('hinges/base.json' => _with(HINGE, 'components' => { 'a' => { 'machining' => machining } })) do
+      descriptor = _def(_child('hinges/base.json'), nil, '$LIB/other/child.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert_equal('$LIB/hinges/cnc.skm', descriptor.resolve_component('a').machining_primitives['drillings'][0]['material'])   # Its parent's place
+    end
+  end
+
   def test_attributes_merge_variant_over_component
     data = JSON.parse(JSON.generate(HINGE))
     data['components']['a']['attributes'] = { 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ '0mm', '0mm' ] }

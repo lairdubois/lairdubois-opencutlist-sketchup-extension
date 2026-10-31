@@ -66,10 +66,11 @@ module Ladb::OpenCutList
         angle = (face_manipulator.normal.angle_between(Z_AXIS) - Geometrix::HALF_PI).round(4)
         material_attribute = _get_material_attributes(face_manipulator.material)
         if material_attribute.type == MaterialAttributes::TYPE_MACHINING
+          separated = material_attribute.machining_separated == true
           if angle > 0
-            face_manipulator_defs << FaceManipulatorDef.new(face_manipulator, FACE_TYPE_SOLID, true)
+            face_manipulator_defs << FaceManipulatorDef.new(face_manipulator, FACE_TYPE_SOLID, true, separated)
           elsif angle < 0
-            face_manipulator_defs << FaceManipulatorDef.new(face_manipulator, FACE_TYPE_CUTTING, true)
+            face_manipulator_defs << FaceManipulatorDef.new(face_manipulator, FACE_TYPE_CUTTING, true, separated)
           end
         else
           f_z_min = face_manipulator.bounds.min.z
@@ -102,78 +103,16 @@ module Ladb::OpenCutList
       root_depth = 0.0
       max_depth = part_z_min.nil? ? @drawing_def.faces_bounds.depth : z_max - part_z_min
 
-      upper_layer_def = PathsLayerDef.new(root_depth, DrawingProjectionLayerDef::TYPE_UPPER)
+      # Part faces : separated machinings stay out of the part matter
+      part_face_manipulator_defs = face_manipulator_defs.reject(&:separated?)
+      plds = _compute_faces_paths_layer_defs(part_face_manipulator_defs, z_max, max_depth)
+      upper_layer_def = plds[root_depth.to_s]
 
-      plds = {}   # plds = Path Layer DefS
-      plds[root_depth.to_s] = upper_layer_def
-
-      through_machining_paths = []  # Footprints of the through machinings (floor below the part
-                                    # bottom) : full height columns that pierce every layer, even
-                                    # a machining floor they cross (e.g. a through hole nested in a
-                                    # blind pocket). Kept apart : they pose no floor solid.
-
-      # Extract faces loops
-      face_manipulator_defs.each do |face_manipulator_def|
-
-        face_manipulator = face_manipulator_def.face_manipulator
-
-        if face_manipulator.surface_manipulator
-          f_depth = (z_max - face_manipulator.surface_manipulator.bounds.max.z) # Faces sharing the same "surface" are considered as a unique "box"
-        else
-          f_depth = (z_max - face_manipulator.bounds.max.z)
-        end
-        is_through_machining = false
-        if face_manipulator_def.machining?
-          if face_manipulator_def.face_type == FACE_TYPE_SOLID
-            if f_depth.round(3) >= max_depth.round(3)
-              is_through_machining = true                   # Floor at or below the part bottom : through machining, no floor layer, kept as a piercing column
-            elsif f_depth.round(3) <= 0
-              next                                          # Floor at or above the part top : the volume doesn't dig into the part
-            end
-          else
-            next if f_depth.round(3) >= max_depth.round(3)  # Top at or below the part bottom : the volume doesn't dig into the part
-            f_depth = 0.0 if f_depth < 0                    # Top above the part top : the machining enters the part through its upper face
-          end
-        elsif face_manipulator_def.face_type == FACE_TYPE_BOTTOM
-          next if f_depth.round(3) >= max_depth.round(3)    # Part bottom faces : no matter below the part anyway
-        end
-        # Machining floors and part bottoms are down-facing : their projected
-        # loops wind negatively, reverse them so every extracted path is
-        # positively oriented (up-facing loops already are) — paths from
-        # several faces are combined in single boolean calls below, mixed
-        # windings would cancel each other where they overlap.
-        f_reverse = face_manipulator_def.face_type == FACE_TYPE_BOTTOM || face_manipulator_def.machining? && face_manipulator_def.face_type == FACE_TYPE_SOLID
-        if face_manipulator.has_cuts_opening?
-          # Face has cuts opening components glued to. So we extract its paths from mesh triangulation instead of loops.
-          f_paths = face_manipulator.triangles.each_slice(3)
-                                    .to_a
-                                    .map! { |points| Clippy.points_to_rpath(f_reverse ? points.reverse : points) }
-        else
-          f_paths = face_manipulator.loop_manipulators
-                                    .map(&:points)
-                                    .map! { |points| Clippy.points_to_rpath(f_reverse ? points.reverse : points) }
-        end
-
-        if is_through_machining
-          through_machining_paths.concat(f_paths) # Through machining : no floor solid, its footprint pierces every layer
-          next
-        end
-
-        key = f_depth.round(3).to_s
-        pld = plds[key] ||= PathsLayerDef.new(f_depth, DrawingProjectionLayerDef::TYPE_DEFAULT)
-        if face_manipulator_def.face_type == FACE_TYPE_SOLID
-          if face_manipulator_def.machining?
-            pld.machining_closed_paths.concat(f_paths) # Machining floors are kept aside : they also cut every layer above their depth
-          else
-            pld.closed_paths.concat(f_paths) # Just concat, union will be call later in one unique call
-          end
-        elsif face_manipulator_def.face_type == FACE_TYPE_CUTTING
-          pld.cutting_closed_paths.concat(f_paths)
-        elsif face_manipulator_def.face_type == FACE_TYPE_BOTTOM
-          pld.bottom_closed_paths.concat(f_paths)
-        end
-
-      end
+      # Separated machinings : a second sweep, including them, tells which ones actually
+      # open into the part (a machining entering from the opposite face, or buried inside
+      # the part, is inert).
+      separated_machining_defs = []
+      _compute_faces_paths_layer_defs(face_manipulator_defs, z_max, max_depth, separated_machining_defs) if part_face_manipulator_defs.length < face_manipulator_defs.length
 
       # Extract edges and curves
       edge_manipulators.each do |edge_manipulator|
@@ -202,147 +141,6 @@ module Ladb::OpenCutList
       # Sort on depth ASC
       splds = plds.values.sort_by { |layer_def| [ layer_def.depth.round(3), layer_def.su_layer.nil? ? 1 : 0 ] }
 
-      # Union paths + Diff with cutting and machining paths on each layer.
-      # A machining volume removes the matter between its top face and its
-      # floor, but only where it is open to the sky : a machining buried under
-      # upper matter (suspended inside the part) is inert. Layers are swept top
-      # to bottom :
-      # - a machining top "opens" the machining on the region not covered by
-      #   the matter of the layers above, and cuts its own layer on that
-      #   opening,
-      # - a machining floor is served by the DEEPEST machining top above it
-      #   covering it (its own volume top for closed volumes) : where that top
-      #   is open, the floor cuts every upper layer and poses its solid on its
-      #   own layer ; elsewhere it is inert. The posed solid is further
-      #   restricted to where the part actually has matter at that depth
-      #   (matter_paths) : a machining traversing a local thickness (e.g. the
-      #   upper arm of a C shaped part) poses nothing in the void below it,
-      # - a top also cuts every layer below on its "through" region — its
-      #   opening not covered by any deeper machining floor, where the
-      #   machining does not stop inside the part. A through machining (floor
-      #   below the part bottom, kept apart in through_machining_paths) pierces
-      #   the part from its own top down even where a deeper machining floor
-      #   crosses it : its column is re-added to the through region where that
-      #   top is open, so
-      #   a through hole nested in a blind pocket (a counterbore whose bore top
-      #   is merged with the pocket top) is not masked by the pocket floor.
-
-      fn_rounded_depth = lambda { |layer_def| layer_def.depth.round(3) }
-      fn_deeper_floor_layer_defs = lambda { |depth|
-        splds.select { |layer_def| fn_rounded_depth.call(layer_def) > depth && layer_def.machining_closed_paths.any? }
-      }
-
-      splds.each do |layer_def|
-        layer_def.machining_closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.machining_closed_paths) if layer_def.machining_closed_paths.size > 1
-      end
-      through_machining_paths, op = Clippy.execute_union(closed_subjects: through_machining_paths) if through_machining_paths.size > 1
-
-      # Through machining columns are attributed to the deepest machining top
-      # covering them (their own volume top) : a column only pierces from that
-      # depth. A machining entering from the part bottom has its floor below the
-      # part too, but its column starts at its own top, it must not pierce the
-      # tops of other machinings above it (e.g. two blind holes facing each
-      # other from opposite faces).
-      through_column_paths = {} # depth => paths
-      remaining_paths = through_machining_paths
-      splds.reverse_each do |layer_def|
-        break if remaining_paths.empty?
-        next if layer_def.cutting_closed_paths.empty?
-        served_paths, op = Clippy.execute_intersection(closed_subjects: remaining_paths, clips: layer_def.cutting_closed_paths)
-        next if served_paths.empty?
-        remaining_paths, op = Clippy.execute_difference(closed_subjects: remaining_paths, clips: layer_def.cutting_closed_paths)
-        (through_column_paths[fn_rounded_depth.call(layer_def)] ||= []).concat(served_paths)
-      end
-
-      top_records = []         # { :depth, :raw_paths, :open_paths } of the machining tops swept so far
-      upper_through_paths = [] # Through cuts of the machining tops strictly above the current layer
-      covered_paths = []       # Matter of the layers strictly above the current layer
-      matter_paths = []        # Part matter present just below the current depth : up-facing part
-                               # faces (re)start it, down-facing part faces end it. Machining floors
-                               # only pose their solid where it exists (nothing is posed in the void
-                               # under a traversed local thickness, nor outside the part outline).
-
-      # Active region of a machining floor : parts of its outline attributed to
-      # the deepest machining top covering them (its own volume top for closed
-      # volumes), kept where that top is open. Regions covered by a raw top
-      # strictly between limit_depth and the floor belong to a volume starting
-      # below the current layer : excluded (they cannot cut it, and their
-      # openness — not swept yet — will rule their own floor when reached).
-      fn_floor_activity = lambda { |floor_layer_def, limit_depth|
-        floor_depth = fn_rounded_depth.call(floor_layer_def)
-        remaining_paths = floor_layer_def.machining_closed_paths
-        hidden_top_paths = splds.select { |layer_def|
-          (d = fn_rounded_depth.call(layer_def)) > limit_depth && d < floor_depth
-        }.flat_map(&:cutting_closed_paths)
-        remaining_paths, op = Clippy.execute_difference(closed_subjects: remaining_paths, clips: hidden_top_paths) if hidden_top_paths.any?
-        activity_paths = []
-        top_records.reverse_each do |top_record|
-          break if remaining_paths.empty?
-          next if top_record[:depth] > limit_depth
-          served_paths, op = Clippy.execute_intersection(closed_subjects: remaining_paths, clips: top_record[:raw_paths])
-          next if served_paths.empty?
-          remaining_paths, op = Clippy.execute_difference(closed_subjects: remaining_paths, clips: top_record[:raw_paths])
-          unless top_record[:open_paths].empty?
-            open_served_paths, op = Clippy.execute_intersection(closed_subjects: served_paths, clips: top_record[:open_paths])
-            activity_paths += open_served_paths
-          end
-        end
-        activity_paths
-      }
-
-      splds.each do |layer_def|
-        depth = fn_rounded_depth.call(layer_def)
-        deeper_floor_layer_defs = fn_deeper_floor_layer_defs.call(depth)
-
-        # Fold this layer's part matter events : down-facing faces end the
-        # matter, up-facing faces (re)start it
-        matter_paths, op = Clippy.execute_difference(closed_subjects: matter_paths, clips: layer_def.bottom_closed_paths) if layer_def.bottom_closed_paths.any? && matter_paths.any?
-        matter_paths += layer_def.closed_paths
-
-        # Opening of this layer's machining tops : their region not covered by upper matter
-        top_paths = layer_def.cutting_closed_paths
-        top_paths, op = Clippy.execute_difference(closed_subjects: top_paths, clips: covered_paths) if top_paths.any? && covered_paths.any?
-        top_records << { :depth => depth, :raw_paths => layer_def.cutting_closed_paths, :open_paths => top_paths } if layer_def.cutting_closed_paths.any?
-
-        closed_paths = layer_def.closed_paths
-        unless layer_def.machining_closed_paths.empty?
-          # Machining floors pose their solid on their active region only, where part matter exists
-          machining_paths = fn_floor_activity.call(layer_def, depth)
-          machining_paths, op = Clippy.execute_intersection(closed_subjects: machining_paths, clips: matter_paths) if machining_paths.any?
-          closed_paths += machining_paths
-        end
-        unless closed_paths.empty?
-          closed_paths, op = Clippy.execute_union(closed_subjects: closed_paths) if closed_paths.size > 1
-          # Deeper machining floors cut this layer on their active region
-          floor_cutting_paths = deeper_floor_layer_defs.flat_map { |floor_layer_def| fn_floor_activity.call(floor_layer_def, depth) }
-          cutting_paths = top_paths + floor_cutting_paths + upper_through_paths
-          closed_paths, op = Clippy.execute_difference(closed_subjects: closed_paths, clips: cutting_paths) if cutting_paths.any?
-          layer_def.closed_paths = closed_paths
-        end
-
-        # Through region of this layer's tops : their opening not stopped by a deeper floor
-        if top_paths.any?
-          deeper_floor_paths = deeper_floor_layer_defs.flat_map(&:machining_closed_paths)
-          if deeper_floor_paths.any?
-            through_paths, op = Clippy.execute_difference(closed_subjects: top_paths, clips: deeper_floor_paths)
-          else
-            through_paths = top_paths
-          end
-          # A through machining pierces the part from its top down, even a deeper
-          # machining floor it crosses : re-add the columns attributed to this
-          # layer's tops where they are open (a through hole nested in a blind
-          # pocket must not be masked by the pocket floor).
-          unless (column_paths = through_column_paths[depth]).nil?
-            pierced_paths, op = Clippy.execute_intersection(closed_subjects: top_paths, clips: column_paths)
-            through_paths += pierced_paths if pierced_paths.any?
-          end
-          upper_through_paths += through_paths
-        end
-
-        covered_paths += layer_def.closed_paths
-
-      end
-
       # Intersect with the mask if it exists
       unless @mask.nil?
 
@@ -350,6 +148,10 @@ module Ladb::OpenCutList
         splds.each do |layer_def|
           layer_def.closed_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_paths)
         end
+        separated_machining_defs.select! { |separated_machining_def|  # Separated machinings are kept whole, only those outside the mask are dropped
+          paths, op = Clippy.execute_intersection(closed_subjects: separated_machining_def.paths, clips: mask_paths)
+          paths.any? { |path| Clippy.get_rpath_area(path).abs >= MINIMAL_PATH_AREA }
+        }
 
         mask_bounds = Geom::BoundingBox.new.add(@mask).add(Geom::Point3d.new(@mask.first.x, @mask.first.y, z_max))
         faces_bounds = faces_bounds.intersect(mask_bounds) unless faces_bounds.empty?
@@ -593,6 +395,18 @@ module Ladb::OpenCutList
 
       end
 
+      # -- Separated machinings : one layer per depth and material, outlines not merged
+
+      separated_machining_defs.group_by { |separated_machining_def| [ separated_machining_def.depth.round(3), separated_machining_def.material ] }.each do |(_depth, material), defs|
+        polygons = defs.flat_map(&:paths).uniq.map { |path|
+          DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - defs.first.depth), true)
+        }
+        name = material.nil? ? nil : material.display_name
+        color = material.nil? ? nil : material.color
+        material_colored = _get_material_attributes(material).machining_material_colored != false
+        projection_def.layer_defs << DrawingProjectionLayerDef.new(defs.first.depth, DrawingProjectionLayerDef::TYPE_MACHININGS, polygons, name, color, material_colored)
+      end
+
       # -- Shell
 
       if @compute_shell
@@ -646,17 +460,300 @@ module Ladb::OpenCutList
       projection_def
     end
 
+    def _compute_faces_paths_layer_defs(face_manipulator_defs, z_max, max_depth, separated_machining_defs = nil)
+
+      root_depth = 0.0
+
+      upper_layer_def = PathsLayerDef.new(root_depth, DrawingProjectionLayerDef::TYPE_UPPER)
+
+      plds = {}   # plds = Path Layer DefS
+      plds[root_depth.to_s] = upper_layer_def
+
+      through_machining_paths = []  # Footprints of the through machinings (floor below the part
+                                    # bottom) : full height columns that pierce every layer, even
+                                    # a machining floor they cross (e.g. a through hole nested in a
+                                    # blind pocket). Kept apart : they pose no floor solid.
+
+      separated_defs = {}                 # surface or face => SeparatedMachiningDef of the separated machining floors to probe
+
+      # Extract faces loops
+      face_manipulator_defs.each do |face_manipulator_def|
+
+        face_manipulator = face_manipulator_def.face_manipulator
+
+        if face_manipulator.surface_manipulator
+          # Faces sharing the same "surface" are considered as a unique "box" : up-facing faces
+          # are its top, down-facing faces its bottom (e.g. the near and far walls of a drilling
+          # seen from its side, a single surface)
+          if face_manipulator_def.face_type == FACE_TYPE_BOTTOM || face_manipulator_def.machining? && face_manipulator_def.face_type == FACE_TYPE_SOLID
+            f_depth = (z_max - face_manipulator.surface_manipulator.bounds.min.z)
+          else
+            f_depth = (z_max - face_manipulator.surface_manipulator.bounds.max.z)
+          end
+        else
+          f_depth = (z_max - face_manipulator.bounds.max.z)
+        end
+        is_through_machining = false
+        if face_manipulator_def.machining?
+          if face_manipulator_def.face_type == FACE_TYPE_SOLID
+            if f_depth.round(3) >= max_depth.round(3)
+              is_through_machining = true                   # Floor at or below the part bottom : through machining, no floor layer, kept as a piercing column
+            elsif f_depth.round(3) <= 0
+              next                                          # Floor at or above the part top : the volume doesn't dig into the part
+            end
+          else
+            next if f_depth.round(3) >= max_depth.round(3)  # Top at or below the part bottom : the volume doesn't dig into the part
+            f_depth = 0.0 if f_depth < 0                    # Top above the part top : the machining enters the part through its upper face
+          end
+        elsif face_manipulator_def.face_type == FACE_TYPE_BOTTOM
+          next if f_depth.round(3) >= max_depth.round(3)    # Part bottom faces : no matter below the part anyway
+        end
+        # Machining floors and part bottoms are down-facing : their projected
+        # loops wind negatively, reverse them so every extracted path is
+        # positively oriented (up-facing loops already are) — paths from
+        # several faces are combined in single boolean calls below, mixed
+        # windings would cancel each other where they overlap.
+        f_reverse = face_manipulator_def.face_type == FACE_TYPE_BOTTOM || face_manipulator_def.machining? && face_manipulator_def.face_type == FACE_TYPE_SOLID
+        if face_manipulator.has_cuts_opening?
+          # Face has cuts opening components glued to. So we extract its paths from mesh triangulation instead of loops.
+          f_paths = face_manipulator.triangles.each_slice(3)
+                                    .to_a
+                                    .map! { |points| Clippy.points_to_rpath(f_reverse ? points.reverse : points) }
+        else
+          f_paths = face_manipulator.loop_manipulators
+                                    .map(&:points)
+                                    .map! { |points| Clippy.points_to_rpath(f_reverse ? points.reverse : points) }
+        end
+
+        # Separated machining floor to probe : its outline is kept as is (outer loop only, the
+        # inner loops of a stepped floor are the floors of the deeper steps). Floor faces of a
+        # same surface (facets of a curved wall) make a unique floor.
+        if separated_machining_defs && face_manipulator_def.separated? && face_manipulator_def.face_type == FACE_TYPE_SOLID
+          separated_machining_def = separated_defs[face_manipulator.surface_manipulator || face_manipulator] ||= SeparatedMachiningDef.new(is_through_machining ? max_depth : f_depth, face_manipulator.material, [], [], is_through_machining)
+          separated_machining_def.paths << Clippy.points_to_rpath(face_manipulator.outer_loop_manipulator.points.reverse)
+          separated_machining_def.probe_paths.concat(f_paths)
+        end
+
+        if is_through_machining
+          through_machining_paths.concat(f_paths) # Through machining : no floor solid, its footprint pierces every layer
+          next
+        end
+
+        key = f_depth.round(3).to_s
+        pld = plds[key] ||= PathsLayerDef.new(f_depth, DrawingProjectionLayerDef::TYPE_DEFAULT)
+        if face_manipulator_def.face_type == FACE_TYPE_SOLID
+          if face_manipulator_def.machining?
+            pld.machining_closed_paths.concat(f_paths) # Machining floors are kept aside : they also cut every layer above their depth
+          else
+            pld.closed_paths.concat(f_paths) # Just concat, union will be call later in one unique call
+          end
+        elsif face_manipulator_def.face_type == FACE_TYPE_CUTTING
+          pld.cutting_closed_paths.concat(f_paths)
+        elsif face_manipulator_def.face_type == FACE_TYPE_BOTTOM
+          pld.bottom_closed_paths.concat(f_paths)
+        end
+
+      end
+
+      separated_floor_defs = {}           # depth => SeparatedMachiningDefs of the separated machining floors to probe
+      separated_through_defs = []         # SeparatedMachiningDefs of the separated through machinings to probe
+      separated_defs.each_value do |separated_machining_def|
+        separated_machining_def.paths, op = Clippy.execute_union(closed_subjects: separated_machining_def.paths) if separated_machining_def.paths.size > 1
+        if separated_machining_def.through
+          separated_through_defs << separated_machining_def
+        else
+          (separated_floor_defs[separated_machining_def.depth.round(3)] ||= []) << separated_machining_def
+        end
+      end
+
+      # Sort on depth ASC
+      splds = plds.values.sort_by { |layer_def| [ layer_def.depth.round(3), layer_def.su_layer.nil? ? 1 : 0 ] }
+
+      # Union paths + Diff with cutting and machining paths on each layer.
+      # A machining volume removes the matter between its top face and its
+      # floor, but only where it is open to the sky : a machining buried under
+      # upper matter (suspended inside the part) is inert. Layers are swept top
+      # to bottom :
+      # - a machining top "opens" the machining on the region not covered by
+      #   the matter of the layers above, and cuts its own layer on that
+      #   opening,
+      # - a machining floor is served by the DEEPEST machining top above it
+      #   covering it (its own volume top for closed volumes) : where that top
+      #   is open, the floor cuts every upper layer and poses its solid on its
+      #   own layer ; elsewhere it is inert. The posed solid is further
+      #   restricted to where the part actually has matter at that depth
+      #   (matter_paths) : a machining traversing a local thickness (e.g. the
+      #   upper arm of a C shaped part) poses nothing in the void below it,
+      # - a top also cuts every layer below on its "through" region — its
+      #   opening not covered by any deeper machining floor, where the
+      #   machining does not stop inside the part. A through machining (floor
+      #   below the part bottom, kept apart in through_machining_paths) pierces
+      #   the part from its own top down even where a deeper machining floor
+      #   crosses it : its column is re-added to the through region where that
+      #   top is open, so
+      #   a through hole nested in a blind pocket (a counterbore whose bore top
+      #   is merged with the pocket top) is not masked by the pocket floor.
+
+      fn_rounded_depth = lambda { |layer_def| layer_def.depth.round(3) }
+      fn_deeper_floor_layer_defs = lambda { |depth|
+        splds.select { |layer_def| fn_rounded_depth.call(layer_def) > depth && layer_def.machining_closed_paths.any? }
+      }
+
+      splds.each do |layer_def|
+        layer_def.machining_closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.machining_closed_paths) if layer_def.machining_closed_paths.size > 1
+      end
+      through_machining_paths, op = Clippy.execute_union(closed_subjects: through_machining_paths) if through_machining_paths.size > 1
+
+      # Through machining columns are attributed to the deepest machining top
+      # covering them (their own volume top) : a column only pierces from that
+      # depth. A machining entering from the part bottom has its floor below the
+      # part too, but its column starts at its own top, it must not pierce the
+      # tops of other machinings above it (e.g. two blind holes facing each
+      # other from opposite faces).
+      through_column_paths = {} # depth => paths
+      remaining_paths = through_machining_paths
+      splds.reverse_each do |layer_def|
+        break if remaining_paths.empty?
+        next if layer_def.cutting_closed_paths.empty?
+        served_paths, op = Clippy.execute_intersection(closed_subjects: remaining_paths, clips: layer_def.cutting_closed_paths)
+        next if served_paths.empty?
+        remaining_paths, op = Clippy.execute_difference(closed_subjects: remaining_paths, clips: layer_def.cutting_closed_paths)
+        (through_column_paths[fn_rounded_depth.call(layer_def)] ||= []).concat(served_paths)
+      end
+
+      top_records = []         # { :depth, :raw_paths, :open_paths } of the machining tops swept so far
+      upper_through_paths = [] # Through cuts of the machining tops strictly above the current layer
+      covered_paths = []       # Matter of the layers strictly above the current layer
+      matter_paths = []        # Part matter present just below the current depth : up-facing part
+                               # faces (re)start it, down-facing part faces end it. Machining floors
+                               # only pose their solid where it exists (nothing is posed in the void
+                               # under a traversed local thickness, nor outside the part outline).
+
+      # Active region of a machining floor : parts of its outline attributed to
+      # the deepest machining top covering them (its own volume top for closed
+      # volumes), kept where that top is open. Regions covered by a raw top
+      # strictly between limit_depth and the floor belong to a volume starting
+      # below the current layer : excluded (they cannot cut it, and their
+      # openness — not swept yet — will rule their own floor when reached).
+      fn_floor_activity = lambda { |floor_layer_def, limit_depth|
+        floor_depth = fn_rounded_depth.call(floor_layer_def)
+        remaining_paths = floor_layer_def.machining_closed_paths
+        hidden_top_paths = splds.select { |layer_def|
+          (d = fn_rounded_depth.call(layer_def)) > limit_depth && d < floor_depth
+        }.flat_map(&:cutting_closed_paths)
+        remaining_paths, op = Clippy.execute_difference(closed_subjects: remaining_paths, clips: hidden_top_paths) if hidden_top_paths.any?
+        activity_paths = []
+        top_records.reverse_each do |top_record|
+          break if remaining_paths.empty?
+          next if top_record[:depth] > limit_depth
+          served_paths, op = Clippy.execute_intersection(closed_subjects: remaining_paths, clips: top_record[:raw_paths])
+          next if served_paths.empty?
+          remaining_paths, op = Clippy.execute_difference(closed_subjects: remaining_paths, clips: top_record[:raw_paths])
+          unless top_record[:open_paths].empty?
+            open_served_paths, op = Clippy.execute_intersection(closed_subjects: served_paths, clips: top_record[:open_paths])
+            activity_paths += open_served_paths
+          end
+        end
+        activity_paths
+      }
+
+      # A separated machining is kept if its whole floor, where it lies over the part, is open :
+      # a machining entering from the opposite face is only "open" outside the part (an
+      # overflowing rebate) or through the void of another machining (a counterbore seen
+      # through its bore). Part silhouette = union of its up-facing faces.
+      unless separated_machining_defs.nil?
+        silhouette_paths, op = Clippy.execute_union(closed_subjects: splds.flat_map(&:closed_paths))
+      end
+      open_through_paths = [] # Pierced columns of the through machinings
+      fn_paths_area = lambda { |paths| paths.inject(0.0) { |area, path| area + Clippy.get_rpath_area(path) }.abs }
+      fn_probe_separated = lambda { |defs, open_paths|
+        return if defs.nil? || open_paths.empty?
+        defs.each do |separated_machining_def|
+          inside_paths, op = Clippy.execute_intersection(closed_subjects: separated_machining_def.probe_paths, clips: silhouette_paths)
+          next if (inside_area = fn_paths_area.call(inside_paths)) < MINIMAL_PATH_AREA
+          closed_paths, op = Clippy.execute_difference(closed_subjects: inside_paths, clips: open_paths)
+          separated_machining_defs << separated_machining_def if fn_paths_area.call(closed_paths) <= inside_area * 0.01
+        end
+      }
+
+      splds.each do |layer_def|
+        depth = fn_rounded_depth.call(layer_def)
+        deeper_floor_layer_defs = fn_deeper_floor_layer_defs.call(depth)
+
+        # Fold this layer's part matter events : down-facing faces end the
+        # matter, up-facing faces (re)start it
+        matter_paths, op = Clippy.execute_difference(closed_subjects: matter_paths, clips: layer_def.bottom_closed_paths) if layer_def.bottom_closed_paths.any? && matter_paths.any?
+        matter_paths += layer_def.closed_paths
+
+        # Opening of this layer's machining tops : their region not covered by upper matter
+        top_paths = layer_def.cutting_closed_paths
+        top_paths, op = Clippy.execute_difference(closed_subjects: top_paths, clips: covered_paths) if top_paths.any? && covered_paths.any?
+        top_records << { :depth => depth, :raw_paths => layer_def.cutting_closed_paths, :open_paths => top_paths } if layer_def.cutting_closed_paths.any?
+
+        closed_paths = layer_def.closed_paths
+        unless layer_def.machining_closed_paths.empty?
+          # Machining floors pose their solid on their active region only, where part matter exists
+          machining_paths = fn_floor_activity.call(layer_def, depth)
+          fn_probe_separated.call(separated_floor_defs[depth], machining_paths) unless separated_machining_defs.nil?
+          machining_paths, op = Clippy.execute_intersection(closed_subjects: machining_paths, clips: matter_paths) if machining_paths.any?
+          closed_paths += machining_paths
+        end
+        unless closed_paths.empty?
+          closed_paths, op = Clippy.execute_union(closed_subjects: closed_paths) if closed_paths.size > 1
+          # Deeper machining floors cut this layer on their active region
+          floor_cutting_paths = deeper_floor_layer_defs.flat_map { |floor_layer_def| fn_floor_activity.call(floor_layer_def, depth) }
+          cutting_paths = top_paths + floor_cutting_paths + upper_through_paths
+          closed_paths, op = Clippy.execute_difference(closed_subjects: closed_paths, clips: cutting_paths) if cutting_paths.any?
+          layer_def.closed_paths = closed_paths
+        end
+
+        # Through region of this layer's tops : their opening not stopped by a deeper floor
+        if top_paths.any?
+          deeper_floor_paths = deeper_floor_layer_defs.flat_map(&:machining_closed_paths)
+          if deeper_floor_paths.any?
+            through_paths, op = Clippy.execute_difference(closed_subjects: top_paths, clips: deeper_floor_paths)
+          else
+            through_paths = top_paths
+          end
+          # A through machining pierces the part from its top down, even a deeper
+          # machining floor it crosses : re-add the columns attributed to this
+          # layer's tops where they are open (a through hole nested in a blind
+          # pocket must not be masked by the pocket floor).
+          unless (column_paths = through_column_paths[depth]).nil?
+            pierced_paths, op = Clippy.execute_intersection(closed_subjects: top_paths, clips: column_paths)
+            through_paths += pierced_paths if pierced_paths.any?
+            open_through_paths += pierced_paths
+          end
+          upper_through_paths += through_paths
+        end
+
+        covered_paths += layer_def.closed_paths
+
+      end
+
+      fn_probe_separated.call(separated_through_defs, open_through_paths) unless separated_machining_defs.nil?
+
+      plds
+    end
+
     # -----
 
     FACE_TYPE_SOLID = 0
     FACE_TYPE_CUTTING = 1
     FACE_TYPE_BOTTOM = 2
 
-    FaceManipulatorDef = Struct.new(:face_manipulator, :face_type, :machining) do
+    FaceManipulatorDef = Struct.new(:face_manipulator, :face_type, :machining, :separated) do
       def machining?
         machining
       end
+      def separated?
+        separated == true
+      end
     end
+
+    # Floor of a separated machining (see MaterialAttributes#machining_separated) : exported
+    # as is, on its own layer, instead of being dug into the part matter.
+    SeparatedMachiningDef = Struct.new(:depth, :material, :paths, :probe_paths, :through)  # paths = outer loops (output), probe_paths = all loops (openness probe)
 
     PathsLayerDef = Struct.new(:depth, :type, :su_layer, :closed_paths, :open_paths, :cutting_closed_paths, :machining_closed_paths, :bottom_closed_paths, :border_closed_paths, :border_open_paths) do
       def initialize(depth, type, su_layer: nil, closed_paths: [], open_paths: [], cutting_closed_paths: [], machining_closed_paths: [], bottom_closed_paths: [], border_closed_paths: [], border_open_paths: [])

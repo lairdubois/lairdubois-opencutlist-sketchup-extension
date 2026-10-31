@@ -1339,41 +1339,7 @@ module Ladb::OpenCutList
         articles_a, contributions_a = _get_articles_geometries(:a, fn_get_definition, fn_get_drawing_def)
         articles_b, contributions_b = _get_articles_geometries(:b, fn_get_definition, fn_get_drawing_def)
 
-        fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
-          return nil if !ref.is_a?(String) || ref.strip.empty?
-          ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' and '$OCL/…' refs point to a file of a library
-          return nil if ref.nil?
-          if File.extname(ref).downcase == '.skm'
-            unless model.materials.respond_to?(:load)   # Materials#load requires SketchUp 2019.2+
-              @tool.notify_errors([
-                                    [ 'tool.smart_join.error.failed_to_load_skm_file', { file: ref } ],
-                                    [ 'tool.smart_join.error.unsupported_skm_load' ]
-                                  ])
-              return nil
-            end
-            begin
-              material = model.materials.load(ref)
-            rescue Exception => e
-              @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skm_file', { file: ref } ] ])
-              return nil
-            end
-          else
-            material = model.materials[ref]
-            if material.nil?
-              material = model.materials.add(ref)
-              material.color = default_color unless default_color.nil?
-              unless default_type.nil?
-                ma = MaterialAttributes.new(material)
-                ma.type = default_type
-                ma.write_to_attributes
-              end
-            end
-          end
-          material
-        end
-
-        hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, COLOR_DEFAULT_HARDWARE_MATERIAL, MaterialAttributes::TYPE_HARDWARE)
-        machining_material = fn_get_material.call(_fetch_option_machining_material_name, COLOR_DEFAULT_MACHINING_MATERIAL, MaterialAttributes::TYPE_MACHINING)
+        hardware_material = _get_material(_fetch_option_hardware_material_name, COLOR_DEFAULT_HARDWARE_MATERIAL, MaterialAttributes::TYPE_HARDWARE)
 
         fn_get_layer = lambda do |ref|
           return nil if !ref.is_a?(String) || ref.strip.empty?
@@ -1422,11 +1388,77 @@ module Ladb::OpenCutList
       @geometries_def = GeometriesDef.new(
         *geometries,
         hardware_material,
-        machining_material,
         hardware_layer,
         machining_layer,
         bounds,
       )
+    end
+
+    # The material of the given ref - a name or a '.skm' ref - in the model :
+    # loaded, or created with the given color and type when it isn't there.
+    # nil when there is none. To be called in an operation.
+    def _get_material(ref, default_color = nil, default_type = nil)
+      model = Sketchup.active_model
+      return nil if !ref.is_a?(String) || ref.strip.empty?
+      ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' and '$OCL/…' refs point to a file of a library
+      return nil if ref.nil?
+      if File.extname(ref).downcase == '.skm'
+        unless model.materials.respond_to?(:load)   # Materials#load requires SketchUp 2019.2+
+          @tool.notify_errors([
+                                [ 'tool.smart_join.error.failed_to_load_skm_file', { file: ref } ],
+                                [ 'tool.smart_join.error.unsupported_skm_load' ]
+                              ])
+          return nil
+        end
+        begin
+          material = model.materials.load(ref)
+        rescue Exception => e
+          @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skm_file', { file: ref } ] ])
+          return nil
+        end
+      else
+        material = model.materials[ref]
+        if material.nil?
+          material = model.materials.add(ref)
+          material.color = default_color unless default_color.nil?
+          unless default_type.nil?
+            ma = MaterialAttributes.new(material)
+            ma.type = default_type
+            ma.write_to_attributes
+          end
+        end
+      end
+      material
+    end
+
+    # The tool's machining material - see _get_material - loaded once per
+    # ref. To be called in an operation : it is created when missing.
+    def _get_default_machining_material
+      ref = _fetch_option_machining_material_name
+      @default_machining_materials = {} unless @default_machining_materials.is_a?(Hash)
+      material = @default_machining_materials[ref]
+      return material if material.is_a?(Sketchup::Material) && material.valid?
+      @default_machining_materials[ref] = _get_material(ref, COLOR_DEFAULT_MACHINING_MATERIAL, MaterialAttributes::TYPE_MACHINING)
+    end
+
+    # The material the instance of the given machining - of the given
+    # definition - is painted with, what tells it is one : none for a SKP
+    # that cuts its opening ; the tool's when something of it shows it - a
+    # SKP, an operation that gives no material of its own, see
+    # _get_geometry_definition ; else the machining material most of its
+    # operations give - the first of them on a tie - so the tool's isn't
+    # created for nothing.
+    def _get_machining_instance_material(geometry, definition)
+      unless geometry.definition.nil?
+        return nil if definition.behavior.cuts_opening?   # A SKP machining that cuts its opening is not painted
+        return _get_default_machining_material
+      end
+      materials = definition.entities.grep(Sketchup::Group).map(&:material)
+      materials = [] if materials.any? { |material| material.nil? || MaterialAttributes.new(material).type != MaterialAttributes::TYPE_MACHINING }
+      return _get_default_machining_material if materials.empty?
+      counts = Hash.new(0)
+      materials.each { |material| counts[material] += 1 }
+      materials.max_by { |material| [ counts[material], -materials.index(material) ] }
     end
 
     # -- Articles --
@@ -2004,14 +2036,17 @@ module Ladb::OpenCutList
     # [ x, y, diameter, z_min, z_max ] - and length for an oblong one, nil
     # and the profile for a widened one, then the axis for one along Y, the
     # values before it nil if missing, then the outline of a prism - in
-    # inches, rounded : the key of their geometry. As they give them : off
+    # inches, rounded - then the ref of the material of an operation that
+    # gives one, see HardwareDescriptorDef::PRIMITIVE_MATERIAL, the values
+    # before it nil if missing : the key of their geometry. As they give them : off
     # the origin of the laying frame, or of their article. height_reversed :
     # see HardwareDescriptorDef.height_reversed?, the placement's slot's by
     # default.
     def _get_primitives_dimensions(primitives, placement, variables = nil, height_reversed = _height_reversed?(placement.role))
       variables ||= _get_placement_variables(placement)
       fn_round = lambda { |v| v.to_f.round(6) + 0.0 }  # + 0.0 : no -0.0 in the key
-      HardwareDescriptorDef.primitive_cylinders(primitives, variables, height_reversed).map { |cylinder|
+      cylinders = HardwareDescriptorDef.primitive_cylinders(primitives, variables, height_reversed)
+      cylinders.map { |cylinder|
         if cylinder.prism? && !cylinder.axis.nil?
           # Along X or Y : its v along Z
           outline = cylinder.outline.map { |point| point.map(&fn_round) }
@@ -2030,6 +2065,9 @@ module Ladb::OpenCutList
         values << nil << cylinder.profile.map { |r, z| [ fn_round.call(r), fn_round.call(z) ] } unless cylinder.profile.nil?
         values.fill(nil, values.length...7) << cylinder.axis unless cylinder.axis.nil?
         values
+      }.each_with_index.map { |values, index|
+        material = cylinders[index].material
+        material.nil? ? values : values.fill(nil, values.length...9) << material
       }
     end
 
@@ -2230,7 +2268,9 @@ module Ladb::OpenCutList
     # definition - only the positions of an article lay the same one more
     # than once, see _add_articles. A machining
     # holds each of its operations in a group of its own, painted with the
-    # given material : an export tells them apart. lift : that of the position
+    # material it gives - see HardwareDescriptorDef::PRIMITIVE_MATERIAL - or
+    # left with its instance's, see _get_machining_instance_material : an
+    # export tells them apart. lift : that of the position
     # of an article - see _get_article_positions. To be called in an
     # operation.
     def _get_geometry_definition(geometry, placement, material = nil, lift = 0.0)
@@ -2240,17 +2280,18 @@ module Ladb::OpenCutList
       dimensions = geometry.primitives.nil? ? [] : _get_primitives_dimensions(geometry.primitives, placement, _get_geometry_variables(geometry, placement, lift))
       dimensions += _get_contributions_dimensions(geometry, placement)   # Merged into the machining
       return nil if dimensions.empty?
-      key = _get_geometry_definition_key(geometry, dimensions)
+      key = _get_geometry_definition_key(geometry, dimensions, material)
       name = geometry.name || _get_hardware_definition_name(geometry.slot, geometry.part)
 
       definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES) == key }
       if definition.nil?
         definition = model.definitions.add(name.is_a?(String) && !name.empty? ? name : geometry.part.to_s)
-        dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis, outline|
+        dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis, outline, material_ref|
           at = _get_primitive_axis_transformation(axis)
           if geometry.part == :machining
             group = definition.entities.add_group
-            group.material = material if material.is_a?(Sketchup::Material)
+            group_material = material_ref.nil? ? nil : _get_material(material_ref, COLOR_DEFAULT_MACHINING_MATERIAL, MaterialAttributes::TYPE_MACHINING)
+            group.material = group_material if group_material.is_a?(Sketchup::Material)   # Else the instance's
             entities = group.entities
           else
             entities = definition.entities
@@ -2282,9 +2323,11 @@ module Ladb::OpenCutList
 
     # The key the definition generated from the given primitives - resolved
     # as the given dimensions - is found by : shared by any geometry of the
-    # same part and dimensions.
-    def _get_geometry_definition_key(geometry, dimensions)
-      "#{geometry.part}:#{dimensions.to_json}"
+    # same part and dimensions - and, for a machining, laid with the same
+    # machining material of the tool.
+    def _get_geometry_definition_key(geometry, dimensions, material = nil)
+      return "#{geometry.part}:#{dimensions.to_json}" unless geometry.part == :machining
+      "#{geometry.part}:#{_fetch_option_machining_material_name}:#{dimensions.to_json}"
     end
 
     # A solid along Z, from z_min to z_max : a cylinder, or a slot with round
@@ -2417,7 +2460,7 @@ module Ladb::OpenCutList
       end
       definition = _get_geometry_definition(geometry, placement, material)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
-      material = nil if geometry.part == :machining && !geometry.definition.nil? && definition.behavior.cuts_opening? # A SKP machining that cuts its opening is not painted
+      material = _get_machining_instance_material(geometry, definition) if geometry.part == :machining
       _add_glued_instance(definition, material, layer, placement.face, placement.entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(geometry))
       nil
     end
@@ -2691,14 +2734,15 @@ module Ladb::OpenCutList
 
     # Data Structs -----
 
-    GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :hardware_layer, :machining_layer, :bounds) do
+    # The tool's machining material isn't one of them : created only when an
+    # instance shows it, see _get_machining_instance_material.
+    GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :hardware_layer, :machining_layer, :bounds) do
       def valid?
         hardware_a.valid? &&
           hardware_b.valid? &&
           machining_a.valid? &&
           machining_b.valid? &&
           (hardware_material.nil? || hardware_material.valid?) &&
-          (machining_material.nil? || machining_material.valid?) &&
           (hardware_layer.nil? || hardware_layer.valid?) &&
           (machining_layer.nil? || machining_layer.valid?)
       end
@@ -3483,7 +3527,6 @@ module Ladb::OpenCutList
       machining_a = geometries_def.machining_a
       machining_b = geometries_def.machining_b
       hardware_material = geometries_def.hardware_material
-      machining_material = geometries_def.machining_material
       hardware_layer = geometries_def.hardware_layer
       machining_layer = geometries_def.machining_layer
 
@@ -3565,7 +3608,7 @@ module Ladb::OpenCutList
           machining = placement.role == :a ? machining_a : machining_b
 
           _add_geometry(hardware, placement, hardware_material, hardware_layer)
-          _add_geometry(machining, placement, machining_material, machining_layer)
+          _add_geometry(machining, placement, nil, machining_layer)   # Its material : see _get_machining_instance_material
 
         end
 
@@ -5131,7 +5174,6 @@ module Ladb::OpenCutList
       machining_a = geometries_def.machining_a
       machining_b = geometries_def.machining_b
       hardware_material = geometries_def.hardware_material
-      machining_material = geometries_def.machining_material
       hardware_layer = geometries_def.hardware_layer
       machining_layer = geometries_def.machining_layer
 
@@ -5193,7 +5235,7 @@ module Ladb::OpenCutList
         machining = placement.role == :a ? machining_a : machining_b
 
         _add_geometry(hardware, placement, hardware_material, hardware_layer)
-        _add_geometry(machining, placement, machining_material, machining_layer)
+        _add_geometry(machining, placement, nil, machining_layer)   # Its material : see _get_machining_instance_material
 
       end
 
@@ -5684,7 +5726,7 @@ module Ladb::OpenCutList
     # machining without one - is found by them too : two hinges drilled the
     # same may turn differently.
     # Not the articles of A : their group bears them, see #_add_geometry.
-    def _get_geometry_definition_key(geometry, dimensions)
+    def _get_geometry_definition_key(geometry, dimensions, material = nil)
       return super unless geometry.slot == :a && geometry.component.nil? && (geometry.part == :hardware || _hinge_machining?(geometry))
       "#{DefinitionAttributes::ROLE_HINGE}:#{_get_hardware_component(:a).attributes.to_json}:#{super}"
     end

@@ -345,7 +345,7 @@ module Ladb::OpenCutList
       15
     end
 
-    def _get_projection_layer_color(layer_def)
+    def _get_projection_layer_color(layer_def, projection_def)
       SmartExportTool::COLOR_PART_UPPER
     end
 
@@ -383,7 +383,7 @@ module Ladb::OpenCutList
 
         points_entities = []
 
-        color = _get_projection_layer_color(layer_def)
+        color = _get_projection_layer_color(layer_def, projection_def)
 
         layer_def.poly_defs.each do |poly_def|
 
@@ -786,12 +786,12 @@ module Ladb::OpenCutList
       30
     end
 
-    def _get_projection_layer_color(layer_def)
+    def _get_projection_layer_color(layer_def, projection_def)
       if layer_def.type_upper?
         SmartExportTool::COLOR_PART_UPPER
-      elsif layer_def.type_holes?
+      elsif layer_def.type_holes? || layer_def.type_machinings? && !layer_def.material_colored? && layer_def.depth >= projection_def.max_depth # Machinings not colored by their material take the colors of what they cut : holes when through, depths otherwise
         SmartExportTool::COLOR_PART_HOLES
-      elsif layer_def.type_paths?
+      elsif layer_def.type_paths? || layer_def.type_machinings? && layer_def.material_colored?
         layer_def.has_color? ? layer_def.color : SmartExportTool::COLOR_PART_PATH
       elsif layer_def.type_borders?
         border_color = get_active_part.group.def.material_color
@@ -982,7 +982,7 @@ module Ladb::OpenCutList
       ).run
     end
 
-    def _get_projection_layer_color(layer_def)
+    def _get_projection_layer_color(layer_def, projection_def)
       layer_def.has_color? ? layer_def.color : SmartExportTool::COLOR_PART_PATH
     end
 

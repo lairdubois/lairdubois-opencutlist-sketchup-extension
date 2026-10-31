@@ -132,6 +132,7 @@ module Ladb::OpenCutList
       a << 'OUTER' if layer_def.type_outer?
       a << 'HOLES' if layer_def.type_holes?
       a << 'PATHS' if layer_def.type_paths?
+      a << 'MACHININGS' if layer_def.type_machinings?
       a << layer_def.name if layer_def.has_name?
       _svg_sanitize_identifier(a.compact.join('_'))
     end
@@ -160,20 +161,37 @@ module Ladb::OpenCutList
       flipped = TransformationUtils.flipped?(transformation)
       rot_x, rot_y, rot_z = TransformationUtils.euler_angles(transformation)
 
-      projection_def.layer_defs.sort_by { |v| [ v.type_outer? ? 0 : v.depth, v.type_paths? ? 1 : 0 ] }.each do |layer_def|   # Outer always on back and Path's layers on top of same depth layers
+      projection_def.layer_defs.sort_by { |v| [ v.type_outer? ? 0 : v.depth, v.type_paths? || v.type_machinings? ? 1 : 0 ] }.each do |layer_def|   # Outer always on back and Path's and machining's layers on top of same depth layers
 
         id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
 
-        if layer_def.type_paths?
+        # Machinings not colored by their material take the colors of what they cut : holes when through, depths otherwise
+        style = if layer_def.type_machinings?
+                  if layer_def.material_colored?
+                    :machinings
+                  else
+                    layer_def.depth >= projection_def.max_depth ? :holes : :depths
+                  end
+                elsif layer_def.type_paths?
+                  :paths
+                elsif layer_def.type_holes? # Keep it before checking outer type
+                  :holes
+                elsif layer_def.type_outer? || layer_def.depth == 0
+                  :outer
+                else
+                  :depths
+                end
+
+        if style == :paths || style == :machinings
           attributes = {
             stroke: _svg_stroke_color_hex(layer_def.has_color? ? layer_def.color : paths_stroke_color),
-            fill: layer_def.type_closed_paths? ? _svg_fill_color_hex(paths_fill_color) : 'none',
+            fill: style == :paths && layer_def.type_closed_paths? ? _svg_fill_color_hex(paths_fill_color) : 'none',
             id: id,
             'serif:id': id,
             'inkscape:label': id
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if layer_def.depth != 0
-        elsif layer_def.type_holes? # Keep it before checking outer type
+        elsif style == :holes
           attributes = {
             stroke: _svg_stroke_color_hex(holes_stroke_color, holes_fill_color),
             fill: _svg_fill_color_hex(holes_fill_color),
@@ -182,7 +200,7 @@ module Ladb::OpenCutList
             'inkscape:label': id
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if layer_def.depth > 0
-        elsif layer_def.type_outer? || layer_def.depth == 0
+        elsif style == :outer
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: _svg_fill_color_hex(fill_color),
@@ -303,9 +321,21 @@ module Ladb::OpenCutList
         end
 
         unless data.empty?
-          _svg_write_tag(file, 'path', attributes.merge(
-            d: data.join(' ')
-          ))
+          if layer_def.type_machinings?
+            # Separated machinings are not merged : one path per machining, overlaps in a compound path would read as islands
+            group_attributes, path_attributes = attributes.partition { |key, _| [ :id, :'serif:id', :'inkscape:label' ].include?(key) }.map(&:to_h)
+            _svg_write_group_start(file, group_attributes)
+            data.each do |d|
+              _svg_write_tag(file, 'path', path_attributes.merge(
+                d: d
+              ))
+            end
+            _svg_write_group_end(file)
+          else
+            _svg_write_tag(file, 'path', attributes.merge(
+              d: data.join(' ')
+            ))
+          end
         end
 
       end

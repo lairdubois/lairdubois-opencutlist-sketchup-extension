@@ -489,6 +489,8 @@ core:
     primitive_end_from: Bout « De »
     primitive_head_diameter_angle: Ø | angle
     primitive_head_diameter_depth: Ø | profondeur
+    primitive_material: Matière
+    primitive_material_default: Matière d'usinage de l'outil
     primitive_variables: Variables
     primitive_unresolved: "Pas de solide sur le banc : vérifier ses dimensions."
     chip_bundled: Bibliothèque OCL
@@ -1943,6 +1945,7 @@ tab:
       formats: Formats
       cut_options: Options de débit
       estimate_options: Options d'estimation
+      export_options: Options d'export
       attributes: Attributs
       thickness: Épaisseur
       thickness_help: |
@@ -2004,6 +2007,28 @@ tab:
       raw_estimated_1: Volume de matière première nécessaire
       multiplier_coefficient: Coefficient multiplicateur
       multiplier_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré.
+      machining_separated: Usinages
+      machining_separated_help: |
+        Permet de définir comment les usinages de cette matière sont exportés en 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Les usinages sont soustraits de la forme de la pièce et fusionnés avec ses calques de profondeur.
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        La pièce garde sa forme initiale. Chaque usinage est exporté tel quel, sans fusion avec les autres, sur un calque `MACHININGS` par profondeur, nommé d'après la matière.
+      machining_separated_0: Creusés dans la pièce
+      machining_separated_1: Séparés sur leurs propres calques
+      machining_material_colored: Couleurs à l'export
+      machining_material_colored_help: |
+        Permet de définir les couleurs des usinages séparés dans les exports 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Le contour des usinages prend la couleur de cette matière, sans remplissage.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Les usinages prennent les couleurs de ce qu'ils découpent dans la pièce : celles des percements s'ils sont traversants, celles des cavités sinon. Utile pour les machines qui déduisent le type de coupe des couleurs.
+      machining_material_colored_0: Automatiques
+      machining_material_colored_1: Couleur de la matière
       std_attributes_dim_placeholder: Choisissez une taille
       std_volumic_masses: Masse volumique
       std_volumic_masses_help: Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.

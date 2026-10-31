@@ -91,15 +91,21 @@ module HingeFixture
   # pivot : false for one without its pivot - it can't turn ; articles : its
   # hardware made of articles - the cup and its two pins, each a part of its
   # own ; machining_skp : the cup drilled by that SKP file - see
-  # write_machining_skp - beside its screw holes, given as primitives.
-  def self.descriptor(id, hardware: true, pivot: true, articles: false, machining_skp: nil)
+  # write_machining_skp - beside its screw holes, given as primitives ;
+  # cup_material, screws_material, plate_material : the material the cup
+  # drilling, its screw holes and the drillings of the plate give - see
+  # HardwareDescriptorDef::PRIMITIVE_MATERIAL - the tool's when nil.
+  def self.descriptor(id, hardware: true, pivot: true, articles: false, machining_skp: nil, cup_material: nil, screws_material: nil, plate_material: nil)
     cup = lambda do |y, screws_y|
       drillings = [
         { 'x' => '-22.5mm', 'y' => screws_y, 'diameter' => '8mm', 'depth' => '13mm' },
         { 'x' => '22.5mm', 'y' => screws_y, 'diameter' => '8mm', 'depth' => '13mm' },
       ]
+      drillings.each { |drilling| drilling['material'] = screws_material } unless screws_material.nil?
       if machining_skp.nil?
-        machining = { 'drillings' => [ { 'y' => y, 'diameter' => '35mm', 'depth' => '13mm' } ] + drillings }
+        cup_drilling = { 'y' => y, 'diameter' => '35mm', 'depth' => '13mm' }
+        cup_drilling['material'] = cup_material unless cup_material.nil?
+        machining = { 'drillings' => [ cup_drilling ] + drillings }
       else
         machining = { 'skp' => machining_skp, 'drillings' => drillings }
       end
@@ -130,7 +136,7 @@ module HingeFixture
       'name' => "Hinge fixture #{id}",
       'components' => {
         'a' => a,
-        'b' => { 'machining' => { 'drillings' => [ { 'x' => '-16mm', 'y' => '37mm', 'diameter' => '5mm', 'depth' => '12mm' }, { 'x' => '16mm', 'y' => '37mm', 'diameter' => '5mm', 'depth' => '12mm' } ] } },
+        'b' => { 'machining' => { 'drillings' => [ { 'x' => '-16mm', 'y' => '37mm', 'diameter' => '5mm', 'depth' => '12mm' }, { 'x' => '16mm', 'y' => '37mm', 'diameter' => '5mm', 'depth' => '12mm' } ].map { |drilling| plate_material.nil? ? drilling : drilling.merge('material' => plate_material) } } },
       },
       'options' => { 'start_offset' => '100mm', 'end_offset' => '100mm', 'max_spacing' => '800mm' },
     }
@@ -271,8 +277,9 @@ module HingeFixture
 
   # Yields the handler of the given SmartJoin action, its tool selected -
   # laying the given descriptor ref when given - the tool's messages
-  # appended to the given array.
-  def self.with_handler(model, action, messages, descriptor_ref = nil)
+  # appended to the given array. options : the values the handler fetches
+  # for the given tool options, by name - 'machining_material_name' => '…'.
+  def self.with_handler(model, action, messages, descriptor_ref = nil, options = {})
     tool = OCL::SmartJoinTool.new(current_action: action)
     [ :notify_success, :notify_warnings, :notify_errors, :notify, :set_root_tooltip, :show_message ].each do |name|
       tool.define_singleton_method(name) do |*args|
@@ -284,6 +291,7 @@ module HingeFixture
     model.select_tool(tool)
     begin
       handler = tool.instance_variable_get(:@action_handler)
+      options.each { |name, value| handler.define_singleton_method(:"_fetch_option_#{name}") { value } }
       unless descriptor_ref.nil?
         handler.define_singleton_method(:_fetch_option_hardware) { descriptor_ref }
         handler.set_state(handler.get_startup_state)   # Out of the "pick a hardware" state

@@ -568,6 +568,8 @@
         const $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
         const $selectRawEstimated = $('#ladb_materials_select_raw_estimated', $modal);
         const $inputMultiplierCoefficient = $('#ladb_materials_input_multiplier_coefficient', $modal);
+        const $selectMachiningSeparated = $('#ladb_materials_select_machining_separated', $modal);
+        const $selectMachiningMaterialColored = $('#ladb_materials_select_machining_material_colored', $modal);
         const $editorStdVolumicMasses = $('#ladb_materials_editor_std_volumic_masses', $modal);
         const $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
         const $editorStdCutPrices = $('#ladb_materials_editor_std_cut_prices', $modal);
@@ -620,6 +622,8 @@
             options.edge_decremented = $selectEdgeDecremented.val() === '1';
             options.raw_estimated = $selectRawEstimated.val() === '1';
             options.multiplier_coefficient = Math.max(1.0, $inputMultiplierCoefficient.val() === '' ? 1.0 : parseFloat($inputMultiplierCoefficient.val().replace(',', '.')));
+            options.machining_separated = $selectMachiningSeparated.val() === '1';
+            options.machining_material_colored = $selectMachiningMaterialColored.val() === '1';
             options.std_volumic_masses = $editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
             options.std_prices = $editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
             options.std_cut_prices = $editorStdCutPrices.ladbEditorStdAttributes('getStdAttributes');
@@ -638,6 +642,9 @@
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
             $selectRawEstimated.selectpicker('val', options.raw_estimated ? '1' : '0');
             $inputMultiplierCoefficient.val(options.multiplier_coefficient);
+            $selectMachiningSeparated.selectpicker('val', options.machining_separated ? '1' : '0');
+            $selectMachiningMaterialColored.selectpicker('val', options.machining_material_colored ? '1' : '0');
+            fnComputeMachiningMaterialColoredVisibility();
             fnSetStdAttributesTypeAndStds();
             $editorStdVolumicMasses.ladbEditorStdAttributes('setStdAttributes', [ options.std_volumic_masses ]);
             $editorStdPrices.ladbEditorStdAttributes('setStdAttributes', [ options.std_prices ]);
@@ -658,7 +665,20 @@
             $editorStdPrices.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
             $editorStdCutPrices.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
         };
+        const fnComputeMachiningMaterialColoredVisibility = function () {
+            $selectMachiningMaterialColored.closest('.form-group').toggle($selectMachiningSeparated.val() === '1');
+        };
         const fnComputeFieldsVisibility = function (type) {
+
+            // Machining materials only have export options
+            $tabsProperties.each(function () {
+                const isExportOptions = $(this).attr('href') === '#tab_edit_material_general_export_options';
+                $(this).parent().toggle(type === 7 ? isExportOptions : !isExportOptions);
+            });
+            if ($tabsProperties.filter(function () { return $(this).parent().hasClass('active') && $(this).parent().css('display') !== 'none'; }).length === 0) {
+                $tabsProperties.filter(function () { return $(this).parent().css('display') !== 'none'; }).first().tab('show');
+            }
+
             switch (type) {
                 case 0:   // TYPE_UNKNOWN
                     $inputThickness.closest('section').hide();
@@ -760,6 +780,9 @@
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     $editorStdCutPrices.closest('.form-group').show();
+                    break;
+                case 7:   // TYPE_MACHINING
+                    $inputThickness.closest('section').show();
                     break;
                 default:
                     $inputThickness.closest('section').hide();
@@ -1107,6 +1130,13 @@
         $selectGrained.selectpicker(SELECT_PICKER_TABS_OPTIONS);
         $selectEdgeDecremented.selectpicker(SELECT_PICKER_TABS_OPTIONS);
         $selectRawEstimated.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectMachiningSeparated
+            .on('changed.bs.select', function () {
+                fnComputeMachiningMaterialColoredVisibility();
+            })
+            .selectpicker(SELECT_PICKER_TABS_OPTIONS)
+        ;
+        $selectMachiningMaterialColored.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
         // Bind inputs
         $inputName

@@ -71,6 +71,7 @@
                         <li role="presentation"{% if properties_tab == 'attributes' %} class="active"{% endif %}><a id="ladb_materials_btn_tab_general_attributes" href="#tab_edit_material_general_attributes" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.attributes'|i18next }}</a></li>
                         <li role="presentation"{% if properties_tab == 'cut_options' %} class="active"{% endif %}><a href="#tab_edit_material_general_cut_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.cut_options'|i18next }}</a></li>
                         <li role="presentation"{% if properties_tab == 'estimate_options' %} class="active"{% endif %} id="nav_tab_edit_material_general_estimate_options"><a href="#tab_edit_material_general_estimate_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.estimate_options'|i18next }}</a></li>
+                        <li role="presentation"{% if properties_tab == 'export_options' %} class="active"{% endif %}><a href="#tab_edit_material_general_export_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.export_options'|i18next }}</a></li>
                     </ul>
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane{% if properties_tab == 'formats' %} active{% endif %}" id="tab_edit_material_general_formats">
@@ -177,6 +178,30 @@
                                     <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.multiplier_coefficient'|i18next }}</label>
                                     <div class="col-xs-7">
                                         <input type="text" class="form-control" id="ladb_materials_input_multiplier_coefficient">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane{% if properties_tab == 'export_options' %} active{% endif %}" id="tab_edit_material_general_export_options" style="margin-top: 15px;">
+                            <div class="form form-horizontal" style="margin-top: 25px;">
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.machining_separated_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.machining_separated'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <select class="form-control" id="ladb_materials_select_machining_separated">
+                                            <option value="0" data-content="{{ 'tab.materials.edit_material.machining_separated_0'|i18next }}"></option>
+                                            <option value="1" data-content="{{ 'tab.materials.edit_material.machining_separated_1'|i18next }}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="ladb_materials_form_group_machining_material_colored">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.machining_material_colored_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.machining_material_colored'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <select class="form-control" id="ladb_materials_select_machining_material_colored">
+                                            <option value="1" data-content="{{ 'tab.materials.edit_material.machining_material_colored_1'|i18next }}"></option>
+                                            <option value="0" data-content="{{ 'tab.materials.edit_material.machining_material_colored_0'|i18next }}"></option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

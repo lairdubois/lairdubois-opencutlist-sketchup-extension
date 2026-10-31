@@ -1329,6 +1329,7 @@ module Ladb::OpenCutList
       a << 'OUTER' if layer_def.type_outer?
       a << 'HOLES' if layer_def.type_holes?
       a << 'PATHS' if layer_def.type_paths?
+      a << 'MACHININGS' if layer_def.type_machinings?
       a << layer_def.name if layer_def.has_name?
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
@@ -1349,9 +1350,10 @@ module Ladb::OpenCutList
       projection_def.layer_defs.each do |layer_def|
 
         layer_name = _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
-        if layer_def.type_paths?
+        through_part_colored = layer_def.type_machinings? && !layer_def.material_colored? && layer_def.depth >= projection_def.max_depth
+        if layer_def.type_paths? || layer_def.type_machinings? && layer_def.material_colored?
           layer_color = layer_def.has_color? ? layer_def.color : paths_color
-        elsif layer_def.type_holes?
+        elsif layer_def.type_holes? || through_part_colored  # Machinings not colored by their material take the colors of what they cut : holes when through, depths otherwise
           layer_color = holes_color
         elsif layer_def.type_outer?
           layer_color = color
@@ -1414,7 +1416,7 @@ module Ladb::OpenCutList
 
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      projection_def.layer_defs.sort_by { |v| [ v.type_paths? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's layers always on top
+      projection_def.layer_defs.sort_by { |v| [ v.type_paths? || v.type_machinings? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's and machining's layers always on top
         _dxf_write_projection_layer_def_geometry(file, layer_def,
                                                  smoothing: smoothing,
                                                  transformation: transformation,
