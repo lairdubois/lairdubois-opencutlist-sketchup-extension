@@ -1447,7 +1447,7 @@ tab:
       option_zoom_threshold: Zoomschwelle
       # TODO find a better explanation
       option_zoom_threshold_help: |
-        Ermöglicht die Festlegung der Diagrammbreite, unterhalb derer Diagramme automatisch vergrößert werden.
+        Dient zur Festlegung der Diagrammbreite, unterhalb derer Diagramme automatisch vergrößert werden.
 
         *Die Vergrößerung wird anhand des breitesten Diagramms berechnet*.
       option_time_limit: Zeitbegrenzung
@@ -1579,7 +1579,7 @@ tab:
         Die Sortierreihenfolge der Etiketten wird durch die Anordnung der folgenden Kacheln definiert.
         Jede Eigenschaft kann in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
       offset_help: |
-        Mit dem *Versatz* können Sie die Position des **ersten Etiketts** auf der **ersten Seite** festlegen.
+        Mit dem *Versatz* kann die Position des **ersten Etiketts** auf der **ersten Seite** festgelegt werden.
         Wählen Sie das Kästchen aus, das Ihrer Wahl entspricht.
       option_page: Papierformat
       option_page_format: Format
@@ -1826,7 +1826,7 @@ tab:
         Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungs-Überlaufabstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Kavitäten befinden.
       option_merge_holes_overflow: Bearbeitungszugabe
       option_merge_holes_overflow_help: |
-        Legt den Bearbeitungszugabe für Flächen an den Grenzen von Konturen und Kavitäten fest.
+        Legt den Bearbeitungszugabe für Flächen an den Grenzen von Konturen und Fächern fest.
       option_include_paths: Pfade
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Kanten verwenden, die nicht mit einer Fläche verbunden sind
@@ -1943,6 +1943,7 @@ tab:
       formats: Formate
       cut_options: Schnittparameter
       estimate_options: Kalkulationsoptionen
+      export_options: Export-Optionen
       attributes: Attribute
       thickness: Dicke
       thickness_help: |
@@ -1993,7 +1994,7 @@ tab:
       edge_decremented_1: Reduzierung um Dicke des Kantenbands
       raw_estimated: Verwendetes Volumen
       raw_estimated_help: |
-        Ermöglicht die Festlegung des Volumens, das zur Schätzung der Masse und der Gesamtkosten von Teilen aus diesem Material verwendet wird.
+        Dient zur Festlegung des Volumens, das zur Schätzung der Masse und der Gesamtkosten von Teilen aus diesem Material verwendet wird.
 
         **Nutzvolumen**
         Das Gesamtvolumen ist die Summe der Volumen der Teile.
@@ -2004,11 +2005,34 @@ tab:
       raw_estimated_1: Volumen des benötigten Rohmaterials
       multiplier_coefficient: Faktor
       multiplier_coefficient_help: Ermöglicht die Angabe des Faktors, der auf das gemessene Bruttovolumen angewendet wird.
+      machining_separated: Bearbeitungsgeometrien
+      machining_separated_help: |
+        Dient zur Festlegung, wie die Bearbeitungsgeometrien dieses Materials in 2D (DXF, SVG) exportiert werden.
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Die Bearbeitungsgeometrien werden von der Form des Teils abgezogen und mit seinen Tiefen-Layern zusammengeführt, als ob die Volumenoperation in der Geometrie des Teils ausgeführt würde.
+        *Überstehende Bearbeitungsgeometrien werden abgeschnitten.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Das Teil behält seine ursprüngliche Form. Jede Bearbeitungsgeometrie wird unverändert, ohne Zusammenführung mit den anderen, auf einem Layer `MACHININGS` pro Tiefe exportiert, benannt nach dem Material.
+      machining_separated_0: In das Teil eingearbeitet
+      machining_separated_1: Getrennt auf eigenen Layern
+      machining_material_colored: Farben beim Export
+      machining_material_colored_help: |
+        Dient zur Festlegung der Farben der getrennten Bearbeitungen in 2D-Exporten (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Die Kontur der Bearbeitungen übernimmt die Farbe dieses Materials, ohne Füllung.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Die Bearbeitungen übernehmen die Farben dessen, was sie aus dem Teil ausschneiden: die der Bohrungen, wenn sie durchgehend sind, sonst die der Hohlräume. Nützlich für Maschinen, die die Schnittart aus den Farben ableiten.
+      machining_material_colored_0: Automatisch
+      machining_material_colored_1: Materialfarbe
       std_attributes_dim_placeholder: Wählen Sie eine Größe
       std_volumic_masses: Rohdichte
-      std_volumic_masses_help: Ermöglicht das Festlegen der Rohdichte für alle Größen sowie für jede Standardgröße des Materials.
+      std_volumic_masses_help: Dient zur Festlegung der Rohdichte für alle Größen sowie für jede Standardgröße des Materials.
       std_prices: Preis
-      std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
+      std_prices_help: Dient zur Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
       std_cut_prices: Schnittpreis
       std_cut_prices_help: |
         Dient zur Festlegung des Preises für das Schneiden des Materials.
@@ -2649,7 +2673,7 @@ tool:
     action_option_offset_shape_offset: Versatz
     action_option_offset_shape_offset_status: Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
     action_option_segments_segment_count: Anzahl Segmente
-    action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
+    action_option_segments_segment_count_status: Dient zur Festlegung der Anzahl der Kreissegmente
     action_option_options_construction: Konstruktionslinien
     action_option_options_construction_status: Als Konstruktionslinien zeichnen
     action_option_options_rectangle_centered: Rechteck zentriert

@@ -1722,6 +1722,7 @@ tab:
       formats: Formatos
       cut_options: Parámetros de corte
       estimate_options: Opciones de estimación
+      export_options: Opciones de exportación
       attributes: Atributos
       thickness: Espesor
       thickness_help: |
@@ -1783,6 +1784,12 @@ tab:
       raw_estimated_1: Volumen de materia prima necesaria
       multiplier_coefficient: Coeficiente multiplicador
       multiplier_coefficient_help: Permite indicar el coeficiente multiplicador aplicado al volumen bruto medido.
+      machining_separated: Geometrías de mecanizados
+      machining_separated_0: Vaciados en la pieza
+      machining_separated_1: Separados en sus propias capas
+      machining_material_colored: Colores en la exportación
+      machining_material_colored_0: Automáticos
+      machining_material_colored_1: Color del material
       std_attributes_dim_placeholder: Elige un tamaño
       std_volumic_masses: Densidad
       std_volumic_masses_help: Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
