@@ -7,13 +7,15 @@ _disabled_msg: |
   За да помогнете за окончателното завършване на превода, моля, консултирайте се с [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: За да приложите всички промени, трябва **да затворите** и **да отворите отново** прозореца OpenCutList.
-_description: Генератор на спецификация и разкрой на детайли за мебелисти. Отворен код, групово финансиране и лесен за използване ;)
+_description: Генератор на списък с детайли и схеми на разкрой за плоскост и дъска, предназначен за мебелисти. С отворен код, финансиран от потребителите и лесен за използване ;)
 default:
   minimize: Намаляване
   maximize: Увеличаване
   cancel: Отказ
+  stop: Стоп
   validate: Приемане
   confirm: Потвърждаване
+  finish: Завършване
   ok: Ок
   open: Отваряне
   see: Преглед
@@ -21,13 +23,17 @@ default:
   clear: Изтриване
   refresh: Обновяване
   generate: Генериране
+  regenerate: Повторно генериране
   print: Печат
   export: Експорт
   import: Импорт
   load: Зареждане
+  replace: Замяна
   preview: Общ преглед
   options: Настройки
   caution: Внимание
+  remove: Премахване
+  remove_all: Премахване на всички
   delete: Премахване
   create: Създаване
   duplicate: Дублиране
@@ -39,6 +45,11 @@ default:
   unselect_all: Деселектирайте всички
   draw: Проектиране
   estimate: Kалкулация
+  rename: Преименуване
+  next: Напред
+  "yes": Да
+  "no": Не
+  automatic: Автоматично
   # this is name of a new file saved by SketchUp
   empty_filename: Без име.skp
   help: Помощ
@@ -49,6 +60,12 @@ default:
   good: Добър
   bad: Лош
   by: от
+  # date format in use in your language
+  date_format: d.m.Y G:i
+  # short date format in use in your language
+  date_format_short: d.m.Y
+  decimal: Десетични
+  fractional: Дробни
   unit_0: Инч
   unit_1: Фут
   unit_2: Милиметър
@@ -62,6 +79,8 @@ default:
   instance_plural: единици
   part_single: детайл
   part_plural: детайли
+  cut_single: разрез
+  cut_plural: разреза
   thickness_layer_single: слой
   thickness_layer_plural: слоеве
   setup_model_units: Конфигуриране на мерните единици
@@ -69,14 +88,34 @@ default:
   reset_to_app_defaults: Възстановяване на оригиналните стойности
   # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Shift
+  copy_key_win: Ctrl
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: Tab
+  file: Файл
+  file_plural: Файлове
+  stroke_color: Цвят на линията
+  fill_color: Цвят на запълването
+  length: Дължина
+  width: Ширина
+  thickness: Дебелина
+  height: Височина
+  deprecated: Остаряло
 core:
   menu:
+    submenu: OpenCutList
     item:
       generate_cutlist: Генериране на списък с детайли
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: Редактиране на екземпляра
+      edit_parent_part_instance: Редактиране на групата/компонента, съдържащ екземпляра
+      hide_part_instance: Скриване на екземпляра
+      unhide_part_instance: Показване на екземпляра
+      edit_part_instance_properties: Редактиране на свойствата на екземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
@@ -85,10 +124,27 @@ core:
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: Нулиране на позицията на прозореца
   toolbar:
+    name: OpenCutList
+    tools: Инструменти
     command:
+      dialog: OpenCutList
+      smart_draw: Чертане на детайли
+      smart_build: Изграждане на детайли
+      smart_handle: Манипулиране на детайли
+      smart_reshape: Преоформяне на детайли
       smart_paint: Декориране на детайли
       smart_axes: Ориентация на детайла
+      smart_join: Сглобяване на детайли
+      smart_export: Експорт на детайли
+  messagebox:
+    dir_override: |-
+      "{{ target }}" вече съществува. Искате ли да го замените?
+
+      В папката {{ parent }} вече има папка със същото име. Ако я замените, оригиналното съдържание ще бъде загубено.
+  savepanel:
+    export_to_file: Експорт във файл {{ file_format }}
   dialog:
     title: OpenCutList от L'Air du Bois
   leftbar:
@@ -110,13 +166,27 @@ core:
       Не е препоръчително да я използвате в производството.
 
       За да докладвате грешка : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Не е налично в този контекст
   error:
+    exception: "Грешка: **{{ error }}**"
+    forbidden: "Неразрешено: **{{ error }}**"
+    extern: "Външна грешка: **{{ error }}**"
     feature_unavailable: Тази функция изисква SketchUp {{ version }} или по-висока
+    failed_export_to: |-
+      Възникна грешка при експорта в *{{ path }}*.
+      **{{ error }}**
+    unsupported_file_format: "Неподдържан файлов формат: **{{ format }}**"
+    unsupported_skp_version: "SKP файлът е създаден с по-нова версия на SketchUp: {{ version }}"
+  success:
+    exported_to: Успешен експорт в {{ path }}.
+    copied_to_clipboard: Копирано в клипборда
   event:
     model_change: Активният модел беше променен.
     options_change: Опциите на модела бяха променени.
     material_change: Поне един материал беше променен.
     selection_change: Изборът в активния модел беше променен.
+    layers_change: Таговете в активния модел са променени.
+    drawing_change: Дизайнът на активния модел е променен.
   upgrade:
     unavailable: Невъзможно е да се намери последната версия на *OpenCutList*.
     available: |
@@ -151,16 +221,21 @@ core:
       * Създаването на персонализирана предварителна настройка ви позволява да запазите текущият набор от параметри, така че след това да можете да ги използвате повторно във всичките си модели.*
 
       Въведете име на предварителната настройка:
+    rename_prompt_title: Преименуване
+    rename_prompt: Въведете новото име на предварителната настройка **"{{ name }}"**
     delete_confirm_title: Изтриване
     delete_confirm: Потвърдете премахването на предварителната настройка **"{{ name }}"** ?
     override_confirm_title: Актуализация
     override_confirm: Потвърдете актуализацията на предварителната настройка **"{{ name }}"** с параметрите от формуляра ?
+    new_error: Невъзможно, предварителна настройка **"{{ name }}"** вече съществува
     new_success: Предварителната настройка **"{{ name }}"** е създадена
     override_success: Предварителната настройка **"{{ name }}"** е актуализирана
     restore_success: Формулярът беше попълнен с предварителната настройка **"{{ name }}"**
+    rename_success: Предварителната настройка **"{{ name }}"** е преименувана на **"{{ new_name }}"**
     delete_success: Предварителната настройка **"{{ name }}"** е премахната
     tooltip:
       save_to: Обновяване на предварителната настройка '{{ name }}'
+      rename: Преименуване на предварителната настройка '{{ name }}'
       delete: Изтриване на предварителната настройка '{{ name }}'
     dictionary:
       component_textinput_color: Палета с цветове
@@ -168,7 +243,24 @@ core:
       cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
       cutlist_cuttingdiagram2d_options: $t(default.deprecated)
       cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_layout_single_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title) ($t(default.part_single))
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Модел
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
@@ -187,11 +279,18 @@ core:
       remove: Забравяне на този декор
     textinput_code:
       snippets: Примерни формули
+      help: Въведете **@**, за да получите списък с променливи.
+    textinput_file:
+      browse: Преглед
+      browse_library: Преглед и копиране в библиотеката
+    textinput_size:
+      quantity: Бр.
     three_viewer:
       view: Преглед {{ view }}
       view_isometric: Изометричен
       view_top: Изглед горе
       view_bottom: Изглед долу
+      view_front: Отпред
       view_back: Назад
       view_left: Ляв изглед
       view_right: Десен изглед
@@ -205,6 +304,29 @@ core:
       failed_to_load: |
         Не може да се отвори документацията.
         Уверете се, че сте свързани с интернет.
+  solid:
+    error:
+      empty: Тялото не съдържа геометрия
+      empty_named: "\"{{ name }}\" не съдържа геометрия"
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
+      non_manifold_edges: Тялото съдържа {{ count }} неманифолдов ръб
+      non_manifold_edges_plural: Тялото съдържа {{ count }} неманифолдови ръба
+      non_manifold_edges_named: "\"{{ name }}\" съдържа {{ count }} неманифолдов ръб"
+      non_manifold_edges_named_plural: "\"{{ name }}\" съдържа {{ count }} неманифолдови ръба"
+      open_edges: Тялото съдържа {{ count }} отворен ръб
+      open_edges_plural: Тялото съдържа {{ count }} отворени ръба
+      open_edges_named: "\"{{ name }}\" съдържа {{ count }} отворен ръб"
+      open_edges_named_plural: "\"{{ name }}\" съдържа {{ count }} отворени ръба"
+      locked_instances: "Операцията не може да редактира заключен екземпляр: {{ list }}"
+    rebuild:
+      error:
+        no_segment: В селекцията няма използваеми спомагателни линии
+        no_face: Не може да бъде възстановен копланарен затворен контур
+  library:
+    libraries: Библиотеки
+    user: Моята библиотека
+    bundled: Библиотека OCL
+    family_modules: Модули
 tab:
   cutlist:
     label: Детайли
@@ -213,6 +335,8 @@ tab:
       Изберете компонент на вашия екран. След това щракнете върху бутона **Генериране**.
       Ако не е избран компонент, ще бъдат взети предвид всички компоненти, видими на екрана.
     is_selection: Само селекция
+    select_part: Избор на детайл
+    select_part_plural: Избор на детайли
     material_undefined: Неопределен материал
     not_available_std_width: Нестандартна ширина
     not_available_std_thickness: Нестандартна дебелина
@@ -223,8 +347,16 @@ tab:
     edit_part_axes_properties: Редактиране на свойствата на детайла (оси)
     edit_part_edges_properties: Редактиране на свойствата (ръбовете) на детайла
     edit_part_faces_properties: Редактиране на свойствата (фурнири) на детайла
+    part_drawing_type_1: 2D Лицева страна
+    part_drawing_type_2: 2D Обратна страна
+    part_drawing_type_3: 2D Изглед отляво
+    part_drawing_type_4: 2D Изглед отдясно
+    part_drawing_type_5: 2D Изглед отпред
+    part_drawing_type_6: 2D Изглед отзад
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Покажи/скрий група
+      show_hide_blocks: Показване / Скриване на всички групи
       scroll_to_block: Преминете към групата
       not_available_std_width: Ширината *{{ std_dimension_real }}* не е дефинирана в стандартните ширини на материала '{{ material_name }}'
       not_available_std_thickness: Дебелината *{{ std_dimension_real }}* не е дефинирана в стандартните дебелини на материала '{{ material_name }}'
@@ -264,6 +396,7 @@ tab:
       material_origin_1: Материалът, който се взема предвид за тази част, се определя в instances
       material_origin_2: Материалът, разглеждан за тази част, в момента е наследен от един от своите родителски елементи
       material_origin_3: Материалът, разглеждан за тази част, в момента се извлича от своите дъщерни елементи
+      orientation_locked_on_axis: Ориентацията на този детайл е заключена спрямо осите му
       number_saved: Номерът на тази част е записан
       number_hidden: Номерът '{{ number }}', регистриран в тази част, не може да бъде използван, тъй като скрит
       number_generated: Номерът на тази част се генерира автоматично
@@ -271,7 +404,9 @@ tab:
       flipped: Това парче е огледално по отношение на дефиницията си
       symmetrical: Откриването на огледална част е деактивирано за тази част
       ignore_grain_direction: Посоката на фладера в тази част се игнорира
+      follow_grain_direction: За този детайл е активирано откриване на непрекъснатост на фладера
       auto_oriented: Тази част е автоматично преориентирана
+      oko_label_filter: Включване / Изключване на този маркер
       add_label_filter: Филтрирайте по '{{ label }}'
       remove_label_filter: Премахване на филтрирането по '{{ label }}'
       add_edge_material_name_filter: Филтрирайте по '{{ material_name }}'
@@ -294,11 +429,21 @@ tab:
       children_size_increase: Този размер се увеличава със свръхразмер за {{ count }} групираните части
       invalid_final_area: Предупреждение, тази кумулативна площ не може да бъде изчислена, защото {{ count }} част (от {{ total }}) има невалидна крайна площ
       invalid_final_area_plural: Предупреждение, тази кумулативна площ не може да бъде изчислена, защото {{ count }} части (от {{ total }}) имат невалидна крайна площ
+      is_instance_name: Наименованието на този детайл е извлечено от името на екземпляра на групата
       is_dynamic_attributes_name: Обозначението на тази част е взето от атрибута 'Name' на динамичния компонент
       has_edges: Това парче съдържа {{ count }} кант
       has_edges_plural: Това парче съдържа {{ count }} кнатове
       has_faces: Тази част съдържа {{ count }} фурнирована повърхност
       has_faces_plural: Тази част съдържа {{ count }} фурнировани повърхности
+      size_increased_0: |-
+        Увеличено с надбавката за материала
+        ({{ increase_1 }})
+      size_increased_1: |-
+        Увеличено с надбавката за детайла
+        ({{ increase_2 }})
+      size_increased_2: |-
+        Увеличено с надбавките за материала и детайла
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: Намалено от дебелината на канта ({{ decrement }})
       edge_ymin: Дължина на ръба 1
       edge_ymax: Дължина на ръба 2
@@ -311,20 +456,32 @@ tab:
       dblclick_to_sort_axes: Щракнете два пъти тук, за да пренаредите автоматично осите според размерите на детайла
       part_axes: Вътрешни оси на детайла
       select_unselect_all_parts: Избиране / Премахване на всички части в групата
+      select_parts_in_cutlist: Избиране на детайла в списъка с детайли
+      select_parts_in_cutlist_plural: Избиране на {{ count }} детайла в списъка с детайли
       setup_group_cuttingdiagram: Конфигурирайте схема на рязане на '{{ material_name }}&nbsp;/&nbsp;'{{ std_dimension }}'
       setup_group_packing: Конфигурирайте схема на рязане на '{{ material_name }}&nbsp;/&nbsp;'{{ std_dimension }}'
+      open_part_url: Отваряне на URL адреса на детайла
     menu:
       show_all_groups: Покажи всички групи
       hide_all_other_groups: Скрийте всички останали групи
       numbers_save: Запаметете номерата на частите
       numbers_reset: Инициализирайте отново номерата на частите
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Печат на етикети
+      write_2d: 2D проекция
+      write_3d: 3D геометрия
+      write_2d_parts: Експорт на 2D проекция на детайла
+      write_3d_parts: Експорт на 3D геометрия на детайла
+      group_write_2d_parts: Експорт на 2D проекция на детайлите в групата
+      group_write_3d_parts: Експорт на 3D геометрия на детайлите в групата
       group_layout_parts: Отпечатайте общ чертеж на частитите в групата
       group_numbers_save: Запазете номерата на частите на тази група
       group_numbers_reset: Инициализирайте отново номерата на частите на тази група
       group_cuttingdiagram: Схема на рязане
       group_packing: Схема на рязане
       group_labels: Печат на етикети на части в групата
+      group_export: Експорт на групата
+      group_estimate: Калкулация на групата
       edit_material: Редактиране на материал '{{ material_name }}'
       expand_all: Разгъване на всички редове
       collapse_all: Събиране на всички редове
@@ -379,6 +536,8 @@ tab:
       description: Описание
       description_help: |
         *Описание* ви позволява да предоставите персонализирана информация за всяка дефиниция на детайл.
+      url: URL
+      url_help: "*URL* адресът позволява да включите персонализирана връзка към външна страница във всяка дефиниция на детайл."
       tags: Баджове
       tags_help: |
         *Баджовете* са потребителски ключови думи, които могат да се добавят към всяка дефиниция на детайл.
@@ -397,8 +556,20 @@ tab:
       symmetrical: Деактивиране на откриването на огледален на този детайл
       symmetrical_help: |
         Ако е поставена отметка в това квадратче, опцията за откриване на *огледален детайл* няма да има ефект върху детайла.
+      ignore_grain_direction: Фладер
+      ignore_grain_direction_help: Ако тази опция е избрана, посоката на фладера на материала ще бъде игнорирана за този детайл.
+      ignore_grain_direction_0: Фладерът е по дължината
       ignore_grain_direction_1: Игнориране на ориентацията по фладер за този детайл
+      follow_grain_direction: Непрекъснатост на фладера
+      follow_grain_direction_help: |-
+        Активирането на тази опция ще третира екземплярите на този детайл като детайли, подредени в **непрекъснатост на фладера** със съседите си, които имат:
+        - същата *група за непрекъснатост на фладера*
+        - същата равнина
+        - същата ориентация
+        - същия материал с фладер
+        - същата дебелина
       follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Откриването на непрекъснатост на фладера е активирано
       axes: Оси
       axes_help: Пренаредете размерите, за да съответстват на желаните цветове на осите във вашия детайл.
       axes_tip: |
@@ -419,20 +590,169 @@ tab:
       loading_preview: Зареждане на предварителния преглед
     option:
       auto_orient: Автоматично ориентиране на детайлите
+      auto_orient_help: |-
+        Ако тази опция е избрана, детайлите се сортират по размер, така че най-големият да представлява *дължината*, а най-малкият – *дебелината*.
+
+        В противен случай
+         - *дължината* се отчита по <span style='color:red'>червената</span> ос,
+         - *ширината* по <span style='color:green'>зелената</span> ос и
+         - *дебелината* по <span style='color:blue'>синята</span> ос
+      flipped_detection: Откриване на огледални детайли
+      flipped_detection_help: Ако тази опция е избрана, огледалните детайли ще бъдат откривани и показвани като нов детайл.
+      smart_material: "*Интелигентно* присвояване на материал"
+      smart_material_help: Ако тази опция е избрана, на детайлите без зададен материал може да бъде присвоен основният материал на дъщерните им елементи или наследеният от родителските им елементи.
+      dynamic_attributes_name: Използване на атрибута *Name* на динамичните компоненти
+      dynamic_attributes_name_help: |-
+        Ако тази опция е избрана, наименованието на детайлите, които са динамични компоненти, ще бъде извлечено от атрибута *Name*, ако е зададен.
+
+        <i class='ladb-opencutlist-icon-warning'></i> Екземплярите на детайли с една и съща дефиниция на компонент ще бъдат разделени, ако атрибутът *Name* няма една и съща стойност.
+      part_number_with_letters: Номериране на детайлите с букви
+      part_number_with_letters_help: Ако тази опция е избрана, детайлите се номерират с букви (A, B, C, ... Z, AA, AB, ...).
+      part_number_sequence_by_group: Нулиране на номерацията на детайлите за всяка група
+      part_number_sequence_by_group_help: Ако тази опция е избрана, номерацията на детайлите във всяка група (списък с детайли от един и същ материал и една и съща груба дебелина) започва отново от 1 (или A).
+      part_folding: Групиране на еднаквите детайли
+      part_folding_help: |-
+        Ако тази опция е избрана, детайлите от **материал тип Масивна дървесина, Плоскости или Дъски** с **еднакъв чист размер**, с **еднакви маркери** и с **еднаква чиста повърхност** *(ако показването на тази повърхност не е скрито)* ще бъдат групирани на един ред в *списъка с детайли*.
+
+        Детайлите ще продължат да се разглеждат като отделни при етикетите и схемата на рязане.
+      hide_entity_names: Скриване на имената на екземплярите
+      hide_entity_names_help: Ако тази опция е избрана, **имената на екземплярите** на детайлите няма да се показват.
+      hide_descriptions: Скриване на описанията
+      hide_descriptions_help: Ако тази опция е избрана, **описанията** на детайлите няма да се показват.
+      hide_tags: Скриване на маркерите
+      hide_tags_help: Ако тази опция е избрана, **маркерите**, поставени на детайлите, няма да се показват.
+      hide_cutting_dimensions: Скриване на грубите размери
+      hide_cutting_dimensions_help: Ако тази опция е избрана, **грубите** размери на детайлите няма да се показват.
+      hide_bbox_dimensions: Скриване на чистите размери
+      hide_bbox_dimensions_help: Ако тази опция е избрана, **чистите** размери на детайлите няма да се показват.
+      hide_final_areas: Скриване на действителната площ на детайлите от тип *Плоскости*
+      hide_final_areas_help: Ако тази опция е избрана, **действителните площи** на детайлите от тип *Плоскости* няма да се показват.
+      hide_edges: Скриване на колоните за кантове
+      hide_edges_help: Ако тази опция е избрана, **колоните за кантове** на детайлите от тип *Плоскости* няма да се показват.
+      hide_faces: Скриване на колоните за повърхности
+      hide_faces_help: Ако тази опция е избрана, **колоните за повърхности** на детайлите от тип *Плоскости* няма да се показват.
+      hide_material_colors: Скриване на цветовете на материалите
+      hide_material_colors_help: Ако тази опция е избрана, цветовете на материалите няма да се показват.
+      minimize_on_highlight: Минимизиране след *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: Ако тази опция е избрана, прозорецът на OpenCutList ще бъде минимизиран при използване на функцията *'$t(tab.cutlist.highlight_part)'*.
       general: Обща информация
+      sorting: Сортиране
+      group_order_strategy: Сортиране на групите
+      group_order_strategy_help: |-
+        Пренаредете следните свойства, за да определите начина на сортиране на групите.
+        Всяко свойство може да се сортира във <i class="ladb-opencutlist-icon-sort-asc"></i> *възходящ* или <i class="ladb-opencutlist-icon-sort-desc"></i> *низходящ* ред.
+      part_order_strategy: Сортиране на детайлите
+      part_order_strategy_help: |-
+        Пренаредете следните свойства, за да определите начина на сортиране на детайлите във всяка група.
+        Всяко свойство може да се сортира във <i class="ladb-opencutlist-icon-sort-asc"></i> *възходящ* или <i class="ladb-opencutlist-icon-sort-desc"></i> *низходящ* ред.
+      dimension_column_order_strategy: Ред на колоните
+      dimension_column_order_strategy_help: Пренаредете следните свойства, за да определите реда на показване на колоните с размери.
+      property_material_type: Тип материал
+      property_material_name: Име на материала
+      property_std_width: Стандартна ширина
+      property_std_thickness: Стандартна дебелина
+      property_thickness: Дебелина
+      property_length: Дължина
+      property_width: Ширина
+      property_name: Наименование
+      property_count: Количество
+      property_edge_pattern: Брой кантове
       property_tags: Баджове
+      property_thickness_layer_count: Брой слоеве
       tags: Баджове
+      tags_help: Персонализиран списък с маркери, налични в прозореца със свойства на детайла.
+      tags_placeholder: Добавяне на маркер
     list:
+      filters: Филтри
+      filters_warning_0: Този филтър скрива всички детайли!
+      filters_warning: Този филтър показва само **{{ count }}** детайл от общо {{ total }}.
+      filters_warning_plural: Този филтър показва само **{{ count }}** детайла от общо {{ total }}.
+      edge_material_names_filter: Филтриране по материал на канта
+      veneer_material_names_filter: Филтриране по материал на фурнира
+      names_filter: Филтриране по наименования
+      tags_filter: Филтриране по маркери
+      tags_filter_any: Всички маркери
+      dimensions_help: Обяснение на размерите
+      summary: Обобщение
+      material_type: Тип
+      material_thickness: Материал / Размер
+      part_count: Брой детайли
+      area: Площ
+      area_short: Площ
+      volume: Обем
+      number: №
+      name: Наименование
+      count: Бр.
       cutting: Детайли
+      bbox: Чист
+      final: Действителен
+      total_cutting: Σ Груб
+      total_final: Σ Действителен
+      length: Дължина
+      length_short: Д
+      width: Ширина
+      width_short: Ш
+      thickness: Дебелина
+      thickness_short: Деб
       edges: Кантове
       faces: Лица
     export:
+      title: Експорт
+      info_0: Тази функция позволява да експортирате данните от *списъка с детайли* в клипборда или във файл във формат [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) или [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML).
+      customize_help: Пренареждайте, скривайте, добавяйте, премахвайте или изберете колона от списъка, за да персонализирате нейното **заглавие** и **формулата**, която ще генерира стойностите за всеки експортиран ред.
+      add_column: Добавяне на колона
+      add_native_columns: Добавяне на вградена колона
       duplicate_column: $t(default.duplicate)
       remove_column: $t(default.remove)
       remove_all_columns: $t(default.remove_all)
+      columns: Колони
+      column_title: Заглавие
+      column_title_help: Полето **Заглавие** позволява да персонализирате заглавието на колоната.
+      column_formula: Формула
+      column_formula_help: Полето **Формула** позволява да напишете *Ruby* код, за да персонализирате стойността на колоната.
+      options: Настройки на експорта
+      options_customize: Персонализиране
+      option_source: Източник
       option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: Списък с детайли
+      option_source_instances_list: Списък с екземпляри
+      option_format: Формат
+      option_csv_col_sep: Разделител
+      option_csv_col_sep_tab: Табулация
+      option_csv_col_sep_comma: Запетая
+      option_csv_col_sep_semicolon: Точка и запетая
+      option_csv_encoding: Кодиране
+      # as described in https://www.rfc-editor.org/info/rfc4180/
+      copy_all: Заглавен ред + стойности
+      copy_values: Само стойности
+      number: №
+      path: Път
+      instance_name: Екземпляр
+      name: Наименование
+      total_cutting_length: Обща дължина - груба
+      total_cutting_area: Обща площ - груба
+      total_cutting_volume: Общ обем - груб
+      total_final_area: Обща чиста площ
+      cutting_length: Дължина - груба
+      cutting_width: Ширина - груба
+      cutting_thickness: Дебелина - груба
+      edge_cutting_length: Дължина на кантовете - груба
+      edge_cutting_width: Ширина на кантовете - груба
+      bbox_length: Чиста дължина
+      bbox_width: Чиста ширина
+      bbox_thickness: Чиста дебелина
+      final_area: Чиста площ
+      count: Количество
+      part_count: Брой детайли
       material: Материал
+      material_type: Тип материал
+      material_name: Име на материала
+      material_description: Описание на материала
+      material_url: URL на материала
+      material_std_dimension: Стандартни размери
+      entity_names: Имена на екземплярите
       description: Описание
+      url: URL
       tags: Баджове
       edge_ymin: Дължина на ръба 1
       edge_ymax: Дължина на ръба 2
@@ -440,8 +760,39 @@ tab:
       edge_xmax: Ширина на ръба 2
       face_zmin: Фурнир задна страна
       face_zmax: Фурнир предна страна
+      layer: Таг
+      layers: Тагове
+      batch: Партида
+      bin: Заготовка
+      component_definition: Дефиниция на компонент
+      component_instance: Екземпляр на компонент
+      component_instances: Екземпляри на компонент
+      filename: Име на файла
+      model_name: Име на модела
+      model_description: Описание на модела
+      page_name: Име на сцената
+      page_description: Описание на сцената
+      placeholder:
+        no_column_title: Въведете заглавие
+        no_column_formula_native: Вградена стойност на колоната '{{ col_name }}'
+        no_column_formula: Въведете формула
+      warning:
+        is_group_selection: Детайлите в **скритите групи** на списъка с детайли няма да бъдат експортирани.
+        is_part_selection: Експортът е ограничен до **избраните детайли**.
     estimate:
+      title: Калкулация
+      info_0: Тази функция позволява да генерирате калкулация на **теглото** и **цената** на **суровите материали**, необходими за изработването на детайлите от *списъка с детайли*.
       options_general: Обща информация
+      total: Общо
+      total_used: Използвано
+      total_unused: Неизползвано
+      total_mass: Σ Тегло
+      total_cost: Σ Цена
+      total_count: Бр.
+      total_instance_count: Σ Единици
+      total_volume: Σ Обем
+      total_area: Σ Площ
+      total_length: Σ Дължина
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
       type_3: $t(tab.materials.type_3)
@@ -450,6 +801,21 @@ tab:
       type_6: $t(tab.materials.type_6)
       type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
+      tooltip:
+        incompatible_unit: Мерната единица е несъвместима с настройките за калкулация на материала
+        multiplier_coefficient: Коефициент
+      error:
+        no_typed_material_parts: Не е подаден нито един детайл с определен тип материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** или **$t(tab.materials.type_5)**), за да се генерира калкулацията.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} грешка**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} грешки**."
+      warning:
+        is_group_selection: Детайлите в **скритите групи** на списъка с детайли няма да бъдат взети предвид.
+        is_part_selection: Калкулацията е ограничена до **избраните детайли**.
+      tip:
+        not_enough_data: |-
+          За да бъде тази калкулация изчислена правилно:
+          - използваните материали трябва да имат поне плътност и цена.
+          - използваният обков трябва да има поне тегло и цена.
     # @no-translate
     cuttingdiagram:
       write:
@@ -473,96 +839,1504 @@ tab:
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
     packing:
       title: Схема на рязане
+      option_problem_type: Тип
+      option_problem_type_rectangle: Правоъгълник
+      option_problem_type_rectangleguillotine: Гилотина
+      option_problem_type_onedimensional: Дъска
+      option_problem_type_irregular: Нестинг
       options_material: Материал
+      options_config: Конфигурация
+      options_display: Показване
+      options_tuning: Фина настройка
+      option_std_bin_1d_dimensional: Стандартни дъски
+      option_std_bin_1d_edge: Стандартни кантове
+      option_std_bin_1d_help: |-
+        Изберете размерите на стандартната дъска или кант, които ще бъдат дублирани, за да поберат всички детайли.
+
+        Този списък се определя в полето **$t(tab.materials.edit_material.std_lengths)** на материала.
+
+        *Редактирайте материала '{{ material_name }}', за да актуализирате този списък.*
+      option_std_bin_1d_add: Добавяне на размер
+      option_std_bin_1d_none: Няма
+      option_scrap_bin_1d_dimensional_sizes: Остатъци от дъски
+      option_scrap_bin_1d_edge_sizes: Остатъци от кант
+      option_scrap_bin_1d_sizes_placeholder: дължина x количество ; ...
+      option_scrap_bin_1d_sizes_help: |-
+        Избройте всички остатъци от дъски или кантове, които да се вземат предвид за схемата на рязане.
+
+        *Размерите без мерни единици се приемат в мерните единици на модела.*
+      option_scrap_bin_1d_none: Няма
+      option_std_bin_2d_sheet_good: Стандартни плоскости
+      option_std_bin_2d_veneer: Стандартни листове фурнир
+      option_std_bin_2d_help: |-
+        Изберете размерите на стандартната плоскост или лист фурнир, които ще бъдат дублирани, за да се изчисли най-доброто възможно разположение на всички детайли.
+
+        Този списък се определя в полето **$t(tab.materials.edit_material.std_sizes)** на материала.
+
+        *Редактирайте материала '{{ material_name }}', за да актуализирате този списък.*
+      option_std_bin_2d_add: Добавяне на размер
+      option_std_bin_2d_none: Няма
+      option_scrap_bin_2d_sheet_good_sizes: Остатъци от плоскости
+      option_scrap_bin_2d_veneer_sizes: Остатъци от фурнир
+      option_scrap_bin_2d_sizes_placeholder: дължина x ширина x количество ; ...
+      option_scrap_bin_2d_sizes_help: |-
+        Избройте всички остатъци от плоскости или фурнир, които да се вземат предвид за схемата на рязане.
+
+        *Размерите без мерни единици се приемат в мерните единици на модела.*
+      option_scrap_bin_2d_none: Няма
+      option_optimization_mode: Режим на оптимизация
+      option_optimization_mode_help: Задава режима на оптимизация, със или без ограничение във времето.
+      option_objective: Цел
+      option_objective_help: Задава целта на разкроя.
+      option_rectangleguillotine_cut_type: Тип рязане
+      option_rectangleguillotine_cut_type_help: Задава типа рязане.
+      option_rectangleguillotine_cut_type_non_exact: Неточно
+      option_rectangleguillotine_cut_type_exact: Точно
+      option_rectangleguillotine_cut_type_homogenous: Хомогенно
+      option_rectangleguillotine_number_of_stages: Брой етапи
+      option_rectangleguillotine_number_of_stages_help: Задава максималния брой етапи на рязане.
+      option_rectangleguillotine_first_stage_orientation: Посока на първото рязане
+      option_rectangleguillotine_first_stage_orientation_help: Определя посоката на първото рязане.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Хоризонтално
+      option_rectangleguillotine_first_stage_orientation_vertical: Вертикално
+      option_rectangleguillotine_first_stage_orientation_any: Произволно
+      option_rectangleguillotine_sort_subplates_criteria: Сортиране на етапите
+      option_rectangleguillotine_sort_subplates_criteria_help: Определя критериите за сортиране на детайлите на всеки етап.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: По намаляващ размер
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: По намаляваща плътност
+      option_rectangleguillotine_keep: Минимален размер на остатъците
+      option_rectangleguillotine_keep_help: Остатъците с двата размера по-големи от минималния ще бъдат маркирани като **за запазване**.
+      option_rectangle_leftover_mode: Посока на разпределяне
+      option_rectangle_leftover_mode_help: Определя посоката, в която детайлите се разпределят по последната частично запълнена плоскост.
+      option_rectangle_leftover_mode_area: Автоматично
+      option_rectangle_leftover_mode_x: По ширината на плоскостта
+      option_rectangle_leftover_mode_y: По дължината на плоскостта
+      option_irregular_allowed_rotations: Позволени завъртания
+      option_irregular_allowed_rotations_help: |-
+        Задава позволените завъртания при разполагане на детайлите.
+
+        *Материалите с фладер могат да се завъртат само на 0 и 180°.*
+      option_irregular_allowed_rotations_0: Няма
+      option_irregular_allowed_rotations_90: Стъпки от 90°
+      option_irregular_allowed_rotations_180: Стъпки от 180°
+      option_irregular_allowed_rotations_free: Свободно
+      option_irregular_allow_mirroring: Позволено огледално обръщане
+      option_irregular_allow_mirroring_help: Определя дали е позволено огледално обръщане на детайла при разполагане.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Посока на разпределяне
+      option_irregular_leftover_mode_help: Определя посоката, в която детайлите се разпределят по последната частично запълнена плоскост.
+      option_irregular_leftover_mode_bottom_left: Автоматично
+      option_irregular_leftover_mode_left: По ширината на плоскостта
+      option_irregular_leftover_mode_bottom: По дължината на плоскостта
+      option_spacing: Разстояние
+      option_spacing_help: |-
+        Минимално разстояние между детайлите.
+        Тази стойност може да съответства на ширината на диска или режещия инструмент.
+      option_trimming: Отстъп за обрязване
+      option_trimming_1d_help: Отстъп за обрязване на всеки край на дъската или канта, който се третира като отпадък.
+      option_trimming_2d_help: Отстъп за обрязване по периметъра на суровата плоскост или лист фурнир, който се третира като отпадък.
+      option_items_formula: Формула
+      option_items_formula_help: Позволява да напишете *Ruby* код, за да персонализирате идентификационния текст на детайлите в схемата.
+      option_bin_folding_1d_dimensional: Групиране на сходните дъски
+      option_bin_folding_1d_edge: Групиране на сходните кантове
+      option_bin_folding_2d_sheet_good: Групиране на сходните плоскости
+      option_bin_folding_2d_veneer: Групиране на сходните листове фурнир
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: Групиране на дъски или кантове, съдържащи едни и същи детайли и разрези.
+      option_bin_folding_2d_help: Групиране на плоскости или листове, съдържащи едни и същи детайли и разрези.
+      option_bin_folding_warning: "*Тази опция ще бъде деактивирана, ако използвате свойства на екземплярите във формулата за персонализиране на идентификационния текст.*"
+      option_hide_part_list: Списък с детайли
+      option_hide_part_list_1d_dimensional_0: Показва се за всяка дъска
+      option_hide_part_list_1d_edge_0: Показва се за всеки кант
+      option_hide_part_list_2d_sheet_good_0: Показва се за всяка плоскост
+      option_hide_part_list_2d_veneer_0: Показва се за всеки лист фурнир
+      option_hide_part_list_1: Скрит
+      option_hide_part_list_1d_help: Показване или скриване на списъка с детайли за всяка дъска или кант.
+      option_hide_part_list_2d_help: Показване или скриване на списъка с детайли за всяка плоскост или лист фурнир.
+      option_part_drawing_type: Форма на детайлите
+      option_part_drawing_type_0: Скрита
+      option_part_drawing_type_1: Начертана - изглед на лицевата страна
+      option_part_drawing_type_2: Начертана - изглед на обратната страна
+      option_part_drawing_type_help: |-
+        Показване или скриване на действителните форми на детайлите и тяхната обработка в схемата.
+
+        *Тази опция трябва да е активирана, за да се експортират формите.*
+      option_colorization: Оцветяване на детайлите
       option_colorization_0: $t(default.no)
+      option_colorization_1: $t(default.yes) - Екран
+      option_colorization_2: $t(default.yes) - Екран и печат
+      option_colorization_help: Позволява да зададете дали да се използва случаен цвят за разграничаване на детайлите в схемата.
+      option_origin_corner: Положение на началната точка
+      option_origin_corner_0: Горен ляв ъгъл
+      option_origin_corner_1: Долен ляв ъгъл
+      option_origin_corner_2: Горен десен ъгъл
+      option_origin_corner_3: Долен десен ъгъл
+      option_origin_corner_help: Позволява да изберете местоположението на началото на координатната система за показване на детайлите върху плоскости, листове фурнир, профилен материал или кантове.
+      option_highlight_primary_cuts: Основни разрези
+      option_highlight_primary_cuts_0: Само при посочване
+      option_highlight_primary_cuts_1: Винаги видими
+      option_highlight_primary_cuts_help: Позволява да маркирате основните разрези, така че да са винаги видими.
+      option_hide_edges_preview: Показване на кантовете
+      option_hide_edges_preview_0: Показват се в схемата на рязане
+      option_hide_edges_preview_1: Скрити в схемата на рязане
+      option_hide_edges_preview_help: Показва или скрива визуалното изобразяване на кантовете за всеки детайл в схемата на рязане.
+      option_zoom_threshold: Праг на мащабиране
+      # TODO find a better explanation
+      option_zoom_threshold_help: |-
+        Позволява да зададете ширината на схемата, под която схемите се увеличават автоматично.
+
+        *Увеличението ще бъде изчислено спрямо най-широката схема*.
+      option_time_limit: Ограничение на времето
+      option_time_limit_help: Задава ограничението на времето за изчислението
       grain_groups:
+        title: "{{ count }} група за непрекъснатост на фладера"
+        title_plural: "{{ count }} групи за непрекъснатост на фладера"
         name: Име
+        item_count: Σ Детайли
+      tooltip:
+        scroll_to_block_1d: Превъртане до първата дъска или кант
+        scroll_to_block_2d: Превъртане до първата плоскост или лист фурнир
+      list:
+        summary: Обобщение
+        cached: Заредено от кеша
+        trimming: Отстъп за обрязване
+        settings: Настройки
+        stats: Статистика
+        time: Време
+        total_efficiency: Обща ефективност
+        total_fill_rate: Степен на запълване
+        total_cut_count: Брой разрези
+        total_cut_length: Дължина на разрезите
+        efficiency: Ефективност
+        count: Бр.
+        length: Дължина
+        width: Ширина
+        total_length: Σ Дължина
+        total_area: Σ Площ
+        total_cost: Σ Цена
+        total_part_count: Σ Детайли
+        total_used: Общо използвано
+        bin_1d_dimensional: Дъска
+        bin_1d_dimensional_type_0: Стандартна дъска
+        bin_1d_dimensional_type_1: Остатък от дъска
+        bin_1d_edge: Кант
+        bin_1d_edge_type_0: Стандартен кант
+        bin_1d_edge_type_1: Остатък от кант
+        bin_2d_sheet_good: Плоскост
+        bin_2d_sheet_good_type_0: Стандартна плоскост
+        bin_2d_sheet_good_type_1: Остатък от плоскост
+        bin_2d_veneer: Лист фурнир
+        bin_2d_veneer_type_0: Стандартен лист фурнир
+        bin_2d_veneer_type_1: Остатък от лист фурнир
+        unused: Неизползвано
+        unplaced_parts: Неразположен детайл
+        unplaced_parts_plural: Неразположени детайли
+        parts: Детайл
+        parts_plural: Детайли
+        leftovers: Остатък
+        leftovers_plural: Остатъци
+        leftovers_to_keep: Остатък за запазване
+        leftovers_to_keep_plural: Остатъци за запазване
+        cut: Разрез
+        cut_plural: Разрези
+        cut_trimming: Обрязващ разрез
+        cut_primary: Основен разрез
+        cut_primary_plural: Основни разрези
+        cut_none: Няма
+        cut_depth: Ниво {{ depth }}
       write:
+        title: Експорт на схемата на рязане
+        info_0: Този модул позволява да експортирате **геометрията** на *схемата на рязане* като списък от файлове във формат [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) или [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF).
+        option_bin_sheet_good: Плоскост
+        option_bin_sheet_good_help: Активира експорта на плоскостите и избора на цвят.
+        option_bin_veneer: Лист фурнир
+        option_bin_veneer_help: Активира експорта на листовете фурнир и избора на цвят.
+        option_bin_dimensional: Дъска
+        option_bin_dimensional_help: Активира експорта на дъските и избора на цвят.
+        option_bin_edge: Кант
+        option_bin_edge_help: Активира експорта на кантовете и избора на цвят.
+        option_parts: Детайли
+        option_parts_help: Активира експорта на детайлите и избора на цвят.
         option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
         option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
         option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
         option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Идентификатори
+        option_texts_help: Активира експорта на идентификационните текстове на детайлите и избора на цвят.
+        option_leftovers: Остатъци
+        option_leftovers_help: Позволява да активирате експорта на остатъците и да изберете цвета им.
+        option_cuts: Разрези
+        option_cuts_help: Позволява да експортирате разрезите и да изберете цвета им.
+        warning:
+          is_bin_selection: "**Скритите елементи** няма да бъдат експортирани."
+        error:
+          overflow_gt_spacing: Добавката за обработка ({{ overflow }}) трябва да е по-малка или равна на разстоянието ({{ spacing }}), зададено в тази схема на рязане.
+      error:
+        no_part: Няма детайли.
+        no_bin_1d: Не е избрана стандартна дъска или кант и няма наличен остатък.
+        no_bin_2d: Не е избрана стандартна плоскост или лист фурнир и няма налични остатъци.
+        invalid_part_shapes: Формата на детайла '{{ name }}' е невалидна.
+        no_solution: Не е намерено решение за разполагане на **всички детайли** в наличния материал.
+        unplaced_parts: "**1 детайл** не можа да бъде разположен."
+        unplaced_parts_plural: "**{{ count }} детайла** не можаха да бъдат разположени."
+        unusable_part_1: Детайлът е твърде голям
+        unusable_part_2: Групата за непрекъснатост на фладера е твърде голяма
+      warning:
+        is_part_selection: Тази схема на рязане е ограничена до **избраните детайли**.
+        cutting_dimensions: Тази схема на рязане използва **грубите** размери на детайлите.
+        cutting_dimensions_increase_1d: "Размерите са увеличени с надбавката по дължина на материала '{{ material_name }}': надбавка по дължина (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Размерите са увеличени с надбавките по дължина и ширина на материала '{{ material_name }}': надбавка по дължина (**{{ length_increase }}**) и надбавка по ширина (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Размерите са намалени с дебелината на канта. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
+      title: Етикети
+      options_layout: Оформление
+      options_settings: Конфигурация
+      options_part_order_strategy: Сортиране
+      options_offset: Отместване
+      size: Реален размер на етикета
+      add_element: Добавяне на елемент
       duplicate_element: $t(default.duplicate)
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
+      part_order_strategy_help: |-
+        Пренаредете следните свойства, за да определите начина на сортиране на етикетите.
+        Всяко свойство може да се сортира във <i class="ladb-opencutlist-icon-sort-asc"></i> *възходящ* или <i class="ladb-opencutlist-icon-sort-desc"></i> *низходящ* ред.
+      offset_help: |-
+        *Отместването* определя позицията на **първия етикет**, който ще се отпечата на **първата страница**.
+        Изберете клетката, която отговаря на избора ви.
+      option_page: Размер на хартията
+      option_page_format: Формат
+      option_page_format_portrait: Портрет
+      option_page_format_landscape: Пейзаж
+      option_page_format_custom: Потребителски
+      option_page_width: Ширина
+      option_page_height: Височина
+      option_margin: Полета
+      option_margin_top: Горе
       option_margin_right: Десен изглед
+      option_margin_bottom: Долу
       option_margin_left: Ляв изглед
+      option_spacing: Разстояние
+      option_spacing_h: Хоризонтално
+      option_spacing_v: Вертикално
+      option_grid: Етикети на страница
+      option_col_count: Колони
+      option_row_count: Редове
+      option_cutting_marks: Маркери за рязане
+      option_cutting_marks_0: Няма
+      option_cutting_marks_1: Отпечатани
+      option_formula: Стойност
+      option_size: Размер
+      option_custom_formula: Формула
+      option_anchor: Закотвяне
+      option_anchor_start: Начало - долу
+      option_anchor_middle: Среда - долу
+      option_anchor_end: Край - долу
+      option_anchor_start_top: Начало - горе
+      option_anchor_middle_top: Среда - горе
+      option_anchor_end_top: Край - горе
+      option_color: Цвят
       formula:
+        custom: Формула
+        custom_qr_code: QR код
+        part_number: Номер
+        part_name: Наименование
         part_description: Описание
+        part_entity_named_path: Път на екземпляра
+        part_entity_name: Име на екземпляра
+        part_bin: Заготовка
+        part_cutting_size: Груби размери
+        part_cutting_length: Дължина - груба
+        part_cutting_width: Ширина - груба
+        part_cutting_thickness: Дебелина - груба
+        part_edge_cutting_size: Размери с кантове
+        part_edge_cutting_length: Дължина на кантовете - груба
+        part_edge_cutting_width: Ширина на кантовете - груба
+        part_size: Чист размер
+        part_length: Чиста дължина
+        part_width: Чиста ширина
+        part_thickness: Чиста дебелина
         part_tags: Баджове
+        part_batch: Партида
+        part_edge_ymin: Кант по дължина 1
+        part_edge_ymax: Кант по дължина 2
+        part_edge_xmin: Кант по ширина 1
+        part_edge_xmax: Кант по ширина 2
+        part_face_zmin: Фурнир обратна страна
+        part_face_zmax: Фурнир лицева страна
+        thumbnail_proportional_drawing: Миниатюра (изглед отпред)
+        thumbnail_proportional_drawing_bottom: Миниатюра (изглед на обратната страна)
+        thumbnail_proportional: Пропорционална миниатюра
+        thumbnail_square: Квадратна миниатюра
+        group_material: Материал / Размер
+        group_material_name: Име на материала
+        group_std_dimension: Стандартни размери
+        filename: Име на файла
+        model_name: Име на модела
+        page_name: Име на сцената
+        length_unit: Мерна единица
+        generated_at: Дата и час
+      error:
+        invalid_size: Въведените параметри на конфигурацията не позволяват задаване на валиден размер на етикета.
+      warning:
+        is_group_selection: Детайлите в **скритите групи** на списъка с детайли няма да имат етикети.
+        is_part_selection: Тези етикети са ограничени до **избраните детайли**.
+    layout:
+      title: Чертеж
+      to_layout: Експорт към LayOut
+      options_layout: Оформление
+      options_settings: Конфигурация
+      option_parts: Детайли
+      option_parts_colored: Цвят
+      option_parts_colored_0: Без цвят
+      option_parts_colored_1: Цвят на материала
+      option_parts_colored_help: Позволява да изберете вида на детайлите.
+      option_parts_opacity: Непрозрачност
+      option_parts_opacity_0: Прозрачни
+      option_parts_opacity_1: Непрозрачни
+      option_parts_opacity_help: Позволява да изберете непрозрачността на детайлите.
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
+      option_pins: Износки
+      option_pins_hidden: Показване
+      option_pins_hidden_0: С износки
+      option_pins_hidden_1: Без износки
+      option_pins_hidden_help: Показва или скрива износките на детайла с номер или наименование.
+      option_pins_colored: Цвят
+      option_pins_colored_0: Без цвят
+      option_pins_colored_1: Цвят на детайла
+      option_pins_colored_help: Позволява да изберете цвета на етикета на износката.
+      option_pins_formula: Формула
+      option_pins_formula_help: Позволява да напишете *Ruby* код, за да персонализирате текста на износката.
+      option_pins_length: Дължина
+      option_pins_length_0: Без водеща линия
+      option_pins_length_1: Къса
+      option_pins_length_2: Средна
+      option_pins_length_3: Дълга
+      option_pins_length_help: Позволява да изберете дължината на водещата линия.
+      option_pins_direction: Посока
+      option_pins_direction_0: По червената ос
+      option_pins_direction_1: По зелената ос
+      option_pins_direction_2: По синята ос
+      option_pins_direction_3: Към центъра на родителската група
+      option_pins_direction_4: Към центъра на селекцията
+      option_pins_direction_help: Позволява да изберете посоката на водещите линии към износките за по-добра четимост.
+      option_page: Размер на хартията
+      option_page_format: Формат
+      option_page_format_portrait: Портрет
+      option_page_format_landscape: Пейзаж
+      option_page_format_custom: Потребителски
+      option_page_width: Ширина
+      option_page_height: Височина
+      option_page_header: Заглавна част
+      option_page_header_0: Без заглавна част
+      option_page_header_1: Със заглавна част
+      option_page_header_help: |-
+        Позволява да изберете дали отпечатваната страница да включва заглавна част с името на документа, описание, дата, мерна единица и мащаб.
+        Без заглавна част целият чертеж ще запълни цялата страница.
+      option_camera: Камера
+      option_camera_view: Изглед
+      option_camera_view_custom: Потребителски
+      option_camera_zoom: Мащаб
+      option_camera_zoom_auto: Автоматично
+      option_camera_zoom_custom: Потребителски
+      option_camera_target: Позиция
+      option_camera_target_auto: Автоматично
+      option_camera_target_custom: Потребителска
+      option_explode: Разглобен изглед
+      error:
+        no_part: Няма детайл за чертане.
+        failed_to_save_as_skp: Неуспешен запис на SKP файла за изпращане към LayOut.
+        failed_to_layout: |-
+          Грешка при записа на файла за LayOut: *{{ error }}*
+
+          **Уверете се, че файлът не е отворен в LayOut.**
+      warning:
+        is_group_selection: Детайлите в **скритите групи** на списъка с детайли няма да бъдат начертани.
+        is_part_selection: Този общ чертеж е ограничен до **избраните детайли**.
+      message:
+        adding_new_page: Искате ли да добавите нова страница?
+        incompatible_page_format: |-
+          Целевият файл не е конфигуриран със същия формат на хартията.
+
+          Прочетен: {{ old_page_format }}
+          Експортиран: {{ new_page_format }}
+
+          Всички страници ще бъдат изтрити.
+        changing_units: |-
+          Целевият файл няма същата мерна единица по подразбиране.
+
+          Прочетена: {{ old_units }}
+          Експортирана: {{ new_units }}
+
+          Искате ли да използвате новите мерни единици?
+        changing_precision: |-
+          Целевият файл няма същата точност по подразбиране.
+
+          Прочетена: {{ old_precision }}
+          Експортирана: {{ new_precision }}
+
+          Искате ли да използвате новата точност?
     write:
+      title: Експорт на детайли
+      info_2d: Този модул позволява да експортирате 2D **проекцията** на детайлите като файлове във формат [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) или [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+      info_3d: Този модул позволява да експортирате **3D геометрията** на детайлите като файлове във формат [STL](https://wikipedia.org/wiki/STL_(file_format)) или [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+      option_file_format: Формат
+      option_file_format_help: Позволява да изберете формата на експортирания файл.
+      option_dxf_structure: Структура на DXF
+      option_dxf_structure_1: Слоеве
+      option_dxf_structure_2: Слоеве + блокове
+      option_dxf_structure_help: |-
+        Позволява да изберете структурата на DXF файла.
+
+        - Структурата **Слоеве** чертае всички линии плоско, като различава типовете линии само чрез слоеве. *Тази структура предлага по-добра съвместимост със софтуер на трети страни.*
+        - Структурата **Слоеве + блокове** създава по един блок за всеки детайл и вмъква тези блокове толкова пъти, колкото се повтарят детайлите. *Тази структура предлага по-голяма гъвкавост при редактиране на файла.*
+      option_dxf_depth_to_z: Дълбочини по Z
       option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Разпределяне на дълбочините на слоевете по оста Z
+      option_dxf_depth_to_z_help: |-
+        Активира разпределянето на слоевете по оста Z според тяхната дълбочина.
+
+        Деактивирайте тази опция, за да експортирате само като 2D DXF.
+      option_unit: Мерна единица
+      option_unit_help: Позволява да изберете мерната единица, използвана в експортирания файл.
+      option_use_count: Количество
+      option_use_count_0: Един файл за детайл
+      option_use_count_1: Един файл за екземпляр на детайл
+      option_use_count_help: Позволява да изберете дали да се отчита броят екземпляри на детайла.
+      option_part_drawing_type: Проекция
+      option_part_drawing_type_help: Позволява да изберете изгледа за експорт.
       option_faces: Лица
+      option_faces_0: Използване само на целевата повърхност
+      option_faces_1: Използване на всички повърхности на детайла
+      option_faces_help: Позволява да изберете дали търсенето на формата на детайла да се извършва по всички негови повърхности или само по целевата повърхност.
+      option_anchor: Точка на закотвяне
+      option_anchor_0: Автоматично
+      option_anchor_1: Проектиране на началната точка на детайла
+      option_anchor_help: |-
+        **Автоматично**
+        Долният ляв ъгъл на обхващащия правоъгълник на експортираната геометрия се използва като точка на закотвяне.
+
+        **Проектиране на началната точка на детайла**
+        Активира проектирането на началото на осите на детайла като точка на закотвяне.
+      option_switch_yz: Вертикална ос
+      option_switch_yz_0: Z вертикална
+      option_switch_yz_1: Y вертикална
+      option_switch_yz_help: Разменя осите Y и Z, за да определи вертикалната ос на детайла.
+      option_smoothing: Изглаждане
       option_smoothing_0: $t(default.no)
+      option_smoothing_1: Изглаждане на окръжности и дъги (експериментално)
+      option_smoothing_help: |-
+        Активира откриването на окръжности и дъги.
+
+        *Тази опция не открива други видове криви.*
+      option_merge_holes: Режим на обединяване
+      option_merge_holes_0: Основен
+      option_merge_holes_1: Контур + пробиви + добавка
+      option_merge_holes_help: |-
+        **Основен**
+        Формата на детайла се експортира с проекцията на всяка повърхност в слой, съответстващ на нейната дълбочина.
+
+        **Контур + отвори + добавка**
+        Активира отделянето на външния контур на детайлите от техните отвори, както и изчисляването на добавката за обработка, приложена към повърхностите, граничещи с контура и вдлъбнатините.
+      option_merge_holes_overflow: Добавка за обработка
+      option_merge_holes_overflow_help: Позволява да зададете разстоянието на добавката за обработка, приложена към повърхностите по ръба на контурите и вдлъбнатините.
+      option_include_paths: Пътища
       option_include_paths_0: $t(default.no)
+      option_include_paths_1: Използване на ръбове, несвързани с повърхност
+      option_include_paths_help: Активира използването на ръбове, несвързани с повърхност и съдържащи се в детайла, за да бъдат експортирани като път.
+      option_parts: Детайли
+      option_parts_help: Позволява да изберете цвета на детайлите.
+      option_parts_depths: Вдлъбнатини
+      option_parts_depths_help: |-
+        Позволява да изберете цвета на вдлъбнатините в детайла.
+
+        *По подразбиране се използва градиент, пропорционален на дълбочината на вдлъбнатината, между цвета на детайлите и цвета на отворите.*
+      option_parts_holes: Отвори
+      option_parts_holes_help: Позволява да изберете цветовете на пробитите отвори в детайлите.
+      option_parts_paths: Пътища
+      option_parts_paths_help: |-
+        Позволява да изберете цветовете на пътищата.
+
+        *Цветът на запълване ще се използва само за затворени пътища.*
+      error:
+        no_part: Няма детайл за експорт.
+      warning:
+        is_group_selection: Детайлите в **скритите групи** на списъка с детайли няма да бъдат експортирани.
+        is_part_selection: Експортът е ограничен до **избраните детайли**.
+    snippet:
+      hello: Здравей
+      number: Номер
+      name: Наименование
+      number_and_name: Номер и наименование
+      number_without_hardware: Номер (без обкова)
+      size: Чист размер
+      area: Чиста площ
+      volume: Чист обем
+    error:
+      no_model: Няма отворен модел. Ще трябва да ми дадете малко повече от това ;)
+      no_entities: Моделът ви е празен. Ще трябва да ми дадете малко повече от това ;)
+      no_component_in_selection: В селекцията ви не е открит екземпляр на видим компонент.
+      no_component_in_model: В сцената ви не е открит екземпляр на видим компонент.
+      unknow_part: Избраният детайл не съществува в списъка с детайли.
+      obsolete_cutlist: Невъзможно, списъкът с детайли е остарял. Моля, генерирайте го отново.
+    warning:
+      is_entity_selection: Взети са предвид само избраните елементи във вашия модел.
+      no_typed_materials_in_model: Моделът ви не използва материал с определен тип (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: Селекцията ви не използва материал с определен тип (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**).
+      export_empty: Експортът ви не съдържа нито един детайл.
+    success:
+      part_selected: "{{ count }} детайл е избран в списъка с детайли."
+      part_selected_plural: "{{ count }} детайла са избрани в списъка с детайли."
+    tip:
+      no_component: |-
+        Детайлите, които трябва да бъдат включени в *списъка с детайли*, трябва да са екземпляри на **компонент**.
+        Ако използвате само групи, преобразувайте ги в компоненти.
+        Използването на компоненти позволява да възпроизвеждате еднакви детайли, без да ги дублирате.
+      no_typed_materials: Приложете материал към детайлите, които трябва да бъдат включени в списъка с детайли, и задайте типа на този материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**) в раздела <i class="ladb-opencutlist-icon-materials"></i> **Материали**.
+    obsolete_base: За да бъде синхронизиран, трябва да генерирате отново списъка с детайли.
   materials:
+    label: Материали
+    title: Материали
+    type_0: Неопределен
+    type_1: Масивна дървесина
+    type_2: Плоскости
+    type_3: Дъски
+    type_4: Кант
+    type_5: Обков
+    type_6: Фурнир
+    type_7: Обработка
     tooltip:
+      type_0: Тип материал '$t(tab.materials.type_0)'
+      type_1: Тип материал '$t(tab.materials.type_1)'
+      type_2: Тип материал '$t(tab.materials.type_2)'
+      type_3: Тип материал '$t(tab.materials.type_3)'
+      type_4: Тип материал '$t(tab.materials.type_4)'
+      type_5: Тип материал '$t(tab.materials.type_5)'
+      type_6: Тип материал '$t(tab.materials.type_6)'
+      type_7: Тип материал '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: Посока на фладера
+      raw_estimated_0: Изчислено по ефективния обем
+      colorized: Този тон ще бъде приложен към текстурата при визуализирането ѝ в модела
+      texture_load: Зареждане на ново изображение
+      texture_export: Експорт на изображението
+      texture_clear: Изтриване на текстурата
+      edit: Редактиране на свойствата на '{{ name }}'
+      set_current: Оцветяване на детайлите с '{{ name }}'
+      open_url: Отваряне на URL адреса на материала
+      import_from_skm: Импорт на материал (.skm)
+    menu:
+      purge_unused: Изчистване на неизползваните материали
+      reset_prices: Нулиране на цените на всички материали
+      reset_prices_confirm: |-
+        На път сте да нулирате цените на всички материали във вашия модел.
+        Това действие е окончателно. **Всички цени ще бъдат нулирани.**
+        Потвърдете, за да продължите.
+      reset_prices_success: Цените на всички материали са нулирани.
     new_material:
+      title: Създаване на нов материал
       name: Име
+      name_warning: Невалидно име
+      color: Цвят
+      color_warning: Невалиден цвят
+      type: Тип
     edit_material:
+      title: Свойства на материала '{{ name }}'
       general: Обща информация
+      texture: Текстура
+      no_texture: Без текстура
       name: Име
+      type: Тип
       description: Описание
+      url: URL
+      formats: Формати
+      cut_options: Параметри на рязане
+      estimate_options: Настройки на калкулацията
+      attributes: Атрибути
+      thickness: Дебелина
+      thickness_help: |-
+        Чиста дебелина на материала.
+
+        *Ако не е посочена мерна единица, ще се приложи мерната единица на модела.*
       length_increase: Надмерка по дължина
+      length_increase_help: Надбавка, приложена към чистата дължина на детайла, за да се определи неговата **груба дължина**.
+      length_increase_help_plural: Надбавка, приложена към чистата дължина на детайлите, за да се определи тяхната **груба дължина**.
       width_increase: Надмерка по ширина
+      width_increase_help: Надбавка, приложена към чистата ширина на детайла, за да се определи неговата **груба ширина**.
+      width_increase_help_plural: Надбавка, приложена към чистата ширина на детайлите, за да се определи тяхната **груба ширина**.
       thickness_increase: Надмерка по дебелина
+      thickness_increase_help: Надбавка, приложена към чистата дебелина на детайла, за да се определи неговата **груба дебелина**.
+      thickness_increase_help_plural: Надбавка, приложена към чистата дебелина на детайлите, за да се определи тяхната **груба дебелина**.
+      std_lengths: Стандартни дължини
+      std_lengths_help: |-
+        Стандартни дължини, налични за този материал.
+
+        *Ако не е посочена мерна единица, ще се приложи мерната единица на модела.*
+      std_widths: Стандартни ширини
+      std_widths_help: |-
+        Стандартни ширини, налични за този материал.
+
+        *Ако не е посочена мерна единица, ще се приложи мерната единица на модела.*
+      std_thicknesses: Стандартни дебелини
+      std_thicknesses_help: |-
+        Стандартни **груби** дебелини, налични за този материал.
+
+        *Ако не е посочена мерна единица, ще се приложи мерната единица на модела.*
+      std_sections: Стандартни сечения
+      std_sections_help: |-
+        Стандартни напречни сечения, налични за този материал.
+
+        *Ако не е посочена мерна единица, ще се приложи мерната единица на модела.*
+      std_sizes: Стандартни размери
+      std_sizes_help: |-
+        Стандартни размери, налични за този материал.
+
+        *Ако не е посочена мерна единица, ще се приложи мерната единица на модела.*
+      grained: Фладер
+      grained_help: Избира посоката на фладера спрямо дължината на плоскостта.
+      grained_0: Без посока на фладера
+      grained_1: Фладерът е по дължината
+      edge_decremented: Намаляване на размерите
+      edge_decremented_help: Позволява да посочите дали размерите на детайлите да бъдат намалени с дебелината на канта.
+      edge_decremented_0: Без намаляване
+      edge_decremented_1: Намаляване с дебелината на канта
+      raw_estimated: Използван обем
+      raw_estimated_help: |-
+        Позволява да определите обема, използван за калкулиране на теглото и общата цена на детайлите от този материал.
+
+        **Ефективен обем**
+        Общият обем ще бъде сумата от ефективните обеми на детайлите, т.е. обхващащия паралелепипед, включително надбавките.
+
+        **Обем на необходимия суров материал**
+        Общият обем ще бъде сумата от обемите на плоскостите, листовете, дъските или кантовете на детайлите след изчисляване на схемата на рязане.
+      raw_estimated_0: Ефективен обем
+      raw_estimated_1: Обем на необходимия суров материал
+      multiplier_coefficient: Коефициент
+      multiplier_coefficient_help: Използва се за задаване на коефициента, с който се умножава брутният обем.
+      std_attributes_dim_placeholder: Изберете размер
+      std_volumic_masses: Плътност
+      std_volumic_masses_help: Позволява да зададете плътността за всички размери, както и за всеки стандартен размер на материала.
       std_prices: Цена
+      std_prices_help: Позволява да зададете цената за всички размери, както и за всеки стандартен размер на материала.
+      std_cut_prices: Цена на рязане
+      std_cut_prices_help: |-
+        Позволява да зададете цената на рязане на материала.
+
+        *Тази стойност се отнася само за правите разрези.*
+      texture_width: Ширина
+      texture_height: Височина
+      export_to_skm: Експорт (.skm)
+    texture_load:
+      title: Зареждане на изображение
+    texture_export:
+      title: Експорт на изображението
+    import_from_skm:
+      title: Импорт на .skm файл
+      ask_replace: |-
+        Материал "{{ name }}" вече съществува.
+        Искате ли да го замените с импортирания?
+
+        $t(default.yes) = Замяна на съществуващия материал с импортирания
+        $t(default.no) = Запазване на двата материала
+        $t(default.cancel) = Отказ от операцията
+    export_to_skm:
+      title: Експорт в .skm файл
     option:
+      minimize_on_smart_paint: Минимизиране след *'Оцветяване на детайлите с...'*
+      minimize_on_smart_paint_help: Ако тази опция е избрана, прозорецът на OpenCutList ще бъде минимизиран при използване на функцията *'Оцветяване на детайлите с...'*.
       general: Обща информация
+      material_order_strategy: Сортиране на материалите
+      material_order_strategy_help: |-
+        Пренаредете следните свойства, за да определите начина на сортиране на материалите в списъка.
+        Свойствата могат да се сортират във <i class="ladb-opencutlist-icon-sort-asc"></i> *възходящ* или <i class="ladb-opencutlist-icon-sort-desc"></i> *низходящ* ред.
+      property_type: Тип
       property_name: Име
+    delete:
+      message: |-
+        На път сте да изтриете материала **{{ material_name }}** от вашия модел.
+        Потвърдете, за да продължите.
+    duplicate:
+      message: Изберете име за новия материал, който е копие на **{{ material_name }}**.
+    error:
+      no_model: Няма отворен модел. Ще трябва да ми дадете малко повече от това ;)
+      no_materials: Моделът ви не съдържа нито един материал.
+      material_not_found: Не е намерен материал.
+      no_texture: Материалът няма текстура.
+      failed_import_skm_file: Възникна грешка при импорта от .skm файла. **{{ error }}**
+      failed_export_skm_file: Възникна грешка при експорта в .skm файл. **{{ error }}**
+      failed_deleting_material: Възникна грешка при изтриването на материала. **{{ error }}**
+      failed_duplicating_material: Възникна грешка при дублирането на материала. **{{ error }}**
+      invalid_image_file: Невалидно изображение
+    obsolete_base: За да бъде синхронизиран, трябва да обновите списъка с материали.
   outliner:
+    label: Структура
+    title: Структура
+    list: Дървовидна структура на обектите
+    nodes: Екземпляри
+    toggle_hidden: Скрити екземпляри
+    type_0: Модел
+    type_1: Група
+    type_2: Компонент
+    type_3: Детайл
+    tooltip:
+      hide_node: Скриване
+      unhide_node: Показване
+      locked_node: Заключен
+      is_active_node: Активен екземпляр в модела
+      set_active_node: Редактиране в модела
+      edit_node_properties: Редактиране на свойствата
+      select_active_nodes: Избиране / Отказ от избора на всички активни екземпляри
+      select_node: Избиране
+      unselect_node: Отказ от избора
+      open_node_url: Отваряне на URL адреса на детайла
     edit_node:
+      title_model: Свойства на модела
+      title_instance: Свойства на екземпляра **{{ name }}**
+      title_instance_multiple: Свойства на групата екземпляри
+      multiple_alert: Общи свойства на групата от {{ node_count }} екземпляра.
       general: Обща информация
       name: Име
+      instance_name: Екземпляр
       material: Материал
+      is_grain_group: Задаване като **група за непрекъснатост на фладера**
+      is_grain_group_help: Активирането на тази опция ще третира този екземпляр като **група за непрекъснатост на фладера** за съдържащите се в него детайли, за които е активирана *непрекъснатост на фладера*.
+      definition_name: Дефиниция
       description: Описание
+      url: URL
       tags: Баджове
+      layer_name: Таг
+      snapto: Свързване
+      snapto_none: Няма
+      snapto_0: Произволно
+      snapto_1: Хоризонтално
+      snapto_2: Вертикално
+      snapto_3: Наклонено
+      cuts_opening: Изрязване на отвора
+      always_face_camera: Винаги с лице към камерата
+      shadows_face_sun: Сянка с лице към слънцето
+      no_scale_mask: Мащабиране и разтягане
+      no_scale_mask_0: Разтягане по червената ос (X)
+      no_scale_mask_1: Разтягане по зелената ос (Y)
+      no_scale_mask_2: Разтягане по синята ос (Z)
+      no_scale_mask_3: Разтягане в червената/синята равнина (X+Z)
+      no_scale_mask_4: Разтягане в зелената/синята равнина (Y+Z)
+      no_scale_mask_5: Разтягане в червената/зелената равнина (X+Y)
+      no_scale_mask_6: Разтягане от ъглите (XYZ)
+      explode: Разглобяване
+      explode_message: Потвърждавате ли разглобяването на **{{ name }}**?
       erase: Изтриване
+      erase_message: Потвърждавате ли изтриването на **{{ name }}**?
+    deep_make_unique:
+      title: Уникализиране
+    deep_rename_parts:
+      title: Преименуване на детайли
+      info_0: Тази функция позволява да преименувате детайлите в избрания набор, като приложите формулата по-долу към всеки екземпляр.
+      formula: Формула
+      old_name: Оригинално име
+      new_name: Ново име
+      count: Бр.
+    create_container:
+      title_group: Създаване на група
+      title_component: Създаване на компонент
     option:
       general: Обща информация
+      show_hidden_instances: Показване на скритите екземпляри
+      show_hidden_instances_help: Ако тази опция е избрана, скритите в модела екземпляри ще се показват в дървовидната структура.
+      hide_descriptions: Скриване на описанията
+      hide_descriptions_help: Ако тази опция е избрана, **описанията** на детайлите няма да се показват.
+      hide_tags: Скриване на маркерите
+      hide_tags_help: Ако тази опция е избрана, **маркерите**, поставени на детайлите, няма да се показват.
+      minimize_on_set_active: Минимизиране след '$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: Ако тази опция е избрана, прозорецът на OpenCutList ще бъде минимизиран при използване на функцията *'$t(tab.outliner.tooltip.set_active_node)'*.
+    snippet:
+      name_size: Наименование - Размер
+    error:
+      no_model: Няма отворен модел. Ще трябва да ми дадете малко повече от това ;)
+      no_entities: Моделът ви е празен!
+      node_not_found: Възелът не е намерен
+      entity_not_found: Екземплярът не е намерен
+      invalid_target: Тази операция не се поддържа от целевия екземпляр
+      obsolete_outliner: Невъзможно, генерираната структура е остаряла. Моля, генерирайте я отново.
+    tip:
+      no_node: |-
+        В момента моделът ви няма екземпляри за показване тук.
+        Екземплярът е **група** или **компонент**, поставен в сцената.
+    obsolete_base: За да бъде синхронизирана, трябва да обновите структурата.
   importers:
+    default:
+      open_file: Отваряне на файл {{ extension }}
+      import_to_model: Импорт в модела
+      error:
+        no_data: Няма данни за импорт.
+        no_model: Няма отворен модел. Невъзможно е да се импортират детайли в нищото ;)
+        file_not_found: "Файлът не е намерен: **{{ filename }}**"
+        bad_extension: Файлът *{{ filename }}* няма изискваното разширение (**{{ extensions }}**).
+        failed_to_import: Импортът е неуспешен.
+      success:
+        imported_title: Импортът е завършен
     csv:
+      label: CSV
+      title: Импорт на детайли
+      help: |-
+        Тази страница позволява да импортирате детайли (определени чрез правоъгълен обхващащ паралелепипед) във вашия модел от [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) файл.
+        Така можете да се възползвате от мощната функция за списък с детайли в *OpenCutList*, като генерирате детайлите си с друг софтуер, различен от *SketchUp*.
+
+        Щракнете върху бутона **Отваряне на CSV файл**, за да започнете.
       load:
         title: Качване на CSV файл
+        info_0: |-
+          Изберете настройките, необходими за правилното прочитане на файла:
+          **{{ filename }}**.
+        info_1: |-
+          *Мерната единица, зададена в модела, е: **{{ unit }}**.
+          Тя ще се използва за размерите без посочена мерна единица*.
+        options: Настройки за зареждане
+        option_col_sep: Разделител
+        option_col_sep_tab: Табулация
+        option_col_sep_comma: Запетая
+        option_col_sep_semicolon: Точка и запетая
+        option_first_line_headers: Заглавен ред
+        option_first_line_headers_0: Данни
+        option_first_line_headers_1: Заглавия на колоните
+      import:
+        title: Импорт на детайли в модела
+        info_0: |-
+          На път сте да импортирате **{{ count }} детайл** в модела.
+          Този детайл ще бъде поставен в група в началото на координатите на основната сцена.
+        info_0_plural: |-
+          На път сте да импортирате **{{ count }} детайла** в модела.
+          Тези детайли ще бъдат подредени в група, започваща от началото на координатите на основната сцена.
+        info_1: Щракнете върху **Импорт**, за да потвърдите действието.
+        options: |-
+          Моделът вече съдържа *детайли*, *дефиниции* или *материали*.
+          Изберете желаните настройки за импорт.
+        option_remove_all_?: Какво да направя?
+        option_remove_all_false: Добавяне на детайлите към съществуващите
+        option_remove_all_true: Изтриване на всичко!
+        option_keep_definitions_settings: Запазване на настройките на дефинициите
+        option_keep_materials_settings: Запазване на настройките на материалите
       column:
+        unused: Не се използва
+        mandatory: Задължителни полета
+        optional: Незадължителни полета
+        name: Наименование
+        count: Количество
+        bbox_length: Чиста дължина
+        bbox_width: Чиста ширина
+        bbox_thickness: Чиста дебелина
         material: Материал
         tags: Баджове
+      tooltip:
+        errors: Този детайл няма да бъде импортиран, тъй като е предизвикал следните грешки
+        warnings: Този детайл ще бъде импортиран, но е предизвикал следните предупреждения
+      error:
+        failed_to_load_csv_file: |-
+          Невъзможно зареждане на CSV файла: **{{ error }}**
+          *Проверете дали сте избрали правилния разделител на полетата.*
+        empty_file: Файлът изглежда празен или не може да бъде прочетен правилно.
+        no_importable_part: Нито един детайл не може да бъде импортиран. Присвоете задължителните полета на съответните колони.
+        invalid_name: Невалидно наименование
+        invalid_length: Невалидна дължина
+        invalid_width: Невалидна ширина
+        invalid_thickness: Невалидна дебелина
+      warning:
+        invalid_count: Невалидно количество
+        invalid_material: Невалиден материал
+      success:
+        imported_body: "{{ count }} детайл е импортиран успешно!"
+        imported_body_plural: "{{ count }} детайла са импортирани успешно!"
+      obsolete_base: За да бъде синхронизиран, трябва да заредите отново CSV файла.
     bxf2:
+      label: BXF2
+      title: Импорт на конфигурация на Blum
+      help: |-
+        Тази страница позволява да импортирате конфигурация във вашия модел от BXF2 файл.
+        BXF2 файловете могат да бъдат създадени с [Cabinet Configurator](https://e-services.blum.com/) на [Blum](https://www.blum.com) .
+
+        Щракнете върху бутона **Отваряне на BXF2 файл**, за да започнете.
+      load:
+        title: Зареждане на BXF2 файл
+      import:
+        title: Импорт на конфигурацията в модела
+        info_0: На път сте да импортирате конфигурация от **{{ count }} шкаф** в модела.
+        info_0_plural: На път сте да импортирате конфигурация от **{{ count }} шкафа** в модела.
+        info_1: Ще имате възможност да зададете местоположението ѝ в активния модел.
+        materials: Материали
+        layers: Тагове
+        geometry: Геометрия
+        option_parts_formula: Формула
+        option_parts_formula_help: Формулата позволява да персонализирате името на импортираните детайли.
+        option_part_wood_material_name: Дърво
+        option_part_wood_material_name_help: Материал, който да се приложи към **дървените** детайли.
+        option_part_aluminium_material_name: Алуминий
+        option_part_aluminium_material_name_help: Материал, който да се приложи към **алуминиевите** детайли.
+        option_part_glass_material_name: Стъкло
+        option_part_glass_material_name_help: Материал, който да се приложи към **стъклените** детайли.
+        option_front_part_layer_name: Лица
+        option_front_part_layer_name_help: Таг, който да се приложи към лицевите детайли.
+        option_back_part_layer_name: Гръб
+        option_back_part_layer_name_help: Таг, който да се приложи към гърбовете на шкафовете.
+        option_machining_material_name: Обработка
+        option_machining_material_name_help: Материал, който да се приложи към **обработките**.
+        option_machining_layer_name: Обработка
+        option_machining_layer_name_help: Таг, който да се приложи към обработките.
+        option_hardware_material_name: Обков
+        option_hardware_material_name_help: Материал, който да се приложи към **обкова**.
+        option_hardware_layer_name: Обков
+        option_hardware_layer_name_help: Таг, който да се приложи към обкова.
+        option_no_material_help: "*Оставете това поле празно, за да пропуснете прилагането на материал*."
+        option_default_material_help: "*Ако това поле остане празно, ще бъде създаден материал по подразбиране*."
+        option_no_layer_help: "*Оставете това поле празно, за да пропуснете тага.*"
+        option_subtract_machinings: Изрязване на обработките в детайлите
+        option_subtract_machinings_help: "**Каналите**, **фалцовете** и **фаските** на детайлите, включително свързаните с обкова, се изваждат от обема им, вместо да бъдат начертани. Отворите остават начертани."
+        warning:
+          subtract_machinings_failed: "Обработките не можаха да бъдат изфрезовани в тези детайли; вместо това са начертани: {{ names }}"
+        old_name: Оригинално име
+        new_name: Ново име
+        count: Бр.
+        formula:
+          part: Детайл
+          project: Проект
+          cabinet: Шкаф
+      model:
+        author: Автор
+        date: Дата
       cabinet:
+        list: Списък с шкафове
         description: Име
+        width: Ширина
+        height: Височина
+        depth: Дълбочина
       article:
+        list: Списък с артикули
+        total_quantity: Бр.
+        article_number: Реф.
         description: Описание
         material: Материал
+      error:
+        failed_to_load_bxf2_file: "Невъзможно зареждане на BXF2 файла: **{{ error }}**"
+      warning:
+        partial_support: |-
+          Нужен ви е **SketchUp 2021.1** или по-нова версия, за да използвате всички функции.
+          3D геометриите на обкова **не могат да бъдат импортирани**.
+      obsolete_base: За да бъде синхронизиран, трябва да заредите отново BXF2 файла.
+  tutorials:
+    label: Уроци
+    title: Уроци
+    help: Тук ще намерите непълен списък с видеоклипове, създадени от общността, за използването на *OpenCutList*.
+    submit: Изпращане на видео
+    submit_info: |-
+      Направили сте видео, представящо използването на **OpenCutList**, и искате да го видите тук?
+      Уведомете ни, като ни пишете на **opencutlist@lairdubois.fr**!
+
+      *Видеото трябва да е публично и качено в YouTube.*
+    error:
+      fail_to_load_list: Неуспешно зареждане на списъка с видеоклипове.
+  news:
+    label: Новини
+    title: Новини
+    help: Последните новини от *OpenCutList*.
+    comment: Коментар
+    error:
+      fail_to_load_list: Неуспешно зареждане на списъка с новини.
+  forum:
+    label: Форум
+    title: Форум
+    help: Този форум позволява да общувате с общността от потребители и екипа на *OpenCutList*.
+    create_conversation: Започване на разговор
+    reply: Отговор
+    tags: Тагове
+    redirection: |-
+      Ще бъдете пренасочени към платформата **Open Collective**, която хоства този форум.
+      За да *започвате разговори* или да *отговаряте*, ще трябва да създадете акаунт и да влезете в него.
+      *Безплатно е, без задължения и е нужен само имейл адрес.*
+
+      Потвърдете, за да продължите.
+    error:
+      fail_to_load_list: Неуспешно зареждане на списъка с теми.
+  sponsor:
+    label: Подкрепа
+    title: Подкрепа
+    description: |-
+      **OpenCutList** е софтуер с *отворен код*, поддържан от потребителите си чрез платформата <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      Подкрепете този проект с финансов принос!
+    contribute: Принос
+    backers: "{{ count }} финансов поддръжник"
+    backers_plural: "{{ count }} финансови поддръжници"
+    ad: OpenCutList не е безплатен
+    objective: Цел
+    objective_slogan: OpenCutList сме всички ние
+    objective_title:
+      default: Цели
+    objective_details:
+      default: Непрекъснатото подобряване на *OpenCutList* е важно за нас и проектът продължава да се нуждае от вашата помощ за следващата си актуализация!
+    objective_crowdfunding: Разработката на нови функции ще се извършва чрез **набиране на средства** и ще започне, когато бъде достигната **финансовата цел**.
+    objective_thanks: Благодарим ви за приноса!
+    objective_funded_progress: финансиран на {{ progress }}%
   settings:
+    label: Предпочитания
+    title: Предпочитания
+    global_settings: Общи предпочитания
+    language: Език
+    language_auto: Автоматично
+    font_size: Размер на шрифта
     font_size_auto: $t(default.automatic)
+    font_size_normal: Нормален
+    font_size_small: Малък
+    font_size_tiny: Много малък
+    print_margin: Полета за печат
+    print_margin_normal: Нормални
+    print_margin_small: Малки
+    table_row_size: Височина на редовете в таблиците
+    table_row_size_normal: Нормална
+    table_row_size_compact: Компактна
+    size_and_position: Размер и позиция на прозореца
+    model_settings: Предпочитания за модела
+    length_unit: Мерна единица за дължина
+    length_format: Формат
     length_format_0: $t(default.decimal)
+    length_format_1: Архитектурен
+    length_format_2: Инженерен
     length_format_3: $t(default.fractional)
+    length_precision: Точност
+    suppress_units_display: Показване на мерната единица за всяка стойност
+    mass_unit: Мерна единица за тегло
+    mass_precision: Точност
+    currency_symbol: Символ на валутата
+    currency_precision: Точност
+    presets:
+      export_global_presets: Експорт на предварителните настройки
+      export_global_presets_help: |-
+        Тази функция позволява да експортирате предварителните си настройки в **.json** файл.
+        Изберете предварителните настройки, които искате да експортирате.
+        Ако избраните настройки препращат към **.skp** или **.skm** файлове, тези файлове се включват в **.oclp** архив, така че експортът да може да се споделя както е.
+      export_global_presets_success: Предварителните настройки са експортирани успешно.
+      export_global_presets_success_with_assets: Предварителните настройки са експортирани успешно заедно с {{ count }} свързан(и) файл(а).
+      import_global_presets: Импорт на предварителни настройки
+      import_global_presets_help: |-
+        Изберете предварителните настройки от **.json** или **.oclp** файла, които искате да импортирате.
+        Внимание: ако вече съществува предварителна настройка със същото име, тя ще бъде заменена с импортираната версия.
+        Файловете, съдържащи се в **.oclp** архив, се копират във вашата библиотека на същото място, което са заемали в библиотеката на изпращача.
+      open_library_dir: Отваряне на папката на библиотеката
+      import_global_presets_success: |-
+        Предварителните настройки на *OpenCutList* са импортирани успешно.
+        За да се отразят промените, трябва да **затворите** и **отворите отново** прозореца на OpenCutList.
+      dump_global_presets: Извеждане на предварителните настройки
+      dump_model_presets: Извеждане на настройките на модела
+      reset_global_presets: Нулиране на предварителните настройки
+      reset_global_presets_confirm: |-
+        На път сте да нулирате всички запазени предварителни настройки на *OpenCutList*.
+        Това действие е окончателно. **Всички предварителни настройки ще бъдат загубени.**
+        Потвърдете, за да продължите.
+      reset_global_presets_success: |-
+        Предварителните настройки на *OpenCutList* са нулирани.
+        За да се отразят промените, трябва да **затворите** и **отворите отново** прозореца на OpenCutList.
+      reset_model_presets: Нулиране на настройките на модела
+      reset_model_presets_confirm: |-
+        На път сте да нулирате всички настройки на *OpenCutList* за текущия модел.
+        Това действие е окончателно. **Всички настройки ще бъдат върнати към стойностите по подразбиране.**
+        Потвърдете, за да продължите.
+      reset_model_presets_success: |-
+        Настройките на *OpenCutList* за текущия модел са нулирани.
+        За да се отразят промените, трябва да **затворите** и **отворите отново** прозореца на OpenCutList.
+      error:
+        no_preset_to_export: Няма предварителни настройки за експорт.
+        no_preset_to_import: Няма предварителни настройки за импорт.
+        failed_to_export: "Неуспешен експорт на предварителните настройки: **{{ error }}**."
+        failed_to_open_library_dir: "Неуспешно отваряне на папката на библиотеката: **{{ error }}**."
+        failed_to_import: "Невъзможен импорт на предварителните настройки: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Този файл е бил променен. Не може да бъде импортиран.
+        failed_to_import_bad_file_format: Невалиден файлов формат.
+  about:
+    label: Относно
+    title: Относно
+    version: Версия
+    credits: Технически информация
+    credits_authors: "*OpenCutList* се разработва от [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Вижте всички [сътрудници](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*."
+    credits_translations: Преводи
+    credits_translators: |-
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*английски*, *немски*)
+      - Gildas Boureau (документация на *френски*)
+      - Vladimir Badulya (*руски*)
+      - Pierluigi Colombo, Massimo Risca (*италиански*)
+      - Nayton Sanches Barbosa, коригиран и редактиран от Carlos Maciel ELT, Henny Silva Ferreira (*португалски*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*испански*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*чешки*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*полски*)
+      - Sergey Isupov (*иврит*), RTL интерфейсът все още не се поддържа
+      - Soul Issam (*арабски*), RTL интерфейсът все още не се поддържа
+      - Nguyen Ngoc Tan (*виетнамски*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*украински*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*опростен китайски*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*нидерландски*)
+      - Zoltán Nagy, Roland Kovács (*унгарски*)
+      - Milan Divovic (*сръбски*)
+    credits_description: |-
+      Разработката на това разширение е свързана с проекта за платформа за споделяне [L'Air du Bois](https://www.lairdubois.fr).
+      Това разширение също е с *отворен код* и е достъпно под лиценз [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) в [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_runtime: Среда за изпълнение
+    credits_development: Среда за разработка
+    credits_vendors: "Това приключение не би било възможно без труда на авторите на следните компоненти с *отворен код*:"
+    credits_thanks: |-
+      Специални благодарности на:
+      - [JetBrains](https://www.jetbrains.com) за подкрепата им за този проект чрез техния [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com) за подкрепата им за проекти с отворен код.
+      - [GitBook](https://www.gitbook.com) за подкрепата им за проекти с отворен код.
 tool:
   default:
+    transparency: Прозрачност
+    zoom_extents: Мащабиране до всичко
+    toggle_depth: Детайли на заден план
     more: Още
+    end_point: Крайна точка
+    middle_point: Средна точка
+    third_point: Точка на една трета
+    vcb_length: Дължина
+    vcb_thickness: Дебелина
+    vcb_size: Размери
+    vcb_radius: Радиус
+    vcb_diameter: Диаметър
+    vcb_distance: Разстояние
+    vcb_spacings: Разстояния
+    vcb_angle: Ъгъл
+    locked_on_last_measure_status: Заключване на последното измерване
+    library_choose: Избор на библиотека
+    modal_only_help: Настройката е достъпна само в този прозорец, не и в лентата с инструменти
+    error:
+      no_direction: Моля, посочете посока с мишката
+      invalid_length: Дължината {{ value }} е невалидна
+      invalid_thickness: Дебелината {{ value }} е невалидна
+      invalid_multiplicator: Множителят {{ value }} е невалиден
+      invalid_divider: Делителят {{ value }} е невалиден
+      invalid_offset: Отместването {{ value }} е невалидно
+      invalid_angle: Ъгълът {{ value }} е невалиден
+      invalid_segment_count: Броят сегменти {{ value }} е невалиден. Трябва да бъде между 3 и 999.
+      syntax_error: "Синтактична грешка: {{ error }}"
+      unexpected_close_parenthesis: Неочаквана затваряща скоба
+      missing_close_parenthesis: Липсва затваряща скоба
+      missing_operand: Липсва операнд
+      zero_division: Деление на нула
+      invalid_argument_count: Функциите min, max, floor и ceil изискват поне две стойности
+      comma_argument_separator: "Разделяйте стойностите с точка и запетая \";\": запетаята се използва и като десетичен разделител"
+      invalid_dimension: "Дължина може да се събира само с друга дължина: число без мерна единица е множител"
+      no_matching_value: Нито една от предложените стойности не е подходяща
+      lt_min_distance: Разстоянието {{ value1 }} е по-малко от минималното разстояние {{ value2 }}
+      gt_max_distance: Разстоянието {{ value1 }} е по-голямо от максималното разстояние {{ value2 }}
+      locked_part: Този детайл е заключен
+      not_sibling_part: Този детайл не е в същата група или компонент като останалата част от селекцията
+      selection_contains_locked_entities: Селекцията съдържа заключени обекти
+      wrong_material_type: Целевият детайл трябва да е от тип '{{ type }}'
+  smart_select:
+    state_0_status: Щракнете върху детайл, за да го изберете
+    state_0_to_6_status: Избор на родителски елемент
+    state_0_to_7_status: Множествен избор
+    state_4_status: Плъзнете върху еднакъв детайл със същия родител, за да го добавите към селекцията, и пуснете, за да продължите
+    state_5_status: Плъзнете, за да добавите към селекцията, и пуснете, за да продължите
+    state_6_status: Изберете елемент от списъка
+    state_7_status: Щракнете върху детайл, за да го добавите към селекцията или да го премахнете от нея
+    warning:
+      no_active_part: Първо трябва да посочите детайл с мишката
+      no_parent_group: Посоченият детайл няма родителска група или компонент
   smart_draw:
     title: Проектиране
+    action_0: Чертане на правоъгълник
+    action_0_status: Чертане на обем на базата на правоъгълна форма
+    action_0_state_0_status: Щракнете, за да зададете първата точка на правоъгълника
+    action_0_state_1_status: Щракнете, за да зададете срещуположния ъгъл, или въведете дължина, ширина
+    action_1: Чертане на окръжност
+    action_1_state_0_status: Щракнете, за да зададете центъра на окръжността
+    action_1_status: Чертане на обем на базата на кръгла форма
+    action_1_state_1_radius_status: Щракнете, за да зададете радиуса, или въведете разстояние
+    action_1_state_1_diameter_status: Щракнете, за да зададете диаметъра, или въведете разстояние
+    action_2: Чертане на многоъгълник
+    action_2_state_0_status: Щракнете, за да зададете първата точка на многоъгълника
+    action_2_status: Чертане на обем на базата на многоъгълна форма
+    action_2_state_1_status: Щракнете, за да зададете нова точка, или въведете разстояние
+    action_x_state_2_status: Щракнете, за да зададете височината, или въведете разстояние
+    action_option_group_offset: Отместване
+    action_option_group_segments: Сегменти
     action_option_group_options: Настройки
+    action_option_offset_shape_offset: Отместване
+    action_option_offset_shape_offset_status: Позволява да приложите отместване към контура на начертаната форма
+    action_option_segments_segment_count: Брой сегменти
+    action_option_segments_segment_count_status: Позволява да зададете броя сегменти на окръжността
+    action_option_options_construction: Спомагателни линии
+    action_option_options_construction_status: Чертане като спомагателни линии
+    action_option_options_rectangle_centered: Центриран правоъгълник
+    action_option_options_rectangle_centered_status: Центриране на правоъгълника спрямо първата точка
+    action_option_options_smoothing: Изглаждане
+    action_option_options_smoothing_status: Изглаждане на кривите
+    action_option_options_measure_from_vertex_status: Измерване спрямо най-близкия връх
+    action_option_options_measure_from_diameter: Измерване
+    action_option_options_measure_from_diameter_status: Измерване на окръжността по диаметъра ѝ
+    action_option_options_measure_from_radius_status: Измерване на окръжността по радиуса ѝ
+    action_option_options_measure_reversed: Обърнато измерване
+    action_option_options_measure_reversed_status: Обръщане на измерването
+    action_option_options_pull_centered: Центриране на височината
+    action_option_options_pull_centered_status: Центриране на височината спрямо първата точка
+    action_option_options_pull_locked_status: Заключване на височината по една ос
+    action_option_options_draw_in: Чертане в
+    action_option_options_draw_in_0: Чертане в активния елемент
+    action_option_options_draw_in_1: Чертане в родителя на детайла от първата точка
+    action_option_options_draw_in_status: Чертане в родителя на детайла, посочен от първата точка
+    action_option_options_pick_material: Пипета за цвят
+    action_option_options_pick_material_status: Прилагане на материала на детайла, посочен от първата точка, към новосъздадения детайл
+    action_option_options_ask_name: Именуване на детайлите
+    action_option_options_ask_name_status: Ръчно въвеждане на имената на детайлите
+    action_toggle_move_copy_status: Превключване между копиране/преместване
+    action_change_move_anchor_status: Промяна на точката на закотвяне
+    success:
+      part_created: "Създаден е нов детайл: {{ name }}"
+      part_created_plural: "Създадени са {{ count }} нови детайла: {{ name }}"
   smart_build:
+    title: Изграждане
+    action_0: Поставяне на модул
+    action_0_status: Поставяне на модул, импортиран от SKP файл, мащабиран до размерите на начертания обем
+    action_0_state_0_status: Изберете файл на модул от библиотеката
+    action_0_state_1_status: Щракнете, за да зададете началната точка на модула
+    action_0_state_2_status: Щракнете, за да зададете ширината на модула (ос X)
+    action_0_state_2_lock_status: Заключване към ширината на изходния файл
+    action_0_state_2_arrows_status: Заключване към ос
+    action_0_state_3_status: Щракнете, за да зададете дълбочината на модула (ос Y)
+    action_0_state_3_lock_status: Заключване към дълбочината на изходния файл
+    action_0_state_3_arrows_status: Заключване на нормалата на равнината XY към ос
+    action_0_state_4_status: Щракнете, за да зададете височината на модула (ос Z)
+    action_0_state_4_lock_status: Заключване към височината на изходния файл
+    action_0_state_5_status: Щракнете върху екземпляра, който искате да добавите
+    action_0_state_6_status: Щракнете върху ЛИЦЕВАТА страна на модула
+    action_0_state_7_status: Щракнете върху ГОРНАТА страна на модула
+    action_0_add_title: Добавяне на модул
+    action_0_add_name: Име на файла
+    action_0_add_overwrite: Файлът "{{ name }}.skp" вече съществува. Искате ли да го замените?
+    action_0_add_front_label: ЛИЦЕ
+    action_0_add_up_label: ГОРЕ
+    action_0_flip_status: Обръщане на лицето и гърба
+    action_0_flip_up_status: Обръщане на горната и долната страна
+    action_1: Изграждане на преграда
+    action_1_status: Изграждане на преграда в кухина, образувана от група съществуващи детайли
+    action_1_state_0_status: Щракнете върху стена, за да изградите преграда
+    action_1_state_1_status: Щракнете върху стена, за да изградите прегради
+    action_2: Изграждане на лице
+    action_2_status: Изграждане на лице в кухина, образувана от група съществуващи детайли
+    action_2_state_0_status: Щракнете вътре в кухина, за да изградите лице през отвора ѝ
+    action_2_state_0_merge_status: Плъзнете към съседните кухини, за да създадете общо лице
+    action_3: Изграждане на гръб
+    action_3_status: Изграждане на гръб в кухина, образувана от група съществуващи детайли
+    action_3_state_0_status: Щракнете вътре в кухина, за да изградите гръб в отвора срещу изгледа
+    action_3_state_0_merge_status: Плъзнете към съседните кухини, за да създадете общ гръб
+    action_option_group_groove: Канал
+    action_2_option_group_offset: Фуга
+    action_option_group_thickness: Дебелина
+    action_option_group_overlay: Монтаж
     action_option_group_axes: Оси
+    action_option_group_measure_type: Измерване
+    action_option_group_measure_origin: Начална точка
+    action_option_group_anchor: Закотвяне
     action_option_group_options: Настройки
+    action_option_offset_front_panel_offset: Фуга
+    action_option_offset_front_panel_offset_status: Определя фугата, оставена от всяка страна на лицето
+    action_option_groove_groove_depth: Дълбочина на канала
+    action_option_groove_groove_depth_status: Определя дълбочината на канала, в който влиза гърбът
+    action_option_groove_groove_panel_reduction: Намаляване на плоскостта
+    action_option_groove_groove_panel_reduction_status: Определя с колко се намалява гърбът по всеки ръб, влизащ в канал, като оставя тази хлабина на дъното на канала
+    action_option_groove_groove_width_clearance: Хлабина по ширина
+    action_option_groove_groove_width_clearance_status: Определя с колко по-широк от дебелината на гърба се фрезова каналът, изцяло към външната страна на шкафа
+    action_option_groove_groove_setback: Отстъп
+    action_option_groove_groove_setback_status: Определя колко навътре в шкафа е отстъпен гърбът и следователно къде се фрезова каналът
+    action_option_groove_groove_through: Проходен канал
+    action_option_groove_groove_through_status: Удължаване на канала до краищата на детайлите, които застъпват съседите си, когато каналът излиза там, без да е видим
+    action_option_thickness_thickness: Дебелина
+    action_option_thickness_thickness_status: Определя дебелината на плоскостите
+    action_option_overlay_inset_status: "Вградено: монтирано в отвора, на едно ниво с лицевата повърхност"
+    action_3_option_overlay_inset_status: "В канал: монтирано в канал, фрезован в детайлите, ограждащи отвора"
+    action_option_overlay_full_overlay_status: "Изцяло насложено: монтирано пред лицевата повърхност, покриващо страниците до външния ръб на шкафа и достигащо до половината от дебелината на вътрешните плоскости"
+    action_3_option_overlay_full_overlay_status: "Насложен гръб: монтиран отзад на шкафа, покриващ плоскостите до външния ръб и достигащ до половината от дебелината на вътрешните плоскости, без никаква обработка"
+    action_option_overlay_against_protrusions_status: "Насложено лице между изпъкващи детайли: насложено на едно ниво с рамката на отвора и монтирано до изпъкващите плоскости"
+    action_3_option_overlay_against_protrusions_status: "Насложен гръб между изпъкващи детайли: насложен на едно ниво с рамката на отвора и монтиран между изпъкващите плоскости (удължени страници) без никаква обработка"
+    action_option_measure_type_inside_status: Позициониране на дебелината навътре от целевата точка
+    action_option_measure_type_centered_status: Центриране на дебелината спрямо целевата точка
+    action_option_measure_type_outside_status: Позициониране на дебелината навън от целевата точка
+    action_option_measure_origin_wall_status: Измерване от вътрешните стени на кухината
+    action_option_measure_origin_overall_status: Измерване от външните повърхности на детайлите, затварящи кухината
+    action_option_axes_active_status: Манипулиране по активните оси
+    action_option_axes_context_status: Манипулиране по осите на групата или компонента-домакин
+    action_option_options_measure_reversed: Обърнато измерване
+    action_option_options_measure_reversed_status: Обръщане на измерването
+    action_option_options_reduce_envelope: Вдлъбнати детайли
+    action_option_options_reduce_envelope_status: Отчитане на вдлъбнатите детайли
+    action_option_options_reuse_definition: Повторно използване на детайли
+    action_option_options_reuse_definition_status: Вместо да се създава нов, да се използва повторно съществуващият детайл със същата форма, разположен в същата зона
+    action_option_options_mirror: Огледално разположение
+    action_option_options_mirror_status: Поставяне на всяко четно лице като огледален образ на съседното
+    action_option_options_pick_material: Пипета за цвят
+    action_option_options_pick_material_status: Прилагане на материала на посочения детайл към създадените детайли
+    action_option_options_face_camera: Към камерата
+    action_option_options_face_camera_status: Автоматично завъртане на лицето на модула към камерата
+    action_option_options_top_up: Нагоре към Z+
+    action_option_options_top_up_status: Автоматично ориентиране на горната страна на модула нагоре (Z+)
+    action_option_options_ask_name: Именуване на детайлите
+    action_option_options_ask_name_status: Ръчно въвеждане на имената на детайлите
+    action_option_options_layer_name: Таг
+    action_option_options_layer_name_status: Име на тага, на който се поставят детайлите
+    action_option_anchor_center_x_status: Центрирано по X
+    action_option_anchor_center_y_status: Центрирано по Y
+    action_option_anchor_center_z_status: Центрирано по Z
+    action_option_anchor_origin_status: Начална точка на компонента
+    action_option_no_layer_help: "*Оставете това поле празно, за да пропуснете тага.*"
+    detecting_cavities: Откриване на кухини...
+    error:
+      invalid_divider_seed: Този тип детайл не позволява изграждане на преграда
+      invalid_divider_container: "Този детайл е изолиран: няма обща група или компонент с други детайли"
+      invalid_divider_cavity: Няма кухина на тази позиция
+      no_divider_cavity: В тази група или компонент не са открити кухини
+      invalid_front_panel_seed: Този тип детайл не позволява изграждане на лице
+      invalid_front_panel_container: "Този детайл е изолиран: няма обща група или компонент с други детайли"
+      invalid_front_panel_cavity: На тази позиция няма кухини, отворени към вас
+      no_front_panel_cavity: В тази група или компонент не са открити кухини
+      invalid_back_panel_seed: Този тип детайл не позволява изграждане на гръб
+      invalid_back_panel_container: "Този детайл е изолиран: няма обща група или компонент с други детайли"
+      invalid_back_panel_cavity: На тази позиция няма кухина, отворена от страната срещу изгледа
+      no_back_panel_cavity: В тази група или компонент не са открити кухини
+      too_complex_cavity: Геометрията е твърде сложна за откриване на кухини в нея
+      closed_front_panel_opening: Този отвор вече е затворен с лице
+      closed_back_panel_opening: Този отвор вече е затворен с гръб
+      divider_number_overflow: Не е възможно да се поставят {{ number }} прегради в тази кухина
+      front_panel_number_overflow: Не е възможно да се разпределят {{ number }} лица в този отвор
+      back_panel_number_overflow: Невъзможно е да се разпределят {{ number }} гърба в този отвор
+      back_panel_severs_parts: "Каналът би прорязал напълно: {{ names }}. Намалете дълбочината му"
+      module_file_not_found: "Файлът на модула не е намерен: {{ file }}"
+      module_file_invalid: "Неуспешно зареждане на файла на модула: {{ file }}"
+      module_file_invalid_name: "Невалидно име на файл: {{ name }}"
+      module_file_save_failed: "Неуспешен запис на файла на модула: {{ name }}.skp"
+      module_stretch_failed: Невъзможно е модулът да се разтегли до тези размери
+    warning:
+      no_back_panel_machining: "Не може да бъде фрезован канал: няма съседни детайли, ограждащи гърба на тази дълбочина"
+      no_module_file: В тази папка няма .skp файлове
+      module_axis_no_scale: "Модулът не може да се мащабира по {{ axis }}: блокирано от поведението на компонента"
+      module_axis_curve_intersect: "Модулът не може да се мащабира по {{ axis }}: една от режещите равнини минава през немащабируема крива"
+    success:
+      part_created: "Създаден е нов детайл: {{ name }}"
+      part_created_plural: "Създадени са {{ count }} нови детайла: {{ name }}"
+      part_reused: "Нов екземпляр на съществуващия детайл: {{ name }}"
+      part_reused_plural: "{{ count }} нови екземпляра на съществуващия детайл: {{ name }}"
+      module_file_saved: "Модулът е записан: {{ name }}.skp"
+      module_created: "Поставен е нов модул: {{ name }}"
   smart_handle:
+    title: Манипулиране
+    action_0: Избор
+    action_0_status: Избор на детайл
+    action_1: Копиране по линия
+    action_1_status: Копиране на детайл по ос
+    action_1_state_2_status: Щракнете, за да поставите копието на детайла, или въведете разстояние
+    action_2: Копиране по мрежа
+    action_2_status: Копиране на детайл по мрежа
+    action_2_state_2_status: Щракнете, за да поставите копията на детайла, или въведете две разстояния
+    action_3: Преместване
+    action_3_status: Преместване на детайл по ос
+    action_3_state_1_status: Щракнете, за да зададете първата точка на измерване
+    action_3_state_2_status: Щракнете, за да поставите детайла, или въведете разстояние
+    action_4: Разпределяне
+    action_4_status: Разпределяне на детайл по ос
+    action_4_state_1_status: Щракнете, за да зададете първата точка на измерване
+    action_4_state_2_status: Щракнете, за да зададете втората точка на измерване, или въведете разстояние
+    action_5: Взаимодействие
+    action_5_status: Отваряне или затваряне на врата
+    action_5_state_0_status: Щракнете върху врата, за да я отворите или затворите, или я плъзнете, за да регулирате колко да се отвори
+    action_5_state_0_amend_status: Въведете ъгъл, за да регулирате отварянето, или щракнете върху врата, за да я отворите или затворите
+    action_5_state_20_status: Плъзнете, за да регулирате отварянето на вратата, и пуснете, за да потвърдите
+    action_option_group_copy_measure_type: Измерване
+    action_option_group_move_measure_type: Измерване
     action_option_group_axes: Оси
     action_option_group_options: Настройки
+    action_option_copy_measure_type_outside_status: Измерване от ръб до ръб
+    action_option_copy_measure_type_centered_status: Измерване от център до център
+    action_option_copy_measure_type_inside_status: Измерване между детайлите
+    action_option_axes_active_status: Манипулиране по активните оси
+    action_option_axes_context_status: Манипулиране по осите на групата или компонента, съдържащ детайла
+    action_option_axes_entity_status: Манипулиране по осите на детайла
+    action_option_options_mirror_status: Симетрично копиране
+    action_toggle_raytest_status: Проектиране върху следващата точка
+    warning:
+      copies_disable_mirror: Многократните копия деактивират опцията '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: Този детайл не е врата с панти
+      incoherent_door: Пантите на тази врата не се въртят около една и съща ос
   smart_reshape:
+    title: Преоформяне
+    action_0: Разтягане
+    action_0_status: Разтягане на детайл
+    action_0_state_1_status: Щракнете върху манипулатор, за да разтегнете
+    action_0_state_1a_status: Щракнете върху режеща равнина, за да я преместите
+    action_0_state_1b_status: Добавяне на режеща равнина
+    action_0_state_1c_status: Изтриване на режеща равнина
+    action_0_state_1d_status: Щракнете, за да преместите геометрията между двете режещи равнини
+    action_0_state_10_status: Плъзнете режещата равнина, за да я преместите
+    action_0_state_11_status: Щракнете, за да добавите режещата равнина
+    action_0_state_12_status: Щракнете върху режеща равнина, за да я изтриете
+    action_0_state_2_status: Щракнете, за да потвърдите разтягането, или въведете разстояние
+    action_1: Облицоване
+    action_1_status: Създаване на серия от детайли от затворено тяло или чертеж от спомагателни линии
+    action_1_state_0_status: Щракнете върху затворено тяло или група спомагателни линии, за да зададете референтната геометрия
+    action_1_state_1_status: Изберете повърхностите за изтегляне
+    action_1_rollover_face_status: Посочена повърхност
+    action_1_select_similar_status: Избиране на всички повърхности със същата форма
+    action_1_select_all_edges_status: Избиране на всички съседни ръбове
+    action_2: Заваряване
+    action_2_status: Заваряване на няколко детайла в един детайл
+    action_2_state_0_status: Изберете детайл A
+    action_2_state_1_status: Изберете детайл B
+    action_3: Изрязване
+    action_3_status: Изрязване на един детайл с друг
+    action_3_state_0_status: Изберете детайл A
+    action_3_state_1_status: Изберете детайл B
+    action_4: Сечение
+    action_4_status: Създаване на детайл, съответстващ на сечението на няколко детайла
+    action_4_state_0_status: Изберете детайл A
+    action_4_state_1_status: Изберете детайл B
+    action_option_group_thickness: Дебелина
+    action_option_group_stretch_measure_type: Измерване
     action_option_group_axes: Оси
+    action_option_group_paneling_joint_type: Съединение
+    action_option_group_paneling_direction: Посока
+    action_option_group_csg_operation: Операция
     action_option_group_options: Настройки
+    action_option_thickness_thickness: Дебелина
+    action_option_thickness_thickness_status: Определя дебелината на плоскостите
+    action_option_stretch_measure_type_outside_status: Измерване от ръб до ръб
+    action_option_stretch_measure_type_offset_status: Измерване на разликата
+    action_option_axes_active_status: Манипулиране по активните оси
+    action_option_axes_context_status: Манипулиране по осите на групата или компонента, съдържащ детайла
+    action_option_axes_entity_status: Манипулиране по осите на детайла
+    action_option_paneling_joint_type_flat_status: Челно съединение
+    action_option_paneling_joint_type_miter_status: Съединение под ъгъл (на фаска)
+    action_option_paneling_direction_inward_status: Посока навътре
+    action_option_paneling_direction_outward_status: Посока навън
+    action_option_options_centered_status: Центриране спрямо разтегнатите елементи
+    action_option_options_make_unique_status: Уникализиране на преоформените елементи
+    action_option_options_keep_a: Запазване на A
+    action_option_options_keep_a_status: Запазване на екземплярите A след операцията и поставяне на резултата в нов детайл
+    action_option_options_keep_b: Запазване на B
+    action_option_options_keep_b_status: Запазване на екземплярите B след операцията
+    action_option_options_remove_unused_definitions_status: Изтриване на дефинициите на компоненти, които вече не се използват след операцията
+    action_option_options_reuse_definition: Повторно използване на детайли
+    action_option_options_reuse_definition_status: Обща дефиниция на компонент за плоскостите с еднаква форма
+    action_option_options_reuse_definition_mirrored: Огледално разположение
+    action_option_options_reuse_definition_mirrored_status: Огледално разположение за срещуположните плоскости с еднаква форма
+    notify:
+      validate_a: Потвърдете, за да преминете към избора на B
+      validate_b: Потвърдете, за да приложите операцията
+    error:
+      curve_intersect: Една от режещите равнини пресича неразтеглива крива
   smart_paint:
+    title: Боядисване
     default_material: Неопределен материал
+    filters: Филтри
+    filter_0: Без тип
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
@@ -570,12 +2344,94 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     filter_7: $t(tab.materials.type_7)
+    action_0: Боядисване на детайли
+    action_0_status: Щракнете върху детайл, за да приложите материал към неговия екземпляр
+    action_1: Боядисване на кантове
+    action_1_status: Щракнете върху ръб на плосък детайл, за да приложите материала '$t(tab.materials.type_4)'
+    action_2: Боядисване на повърхности
+    action_2_status: Щракнете върху повърхността на плосък детайл, за да приложите материала '$t(tab.materials.type_6)'
+    action_3: Пипета
+    action_3_status: Щракнете върху повърхност, за да вземете нейния материал
+    action_4: Изчистване
+    action_4_status: Щракнете върху детайл, за да изтриете всички материали от неговата дефиниция и от всички негови екземпляри
+    action_option_group_instances: Брой екземпляри
+    action_option_group_edges: Брой кантове
+    action_option_group_faces: Брой повърхности
+    action_option_instances_0_status: Оцветяване само на екземпляра на целевия детайл
+    action_option_instances_1_status: Оцветяване на всички екземпляри на целевия детайл
+    action_option_edges_0_status: Оцветяване само на целевия ръб
+    action_option_edges_1_status: Оцветяване на целевия ръб и срещуположния ръб на детайла
+    action_option_edges_2_status: Оцветяване на 4-те ръба на целевия детайл
+    action_option_faces_0_status: Оцветяване само на целевата повърхност
+    action_option_faces_1_status: Оцветяване на 2-те повърхности на целевия детайл
+    state_8_status: Отметнете материалите за замяна, след което потвърдете
+    select_filter_title: Материали за замяна
+    edges: "{{ count }} ръб"
+    edges_plural: "{{ count }} ръба"
+    edge_ymin: Дължина 1
+    edge_ymax: Дължина 2
+    edge_xmin: Ширина 1
+    edge_xmax: Ширина 2
+    faces: "{{ count }} повърхност"
+    faces_plural: "{{ count }} повърхности"
     face_zmin: Фурнир задна страна
     face_zmax: Фурнир предна страна
+    warning:
+      no_material: Няма материал
+      no_material_type: Няма материал от тип '{{ type }}'
+      selection_disable_instances_all: Правоъгълната селекция деактивира опцията '$t(tool.smart_paint.action_option_instances_1_status)'
+    error:
+      not_part: Посоченият обект не е детайл (компонент)
+      not_edge: Целевата повърхност не е ръб на плоскост
+      not_face: Целевата повърхност не е лице на плоскост
+  smart_axes:
+    title: Ориентиране
+    action_0: Обръщане
+    action_0_status: Щракнете върху детайл, за да обърнете екземпляра му по един от размерите
+    action_1: Размяна Дължина ↔ Ширина
+    action_1_status: Щракнете върху детайл, за да размените дължината с ширината му
+    action_2: Размяна Лицева ↔ Обратна страна
+    action_2_status: Щракнете върху детайл, за да размените лицевата с обратната му страна
+    action_3: Адаптиране на осите
+    action_3_status: Посочете повърхност на детайл и щракнете върху ръб, за да адаптирате осите му
+    action_4: Преместване на началната точка
+    action_4_status: Посочете повърхност на детайл и щракнете върху точка, за да поставите началната му точка там
+    action_5: Настройка на непрекъснатостта на фладера
+    action_5_status: Щракнете върху детайл, за да активирате или деактивирате откриването на непрекъснатост на фладера
+    action_5_to_state_10_status: Избор на група за непрекъснатост на фладера
+    action_5_state_10_status: Щракнете върху елемент от списъка, за да промените статуса му на група за непрекъснатост на фладера
+    action_option_group_direction: Посока
+    action_option_direction_0: Д
+    action_option_direction_1: Ш
+    action_option_direction_2: Деб
+    action_option_direction_0_status: Обръщане на детайла по дължина
+    action_option_direction_1_status: Обръщане на детайла по ширина
+    action_option_direction_2_status: Обръщане на детайла по дебелина
+    warning:
+      more_entities: Ще бъдат променени {{ count_used }} екземпляра със същата дефиниция
+    error:
+      not_part: Посоченият обект не е детайл (компонент)
+      not_orientable: Типът на този детайл не позволява ориентирането му
+      not_grained: Посоченият детайл няма посока на фладера
+      not_single_thickness_layer: Целевият детайл трябва да се състои от един слой
   smart_export:
     title: Експорт
+    action_0: Експорт на 3D детайл
+    action_0_status: Щракнете върху детайл
+    action_1: Експорт на 2D детайл
+    action_1_status: Щракнете върху повърхност на детайл
+    action_2: Експорт на повърхност
+    action_2_status: Щракнете върху повърхност
+    action_3: Експорт на път
+    action_3_status: Щракнете върху ръб
+    action_option_group_file_format: Формат
+    action_option_group_unit: Мерна единица
     action_option_group_faces: Лица
     action_option_group_options: Настройки
+    action_option_file_format_dxf_status: Експорт в DXF файл
+    action_option_file_format_stl_status: Експорт в STL файл
+    action_option_file_format_obj_status: Експорт в OBJ файл
+    action_option_file_format_svg_status: Експорт в SVG файл
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -585,6 +2441,13 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: Изолиране на проходните отвори и обединяване на дълбочините за всяка вдлъбнатина
+    action_option_options_include_paths_status: Експорт на ръбовете в детайла, несвързани с повърхност, като път
+    error:
+      not_part: Тази повърхност не принадлежи на детайл (компонент)
+      not_flat_face: Тази повърхност не е плоска
+      incompatible_active_path: Активният път не позволява експорт на този детайл
   smart_importers_bxf2:
     title: Импорт
     action_0: $t(tab.importers.bxf2.title)
+    action_0_status: Поставяне на конфигурацията

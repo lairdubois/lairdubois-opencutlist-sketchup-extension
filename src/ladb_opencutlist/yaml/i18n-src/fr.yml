@@ -3026,7 +3026,7 @@ tool:
     action_option_group_direction: Direction
     action_option_direction_0: Lo
     action_option_direction_1: La
-    action_option_direction_2: Ep
+    action_option_direction_2: Ép
     action_option_direction_0_status: Retourner la pièce dans sa longueur
     action_option_direction_1_status: Retourner la pièce dans sa largeur
     action_option_direction_2_status: Retourner la pièce dans son épaisseur

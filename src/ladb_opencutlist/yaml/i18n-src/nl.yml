@@ -432,8 +432,8 @@ tab:
       invalid_final_area_plural: Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben
       is_instance_name: De benaming van dit onderdeel komt uit de instantienaam van de groep
       is_dynamic_attributes_name: De benaming van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
-      has_edges: Dit onderdeel bevat {{ count }} randafwerking
-      has_edges_plural: Dit onderdeel bevat {{ count }} randafwerkingen
+      has_edges: Dit onderdeel bevat {{ count }} kantband
+      has_edges_plural: Dit onderdeel bevat {{ count }} kantbanden
       has_faces: Dit onderdeel bevat {{ count }} gefineerd oppervlak
       has_faces_plural: Dit onderdeel bevat {{ count }} gefineerde oppervlakken
       size_increased_0: |
@@ -445,8 +445,8 @@ tab:
       size_increased_2: |
         Verhoogd met de overmaat van het materiaal en het onderdeel
         ({{ increase_1 }} + {{ increase_2 }})
-      edge_decremented: Verminderd met de dikte van de randafwerking ({{ decrement }})
-      edge_ymin: Kantenband lengte 1
+      edge_decremented: Verminderd met de dikte van de kanten ({{ decrement }})
+      edge_ymin: Kantband lengte 1
       edge_ymax: Kantenband lengte 2
       edge_xmin: Kantenband breedte 1
       edge_xmax: Kantenband breedte 2
@@ -498,7 +498,7 @@ tab:
       multiple_alert: Gemeenschappelijke eigenschappen van de groep van {{ part_count }} onderdelen.
       general: Algemeen
       extra_help: Lijst van materiaalsoort-specifieke eigenschappen "**$t(tab.materials.type_{{ material_type }})**".
-      edges: Randafwerkingen
+      edges: Kanten
       faces: Vlakken
       name: Naam
       material: Materiaal
@@ -625,8 +625,8 @@ tab:
       hide_descriptions_help: Als deze optie is geselecteerd, worden de **beschrijvingen** van de onderdelen niet weergegeven.
       hide_tags: Verberg de badges
       hide_tags_help: Wanneer deze optie ingeschakeld is, dan zullen de **badges** die op de onderdelen geplaatst werden niet weergegeven worden.
-      hide_cutting_dimensions: Verberg de afmetingen van de onderdelen
-      hide_cutting_dimensions_help: Wanneer deze optie is ingeschakeld, dan zullen de afmetingen van de **onderdelen** niet getoond worden.
+      hide_cutting_dimensions: Verberg de ruwe afmetingen van de onderdelen
+      hide_cutting_dimensions_help: Wanneer deze optie is ingeschakeld, dan zullen de **ruwe** afmetingen van de onderdelen niet getoond worden.
       hide_bbox_dimensions: Verberg de netto afmetingen
       hide_bbox_dimensions_help: Wanneer deze optie ingeschakeld is, dan zullen de **netto** afmetingen niet weergegeven worden.
       hide_final_areas: Verberg de afgewerkte oppervlakten van *Plaatmateriaal*
@@ -745,8 +745,8 @@ tab:
       cutting_length: Lengte - onbewerkt
       cutting_width: Breedte - onbewerkt
       cutting_thickness: Dikte - onbewerkt
-      edge_cutting_length: Lengte van de randstroom
-      edge_cutting_width: Randstroombreedte
+      edge_cutting_length: Lengte van de kanten
+      edge_cutting_width: Bruto breedte kantband
       bbox_length: Lengte
       bbox_width: Breedte
       bbox_thickness: Dikte
@@ -1269,7 +1269,7 @@ tab:
         bin_2d_sheet_good: Paneel
         bin_2d_sheet_good_type_0: Standaard paneel
         bin_2d_sheet_good_type_1: Paneel overschot
-        bin_2d_veneer: Blad
+        bin_2d_veneer: Fineervel
         bin_2d_veneer_type_0: Standaard fineervel
         bin_2d_veneer_type_1: Fineerresten
         unused: Ongebruikt
@@ -1405,9 +1405,9 @@ tab:
         part_cutting_length: Ruwe lengte
         part_cutting_width: Ruwe breedte
         part_cutting_thickness: Ruwe dikte
-        part_edge_cutting_size: Randstroomgrootte
-        part_edge_cutting_length: Lengte van de randstroom
-        part_edge_cutting_width: Randstroombreedte
+        part_edge_cutting_size: Bruto afmeting kantband
+        part_edge_cutting_length: Bruto lengte kantband
+        part_edge_cutting_width: Bruto breedte kantband
         part_size: Afmeting
         part_length: Lengte
         part_width: Breedte
@@ -1655,7 +1655,7 @@ tab:
       export_empty: Uw export bevat geen enkel onderdeel.
     success:
       part_selected: "{{ count }} onderdeel geselecteerd in de onderdelenlijst."
-      part_selected_plural: "{{ count }} munten geselecteerd op de debietblad."
+      part_selected_plural: "{{ count }} onderdelen geselecteerd in de onderdelenlijst."
     tip:
       no_component: |
         De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instances zijn.
@@ -1767,7 +1767,7 @@ tab:
       grained_0: Geen nerf
       grained_1: De nerf volgt de lengte
       edge_decremented: Reductie
-      edge_decremented_help: Laat toe om aan te geven dat de afmetingen van de stuklijst verminderd moeten worden met de diktes van de kantenband.
+      edge_decremented_help: Laat toe om aan te geven dat de afmetingen van de onderdelen verminderd moeten worden met de diktes van de kanten.
       edge_decremented_0: Geen reductie
       edge_decremented_1: Verminder de afmeting met de dikte van de kantenband
       raw_estimated: Gebruikt volume
@@ -2263,7 +2263,7 @@ tab:
     length_format: Formaat
     length_format_0: $t(default.decimal)
     length_format_1: Architectonisch
-    length_format_2: Ingenieur
+    length_format_2: Technisch
     length_format_3: $t(default.fractional)
     length_precision: Nauwkeurigheid
     suppress_units_display: Toon de lengte-eenheid voor elke waarde
@@ -2357,7 +2357,7 @@ tool:
     zoom_extents: Alles tonen
     toggle_depth: Onderdelen op de achtergrond
     more: Meer
-    end_point: Einde
+    end_point: Eindpunt
     middle_point: Middelpunt
     third_point: Punt op een derde
     vcb_length: Lengte
@@ -2710,12 +2710,12 @@ tool:
     filter_7: $t(tab.materials.type_7)
     action_0: Onderdelen kleuren
     action_0_status: Klik op een onderdeel om een materiaal op zijn exemplaar toe te passen
-    action_1: Kleur het object
+    action_1: Kantbanden kleuren
     action_1_status: Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen
-    action_2: Vlak opschonen
+    action_2: Vlakken kleuren
     action_2_status: Klik op een vlak van een paneelonderdeel om er een materiaal '$t(tab.materials.type_6)' op toe te passen
     action_3: Pipet
-    action_3_status: Klik op een gezicht om een monster van het materiaal te nemen
+    action_3_status: Klik op een vlak om een monster van het materiaal te nemen
     action_4: Schoonmaken
     action_4_status: Klik op een onderdeel om alle materialen en alle instanties ervan uit de definitie te verwijderen
     action_option_group_instances: Aantal exemplaren
@@ -2723,15 +2723,15 @@ tool:
     action_option_group_faces: Aantal aanzichten
     action_option_instances_0_status: Kleur alleen de beoogde onderdeelinstantie
     action_option_instances_1_status: Kleur alle exemplaren van het beoogde onderdeel
-    action_option_edges_0_status: Kleur alleen het beoogde nummer
-    action_option_edges_1_status: Kleur het doelnummer en het tegenovergestelde nummer van het stuk
-    action_option_edges_2_status: Kleur de 4 nummers van het beoogde stuk
+    action_option_edges_0_status: Kleur alleen de beoogde kant
+    action_option_edges_1_status: Kleur de beoogde kant en de tegenoverliggende kant van het onderdeel
+    action_option_edges_2_status: Kleur de 4 kanten van het beoogde onderdeel
     action_option_faces_0_status: Kleur alleen het beoogde aanzicht
     action_option_faces_1_status: Kleur 2 zijden van het beoogde stuk
     state_8_status: Vink de te vervangen materialen aan en bevestig
     select_filter_title: Te vervangen materialen
-    edges: "{{ count }} nummer"
-    edges_plural: "{{ count }} nummers"
+    edges: "{{ count }} kant"
+    edges_plural: "{{ count }} kanten"
     edge_ymin: Lengte 1
     edge_ymax: Lengte 2
     edge_xmin: Breedte 1
@@ -2765,9 +2765,9 @@ tool:
     action_5_to_state_10_status: Nerfcontinuïteitsgroep kiezen
     action_5_state_10_status: Klik op een element in de lijst om de status van de nerfcontinuïteitsgroep te wijzigen
     action_option_group_direction: Richting
-    action_option_direction_0: LO
+    action_option_direction_0: L
     action_option_direction_1: La
-    action_option_direction_2: Ep
+    action_option_direction_2: D
     action_option_direction_0_status: Draai het stuk in de lengte om
     action_option_direction_1_status: Draai het stuk naar de breedte
     action_option_direction_2_status: Draai het stuk om in zijn dikte

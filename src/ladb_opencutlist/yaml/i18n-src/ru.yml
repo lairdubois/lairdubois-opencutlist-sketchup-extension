@@ -2048,7 +2048,7 @@ tab:
         option_col_sep_semicolon: Точка с запятой
         option_first_line_headers: Строка заголовков
         option_first_line_headers_0: Данные
-        option_first_line_headers_1: Столбец заголовков
+        option_first_line_headers_1: Заголовки столбцов
       import:
         title: Импорт деталей в модель
         info_0: |
@@ -2445,8 +2445,8 @@ tool:
     action_option_options_pull_centered_status: Симметричное вытягивание от заданного кликом центра
     action_option_options_pull_locked_status: Блокировка подъема по оси
     action_option_options_draw_in: Рисовать в
-    action_option_options_draw_in_0: Рисование в активном элементе
-    action_option_options_draw_in_1: Рисовать от первой точки родительского элемента
+    action_option_options_draw_in_0: в активном элементе
+    action_option_options_draw_in_1: от первой точки родительского элемента
     action_option_options_draw_in_status: Нарисовать в родительском элементе, на который указывает первая точка
     action_option_options_pick_material: Пипетка
     action_option_options_pick_material_status: Применить материал детали, на которую указывает первая точка, к создаваемой детали
@@ -2634,14 +2634,14 @@ tool:
     title: Модификатор
     action_0: Растянуть
     action_0_status: Растянуть деталь
-    action_0_state_1_status: Кликните на ручку, чтобы растянуть
-    action_0_state_1a_status: Кликните на схему распила, чтобы переместить ее
-    action_0_state_1b_status: Добавить схему распила
-    action_0_state_1c_status: Удалить схему распила
-    action_0_state_1d_status: Кликните, чтобы переместить геометрию, расположенную между двумя плоскостями сечения
-    action_0_state_10_status: Перетащите схему распила, чтобы переместить ее
-    action_0_state_11_status: Нажмите, чтобы добавить схему распила
-    action_0_state_12_status: Нажмите на схему распила, чтобы удалить ее
+    action_0_state_1_status: Кликните на маркер, чтобы растянуть
+    action_0_state_1a_status: Кликните на вспомогательную плоскость, чтобы переместить ее
+    action_0_state_1b_status: Добавить вспомогательную плоскость
+    action_0_state_1c_status: Удалить вспомогательную плоскость
+    action_0_state_1d_status: Кликните, чтобы переместить геометрию, расположенную между двумя вспомогательными плоскостями
+    action_0_state_10_status: Для перемещения вспомогательной плоскости, необходимо кликнуть по ней
+    action_0_state_11_status: Кликните, чтобы добавить вспомогательную плоскость
+    action_0_state_12_status: Кликните на вспомогательную плоскость, чтобы удалить ее
     action_0_state_2_status: Кликните, чтобы подтвердить растяжение, или введите расстояние
     action_1: Окантовать
     action_1_status: Создание серии деталей на основе замкнутого твердого тела или чертежа из направляющих линий
@@ -2649,7 +2649,7 @@ tool:
     action_1_state_1_status: Выберите грани для окантовки
     action_1_rollover_face_status: Грань под курсором
     action_1_select_similar_status: Выделить все одинаковые грани
-    action_1_select_all_edges_status: Выбрать все смежные ребра
+    action_1_select_all_edges_status: Выбрать все смежные грани
     action_2: Объединить
     action_2_status: Объединить несколько деталей в одну
     action_2_state_0_status: Выберите деталь А
