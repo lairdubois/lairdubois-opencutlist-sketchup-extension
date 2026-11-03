@@ -1943,6 +1943,7 @@ tab:
       formats: Formats
       cut_options: Cutting Parameters
       estimate_options: Estimation Options
+      export_options: Export Options
       attributes: Attributes
       thickness: Thickness
       thickness_help: |
@@ -2004,6 +2005,29 @@ tab:
       raw_estimated_1: Volume of raw material required
       multiplier_coefficient: Coefficient
       multiplier_coefficient_help: Used to indicate the multiplying coefficient applied to the gross volume.
+      machining_separated: Machining Geometries
+      machining_separated_help: |
+        Allows you to define how the machining geometries for this material are exported in 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        The machining geometries are subtracted from the part's shape and merged with its depth layers, as if the solid operation were performed in the part's geometry.
+        *Overflowing machining geometries are truncated.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        The part retains its original shape. Each machining geometry is exported as-is, without merging with the others, on a `MACHININGS` layer per depth, named after the material.
+      machining_separated_0: Carved into the part
+      machining_separated_1: Separated on their own layers
+      machining_material_colored: Colors for export
+      machining_material_colored_help: |
+        Allows you to define the colors of separate machining operations in 2D exports (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        The outline of the machinings takes on the color of this material, without fill.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Machining operations take on the colors of what they cut out of the part: the colors of the holes if they are through holes, or the colors of the cavities otherwise. This is useful for machines that determine the type of cut based on the colors.
+      machining_material_colored_0: Automatic
+      machining_material_colored_1: Material Color
       std_attributes_dim_placeholder: Select a size
       std_volumic_masses: Density
       std_volumic_masses_help: Allows to set the density for all sizes as well as for each standard material size.
@@ -2768,7 +2792,7 @@ tool:
     action_option_options_ask_name_status: Enter part names manually
     action_option_options_layer_name: Tag
     action_option_options_layer_name_status: Name of the tag on which the parts are placed
-    action_option_anchor_center_x_status: Centered in X
+    action_option_anchor_center_x_status: Centered on X
     action_option_anchor_center_y_status: Centered on Y
     action_option_anchor_center_z_status: Centered on Z
     action_option_anchor_origin_status: Origin of the component
