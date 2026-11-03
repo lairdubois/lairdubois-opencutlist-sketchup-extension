@@ -7,7 +7,7 @@ _disabled_msg: |
   Para ayudar a finalizar la traducción, consulte la [Documentación de OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: Para tener en cuenta todos los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
-_description: Generador de lista de piezas y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)
+_description: Generador de lista de piezas y diagrama de corte de tableros y listones para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)
 default:
   minimize: Minimizar
   maximize: Maximizar
@@ -99,7 +99,7 @@ default:
   fill_color: Color de relleno
   length: Longitud
   width: Anchura
-  thickness: Grosor
+  thickness: Espesor
   height: Altura
   deprecated: Obsoleto
 core:
@@ -340,7 +340,7 @@ tab:
     select_part_plural: Seleccionar las piezas
     material_undefined: Ningún material definido
     not_available_std_width: Ancho no estándar
-    not_available_std_thickness: Grosor no estándar
+    not_available_std_thickness: Espesor no estándar
     not_available_std_section: Sección no estándar
     highlight_part: Mostrar la pieza en el modelo
     highlight_parts: Mostrar las piezas en el modelo
@@ -360,7 +360,7 @@ tab:
       show_hide_blocks: Mostrar / Ocultar todos los grupos
       scroll_to_block: Desplaza al grupo
       not_available_std_width: El ancho *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'
-      not_available_std_thickness: El grosor *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'
+      not_available_std_thickness: El espesor *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'
       not_available_std_section: La sección transversal *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'
       add_std_width_to_material: |
         Añade anchura *{{ std_dimension }}*
@@ -378,7 +378,7 @@ tab:
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
         El espesor *{{ std_dimension }}* se redondea por la precisión de las unidades del modelo.
-        Espessor real: *{{ std_dimension_real }}*
+        Espesor real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
@@ -430,8 +430,8 @@ tab:
       children_size_increase: Esta dimensión se incrementa con una sobremedida para {{ count }} piezas agrupadas
       invalid_final_area: Atención, esta área sumable no se pudo calcular porque {{ count }} pieza (de {{ total }}) tiene un área no válida
       invalid_final_area_plural: Precaución, esta área sumable no se pudo calcular porque {{ count }} piezas (de {{ total }}) tienen un área no válida
-      is_instance_name: La designación de esta pieza se extrae del nombre de instancia del grupo
-      is_dynamic_attributes_name: La designación de esta pieza se extrae del atributo 'Name' del componente dinámico
+      is_instance_name: La denominación de esta pieza se extrae del nombre de instancia del grupo
+      is_dynamic_attributes_name: La denominación de esta pieza se extrae del atributo 'Name' del componente dinámico
       has_edges: Esta pieza contiene {{ count }} canto chapado
       has_edges_plural: Esta pieza contiene {{ count }} tiras de los cantos
       has_faces: Esta pieza contiene {{ count }} superficie chapada
@@ -445,7 +445,7 @@ tab:
       size_increased_2: |
         Aumentado con la sobremedida del Material y de la Pieza
         ({{ increase_1 }} + {{ increase_2 }})
-      edge_decremented: Reducido por el grosor de las tiras de los cantos ({{ decrement }})
+      edge_decremented: Reducido por el espesor de las tiras de los cantos ({{ decrement }})
       edge_ymin: Longitud del borde 1
       edge_ymax: Longitud del borde 2
       edge_xmin: Ancho del borde 1
@@ -525,8 +525,8 @@ tab:
       thickness_layer_count_help: |
         Defina aquí el número de capas que dividen la pieza dibujada en su espesor.
 
-        *Ejemplo:* Si tienes una pieza dibujada de *38mm* de grosor y quieres hacerla pegando dos tableros de *19mm*, introduce **2** en este campo.
-        *OpenCutList contará entonces 2 piezas de 19mm de grosor en lugar de 1 pieza de 38mm.*
+        *Ejemplo:* Si tienes una pieza dibujada de *38mm* de espesor y quieres hacerla pegando dos tableros de *19mm*, introduce **2** en este campo.
+        *OpenCutList contará entonces 2 piezas de 19mm de espesor en lugar de 1 pieza de 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
       length_increase_help: $t(tab.materials.edit_material.length_increase_help)
@@ -607,7 +607,7 @@ tab:
       smart_material_help: Si seleccionas esta opción, a las piezas sin material definido se les puede asignar el material asignado a uno de sus padres o hijos.
       dynamic_attributes_name: Utilice el atributo *Name* de componentes dinámicos
       dynamic_attributes_name_help: |
-        Si se selecciona esta opción, la designación de las piezas se extraerá del atributo *Name*, si está definido.
+        Si se selecciona esta opción, la denominación de las piezas que sean componentes dinámicos se extraerá del atributo *Name*, si está definido.
 
         <i class='ladb-opencutlist-icon-warning'></i> Las instancias de piezas con la misma definición se separarán si el atributo *Name* no tiene el mismo valor.
       part_number_with_letters: Utilizar letras para la numeración de piezas
@@ -647,7 +647,7 @@ tab:
         Cada propiedad puede clasificarse en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i>*descendente*.
       part_order_strategy: Clasificación de piezas
       part_order_strategy_help: |
-        Reorganice las siguientes propiedades para definir el orden de clasificación dentro de cada grupo.
+        Reorganice las siguientes propiedades para definir el orden de clasificación de las piezas dentro de cada grupo.
         Las propiedades se pueden clasificar en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendente*.
       dimension_column_order_strategy: Orden de las columnas
       dimension_column_order_strategy_help: |
@@ -674,7 +674,7 @@ tab:
       filters_warning_plural: Este filtro solo muestra **{{ count }}** piezas de un total de {{ total }}.
       edge_material_names_filter: Material de borde de cantos a filtrar
       veneer_material_names_filter: Material de chapa de madera a filtrar
-      names_filter: Designaciones a filtrar
+      names_filter: Denominaciones a filtrar
       tags_filter: Filtrar por distintivos
       tags_filter_any: Todos los distintivos
       dimensions_help: Ilustración de las dimensiones
@@ -1063,7 +1063,7 @@ tab:
         cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
         cutting_dimensions_increase_1d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**)."
-        cutting_dimensions_edge_decrement: Dimensiones reducidas por el grosor de las tiras del canto. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        cutting_dimensions_edge_decrement: Dimensiones reducidas por el espesor de las tiras del canto. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
       title: Diagrama de corte
       option_problem_type: Tipo
@@ -1089,7 +1089,7 @@ tab:
       option_scrap_bin_1d_edge_sizes: Restos de Canto
       option_scrap_bin_1d_sizes_placeholder: largo x cantidad ; ...
       option_scrap_bin_1d_sizes_help: |
-        Indicar aquí la lista de los restos de listón o cantos para incluir en el despiece.
+        Indicar aquí la lista de los restos de listón o cantos para incluir en el diagrama de corte.
 
         *Si no se especifica ninguna unidad se aplicarán las unidades del modelo.*
       option_scrap_bin_1d_none: Ninguno
@@ -1170,7 +1170,7 @@ tab:
         Espacio mínimo entre cada pieza.
         Este valor puede corresponder a la anchura de la hoja o del útil de corte.
       option_trimming: Margen
-      option_trimming_1d_help: Margen de saneado en cada extremo del listón o canto que se considerará como recorte.
+      option_trimming_1d_help: Margen de saneado en cada extremo del listón o tira de canto que se considerará como recorte.
       option_trimming_2d_help: Margen de saneado en todo el contorno del tablero o chapado que se considerará como recorte.
       option_items_formula: Fórmula
       option_items_formula_help: |
@@ -1326,7 +1326,7 @@ tab:
           is_bin_selection: Los **bloques ocultos** no se exportarán.
         error:
           overflow_gt_spacing: |
-            El reborde de mecanizado ({{ overflow }}) debe ser inferior o igual al espacio ({{ spacing }}) configurado en el diagrama de corte.
+            La demasiá de mecanizado ({{ overflow }}) debe ser inferior o igual al espacio ({{ spacing }}) configurado en el diagrama de corte.
       error:
         no_part: Ninguna pieza.
         no_bin_1d: No se ha seleccionado ningún listón o canto estándar ni se ha definido ningún resto.
@@ -1342,7 +1342,7 @@ tab:
         cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
         cutting_dimensions_increase_1d: Dimensiones mayoradas por la sobredimensión de la longitud (**{{ length_increase }}**) configuradas en el material '{{ material_name }}'.
         cutting_dimensions_increase_2d: Dimensiones mayoradas por la sobredimensión configuradas en el material '{{ material_name }}'en longitud (**{{ length_increase }}**) y anchura (**{{ width_increase }}**).
-        cutting_dimensions_edge_decrement: Dimensiones reducidas por el grosor de las tiras del canto. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        cutting_dimensions_edge_decrement: Dimensiones reducidas por el espesor de las tiras del canto. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Rótulos
       options_layout: Composición
@@ -1596,16 +1596,16 @@ tab:
         *Esta opción no permite detectar otros tipos de curva.*
       option_merge_holes: Descomposición
       option_merge_holes_0: Básico
-      option_merge_holes_1: Contorno + perforaciones + reborde
+      option_merge_holes_1: Contorno + perforaciones + demasiá
       option_merge_holes_help: |
         **Básico**
         La forma de la pieza se exporta con la proyección de cada cara en una capa según su profundidad.
 
-        **Contorno + Perforaciones + Reborde**
-        Activa la separación del reborde exterior de las piezas de sus perforaciones, así como el cálculo del reborde de mecanizado aplicado a las superficies que se encuentran junto al perímetro y los huecos.
-      option_merge_holes_overflow: Reborde de mecanizado
+        **Contorno + Perforaciones + Demasiá**
+        Activa la separación del reborde exterior de las piezas de sus perforaciones, así como el cálculo de la demasiá de mecanizado aplicado a las superficies que se encuentran junto al perímetro y los huecos.
+      option_merge_holes_overflow: Demasiá de mecanizado
       option_merge_holes_overflow_help: |
-        Permite definir la distancia del reborde de mecanizado aplicado a las superficies junto al borde y en torno a los huecos.
+        Permite definir la distancia de la demasiá de mecanizado aplicado a las superficies junto al borde y en torno a los huecos.
       option_include_paths: Trazados
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utilizar aristas no asociadas a una cara
@@ -1639,8 +1639,8 @@ tab:
       number_and_name: Número y denominación
       number_without_hardware: Número (sin accesorios)
       size: Dimensiones
-      area: Superficie capaz
-      volume: Volumen capaz
+      area: Superficie
+      volume: Volumen
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)
@@ -1767,9 +1767,9 @@ tab:
       grained_0: Sin veta
       grained_1: La veta sigue la longitud
       edge_decremented: Reducir
-      edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
+      edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el espesor de las tiras del canto.
       edge_decremented_0: Sin reducción
-      edge_decremented_1: Reducir por el grosor de las tiras del canto
+      edge_decremented_1: Reducir por el espesor de las tiras del canto
       raw_estimated: Volumen utilizado
       raw_estimated_help: |
         Permite definir el volumen utilizado para estimar la masa y el costo total de las piezas de este material.
@@ -1778,7 +1778,7 @@ tab:
         El volumen total será la suma de los volúmenes debitados de las piezas.
 
         **Volumen de materia prima necesario**
-        El volumen total será la suma de los volúmenes de los tableros, hojas, barras o bandas de las piezas después del diagrama de corte.
+        El volumen total será la suma de los volúmenes de los tableros, hojas, barras o tiras de canto de las piezas después del diagrama de corte.
       raw_estimated_0: Volumen útil en bruto
       raw_estimated_1: Volumen de materia prima necesaria
       multiplier_coefficient: Coeficiente multiplicador
@@ -1985,7 +1985,7 @@ tab:
       count: Cantidad
       bbox_length: Longitud
       bbox_width: Anchura
-      bbox_thickness: Grosor
+      bbox_thickness: Espesor
       material: Material
       tags: Etiquetas
     tooltip:
@@ -2110,9 +2110,9 @@ tab:
       import:
         title: Importación de la configuración en el modelo
         info_0: |
-          Está a punto de importar una configuración de **{{ count }} cuerpo** en el modelo.
+          Está a punto de importar una configuración de **{{ count }} casco** en el modelo.
         info_0_plural: |
-          Está a punto de importar una configuración de **{{ count }} cuerpos** en el modelo.
+          Está a punto de importar una configuración de **{{ count }} cascos** en el modelo.
         info_1: Podrá elegir su ubicación en el modelo activo.
         materials: Materiales
         layers: Etiquetas
@@ -2128,7 +2128,7 @@ tab:
         option_front_part_layer_name: Frentes
         option_front_part_layer_name_help: Etiqueta que se aplicará a las piezas de frente.
         option_back_part_layer_name: Fondos
-        option_back_part_layer_name_help: Etiqueta que se aplicará a los fondos de los cuerpos.
+        option_back_part_layer_name_help: Etiqueta que se aplicará a los fondos de los cascos.
         option_machining_material_name: Mecanizados
         option_machining_material_name_help: Material que se aplicará a los **mecanizados**.
         option_machining_layer_name: Mecanizados
@@ -2172,7 +2172,7 @@ tab:
       warning:
         partial_support: |
           Necesita **SketchUp 2021.1** o una versión posterior para disfrutar de todas las funcionalidades.
-          Las geometrías 3D de los herrajes **no podrán importarse**.
+          Las geometrías 3D de las piezas de herrajes **no podrán importarse**.
       obsolete_base: Para permanecer sincronizado, debe volver a cargar el archivo BXF2.
   tutorials:
     label: Tutoriales
@@ -2361,7 +2361,7 @@ tool:
     middle_point: Punto medio
     third_point: Punto a tercios
     vcb_length: Longitud
-    vcb_thickness: Grosor
+    vcb_thickness: Espesor
     vcb_size: Cotas
     vcb_radius: Radio
     vcb_diameter: Diámetro
@@ -2495,7 +2495,7 @@ tool:
     action_3_state_0_merge_status: Arrastre hasta los huecos vecinos para un fondo común
     action_option_group_groove: Ranura
     action_2_option_group_offset: Holgura
-    action_option_group_thickness: Grosor
+    action_option_group_thickness: Espesor
     action_option_group_overlay: Montaje
     action_option_group_axes: Ejes
     action_option_group_measure_type: Medida
@@ -2509,17 +2509,17 @@ tool:
     action_option_groove_groove_panel_reduction: Reducción del tablero
     action_option_groove_groove_panel_reduction_status: Define cuánto se reduce la trasera en cada canto encajado en una ranura, dejando esa holgura en el fondo de la ranura
     action_option_groove_groove_width_clearance: Holgura de anchura
-    action_option_groove_groove_width_clearance_status: Define cuánto más ancha que el grosor de la trasera se mecaniza la ranura, totalmente hacia el lado exterior del casco
+    action_option_groove_groove_width_clearance_status: Define cuánto más ancha que el espesor de la trasera se mecaniza la ranura, totalmente hacia el lado exterior del casco
     action_option_groove_groove_setback: Retranqueo
-    action_option_groove_groove_setback_status: Define cuánto retrocede el fondo hacia el interior del cuerpo y, por tanto, dónde se mecaniza la ranura
+    action_option_groove_groove_setback_status: Define cuánto retrocede el fondo hacia el interior del casco y, por tanto, dónde se mecaniza la ranura
     action_option_groove_groove_through: Ranura pasante
     action_option_groove_groove_through_status: Prolongar la ranura hasta el extremo de las piezas que cubren a su vecina, cuando desemboca en ellas sin ser visible
-    action_option_thickness_thickness: Grosor
+    action_option_thickness_thickness: Espesor
     action_option_thickness_thickness_status: Define el espesor de los tableros
     action_option_overlay_inset_status: "Frente embutido: colocado en la abertura, enrasado con la cara delantera"
     action_3_option_overlay_inset_status: "Fondo en ranura: encajado en una ranura mecanizada en las piezas que bordean la abertura"
-    action_option_overlay_full_overlay_status: "Frente superpuesto: colocado delante de la cara delantera, cubriendo los tableros hasta el borde exterior del cuerpo y hasta la mitad del espesor de los tableros interiores"
-    action_3_option_overlay_full_overlay_status: "Fondo superpuesto: colocado en la parte trasera del cuerpo, cubriendo los tableros hasta el borde exterior y hasta la mitad del espesor de los tableros interiores, sin ningún mecanizado"
+    action_option_overlay_full_overlay_status: "Frente superpuesto: colocado delante de la cara delantera, cubriendo los tableros hasta el borde exterior del casco y hasta la mitad del espesor de los tableros interiores"
+    action_3_option_overlay_full_overlay_status: "Fondo superpuesto: colocado en la parte trasera del casco, cubriendo los tableros hasta el borde exterior y hasta la mitad del espesor de los tableros interiores, sin ningún mecanizado"
     action_option_overlay_against_protrusions_status: "Frente superpuesto contra salientes: superpuesto sobre los tableros enrasados con la abertura y ajustado contra los que sobresalen"
     action_3_option_overlay_against_protrusions_status: "Fondo superpuesto contra salientes: superpuesto sobre los tableros enrasados con la abertura y ajustado entre los que sobresalen (laterales salientes), sin ningún mecanizado"
     action_option_measure_type_inside_status: Situar el espesor hacia el interior del punto señalado
@@ -2662,14 +2662,14 @@ tool:
     action_4_status: Crear una pieza correspondiente a la intersección de varias piezas
     action_4_state_0_status: Seleccione la pieza A
     action_4_state_1_status: Seleccione la pieza B
-    action_option_group_thickness: Grosor
+    action_option_group_thickness: Espesor
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Ejes
     action_option_group_paneling_joint_type: Unión
     action_option_group_paneling_direction: Dirección
     action_option_group_csg_operation: Operación
     action_option_group_options: Opciones
-    action_option_thickness_thickness: Grosor
+    action_option_thickness_thickness: Espesor
     action_option_thickness_thickness_status: Define el espesor de los tableros
     action_option_stretch_measure_type_outside_status: Medir por el exterior
     action_option_stretch_measure_type_offset_status: Medir la diferencia
