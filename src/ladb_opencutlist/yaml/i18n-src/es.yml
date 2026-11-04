@@ -1785,9 +1785,26 @@ tab:
       multiplier_coefficient: Coeficiente multiplicador
       multiplier_coefficient_help: Permite indicar el coeficiente multiplicador aplicado al volumen bruto medido.
       machining_separated: Geometrías de mecanizados
+      machining_separated_help: |
+        Permite definir cómo se exportan en 2D (DXF, SVG) las geometrías de mecanizados de este material.
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Las geometrías de mecanizados se restan de la forma de la pieza y se fusionan con sus capas de profundidad, como si la operación sólida se realizara en la geometría de la pieza.
+        *Las geometrías de mecanizados que sobresalen se truncan.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        La pieza conserva su forma inicial. Cada geometría de mecanizado se exporta tal cual, sin fusionarse con las demás, en una capa `MACHININGS` por profundidad, nombrada según el material.
       machining_separated_0: Vaciados en la pieza
       machining_separated_1: Separados en sus propias capas
       machining_material_colored: Colores en la exportación
+      machining_material_colored_help: |
+        Permite definir los colores de los mecanizados separados en las exportaciones 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        El contorno de los mecanizados toma el color de este material, sin relleno.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Los mecanizados toman los colores de lo que cortan en la pieza: los de las perforaciones si son pasantes, los de los huecos en caso contrario. Útil para las máquinas que deducen el tipo de corte a partir de los colores.
       machining_material_colored_0: Automáticos
       machining_material_colored_1: Color del material
       std_attributes_dim_placeholder: Elige un tamaño

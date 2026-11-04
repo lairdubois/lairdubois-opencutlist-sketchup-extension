@@ -1722,6 +1722,7 @@ tab:
       formats: Формати
       cut_options: Параметри розкрою
       estimate_options: Опції оцінки
+      export_options: Опції експорту
       attributes: Атрибути
       thickness: Товщина
       thickness_help: |
@@ -1783,6 +1784,29 @@ tab:
       raw_estimated_1: Об'єм використаного матеріалу
       multiplier_coefficient: Коефіцієнт надбавки
       multiplier_coefficient_help: Використовується для позначення коефіцієнта множення, застосованого до грубого об'єму.
+      machining_separated: Геометрія обробки
+      machining_separated_help: |
+        Дозволяє визначити, як геометрія обробки цього матеріалу експортується у 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Геометрія обробки віднімається від форми деталі та об'єднується з її шарами глибини, ніби твердотільна операція виконувалася в геометрії деталі.
+        *Геометрія обробки, що виступає за межі, обрізається.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Деталь зберігає свою початкову форму. Кожна геометрія обробки експортується як є, без об'єднання з іншими, на шар `MACHININGS` для кожної глибини, названий за матеріалом.
+      machining_separated_0: Вирізані в деталі
+      machining_separated_1: Відокремлені на власних шарах
+      machining_material_colored: Кольори під час експорту
+      machining_material_colored_help: |
+        Дозволяє визначити кольори відокремленої обробки у 2D-експорті (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Контур обробки набуває кольору цього матеріалу, без заливки.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Обробка набуває кольорів того, що вона вирізає в деталі: кольорів отворів, якщо вони наскрізні, інакше кольорів порожнин. Корисно для верстатів, які визначають тип різу за кольорами.
+      machining_material_colored_0: Автоматичні
+      machining_material_colored_1: Колір матеріалу
       std_attributes_dim_placeholder: Виберіть розмір
       std_volumic_masses: Густина
       std_volumic_masses_help: Дозволяє визначити масу об'єму для всіх розмірів, а також для кожного типорозміру матеріалу.
