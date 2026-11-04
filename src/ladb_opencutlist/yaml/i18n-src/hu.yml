@@ -162,8 +162,6 @@ core:
   warning:
     dev: |
       Ön az *OpenCutList* **fejlesztői** verzióját használja.
-      Ez a verzió csak tesztelésre szolgál.
-      Nem ajánlott éles környezetben használni.
 
       Hiba jelentéséhez: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Ebben a kontextusban nem érhető el

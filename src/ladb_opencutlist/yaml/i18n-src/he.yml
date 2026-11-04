@@ -158,8 +158,6 @@ core:
   warning:
     dev: |
       אתה משתמש בגרסת **פיתוח** של *OpenCutList*.
-      גרסה זו זמינה רק לבדיקה.
-      לא מומלץ להשתמש בה בייצור.
 
       לדיווח על שגיאה: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: לא זמין בהקשר זה

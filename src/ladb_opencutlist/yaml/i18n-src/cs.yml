@@ -162,8 +162,6 @@ core:
   warning:
     dev: |
       Používáte **vyvíjenou** verzi *OpenCutList*.
-      Tato verze je k dispozici pouze pro testování.
-      Nedoporučuje se jej používat ve výrobě.
 
       Chcete-li nahlásit chybu:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Vzorec není v tomto kontextu k dispozici
