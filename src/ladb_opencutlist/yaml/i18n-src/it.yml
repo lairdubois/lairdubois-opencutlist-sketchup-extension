@@ -1785,9 +1785,26 @@ tab:
       multiplier_coefficient: Coefficiente moltiplicatore
       multiplier_coefficient_help: Indica il coefficiente di moltiplicazione applicato al volume grezzo misurato.
       machining_separated: Geometrie delle lavorazioni
+      machining_separated_help: |
+        Permette di definire come vengono esportate in 2D (DXF, SVG) le geometrie delle lavorazioni di questo materiale.
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Le geometrie delle lavorazioni vengono sottratte dalla forma della parte e fuse con i suoi layer di profondità, come se l'operazione solida fosse eseguita nella geometria della parte.
+        *Le geometrie delle lavorazioni sporgenti vengono troncate.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        La parte mantiene la sua forma iniziale. Ogni geometria di lavorazione viene esportata così com'è, senza fusione con le altre, su un layer `MACHININGS` per profondità, denominato in base al materiale.
       machining_separated_0: Ricavate nella parte
       machining_separated_1: Separate sui propri layer
       machining_material_colored: Colori in esportazione
+      machining_material_colored_help: |
+        Permette di definire i colori delle lavorazioni separate nelle esportazioni 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Il contorno delle lavorazioni assume il colore di questo materiale, senza riempimento.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Le lavorazioni assumono i colori di ciò che tagliano nella parte: quelli delle forature se sono passanti, altrimenti quelli delle cavità. Utile per le macchine che deducono il tipo di taglio dai colori.
       machining_material_colored_0: Automatici
       machining_material_colored_1: Colore del materiale
       std_attributes_dim_placeholder: Scegli una dimensione

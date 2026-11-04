@@ -1722,6 +1722,7 @@ tab:
       formats: Formatos
       cut_options: Opções de corte
       estimate_options: Opções de Orçamento
+      export_options: Opções de exportação
       attributes: Atributos
       thickness: Espessura
       thickness_help: |
@@ -1783,6 +1784,29 @@ tab:
       raw_estimated_1: Volume de matéria-prima necessário
       multiplier_coefficient: Coeficiente multiplicador
       multiplier_coefficient_help: Permite indicar o coeficiente multiplicador aplicado sobre o volume bruto medido.
+      machining_separated: Geometrias de usinagens
+      machining_separated_help: |
+        Permite definir como as geometrias de usinagens deste material são exportadas em 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        As geometrias de usinagens são subtraídas da forma da peça e fundidas com as suas camadas de profundidade, como se a operação sólida fosse realizada na geometria da peça.
+        *As geometrias de usinagens que ultrapassam a peça são truncadas.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        A peça mantém a sua forma inicial. Cada geometria de usinagem é exportada tal como está, sem fusão com as outras, numa camada `MACHININGS` por profundidade, nomeada a partir do material.
+      machining_separated_0: Entalhadas na peça
+      machining_separated_1: Separadas nas suas próprias camadas
+      machining_material_colored: Cores na exportação
+      machining_material_colored_help: |
+        Permite definir as cores das usinagens separadas nas exportações 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        O contorno das usinagens assume a cor deste material, sem preenchimento.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        As usinagens assumem as cores do que cortam na peça: as dos furos se forem passantes, caso contrário as das cavidades. Útil para as máquinas que deduzem o tipo de corte a partir das cores.
+      machining_material_colored_0: Automáticas
+      machining_material_colored_1: Cor do material
       std_attributes_dim_placeholder: Escolha um tamanho
       std_volumic_masses: Densidade
       std_volumic_masses_help: Permite definir a densidade para todas as dimensões, bem como para cada dimensão padrão do material.
