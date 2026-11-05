@@ -1392,7 +1392,8 @@ namespace Packy {
             const bool oriented = j.value("oriented", false);
             const StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
 
-            ItemTypeId item_type_id = builder.instance_builder().add_item_type(width, height, oriented, stack_id);
+            ItemTypeId item_type_id = builder.instance_builder().add_item_type(width, height, oriented);
+            builder.instance_builder().set_item_type_stack_id(item_type_id, stack_id);
             if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
             builder.instance_builder().set_item_type_copies(item_type_id, copies);
             if (copies_min > 0) builder.instance_builder().set_item_type_copies_min(item_type_id, copies_min);
