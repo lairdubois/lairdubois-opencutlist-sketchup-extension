@@ -1689,6 +1689,7 @@ tab:
       option_pins_length_1: Courte
       option_pins_length_2: Moyenne
       option_pins_length_3: Longue
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Permet de choisir la longueur de la flèche des épingles.
       option_pins_direction: Direction
       option_pins_direction_0: Le long de l'axe Rouge

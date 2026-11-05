@@ -1754,7 +1754,7 @@
                         $formGroupPins.hide();
                     } else {
                         $formGroupPins.show();
-                        if ($selectPinsLength.val() === '0') {
+                        if ($selectPinsLength.val() === '0' || $selectPinsLength.val() === '4' /* PINS_LENGTH_AUTO */) {
                             $formGroupPinsDirection.hide();
                         } else {
                             $formGroupPinsDirection.show();

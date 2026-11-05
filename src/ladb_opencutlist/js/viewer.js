@@ -184,6 +184,13 @@ class Box3HelperDashed extends THREE.LineSegments {
 
 const DPI = 96;
 
+const PINS_LENGTH_AUTO = 4;             // Pins laid out along the 4 sides of the frame
+const PINS_AUTO_MARGIN = 6;             // In pixels, between the frame and the pins
+const PINS_AUTO_GAP = 3;                // In pixels, between two pins of a side
+const PINS_AUTO_MAX_UNCROSS_PASSES = 20;
+const PINS_AUTO_ANCHOR_MIN_DISTANCE = 6;  // In pixels, between the anchors of two parts on screen
+const PINS_AUTO_MIN_AXIS_ANGLE = 8;     // In degrees, between a leader line and the horizontal or the vertical
+
 let renderer,
     cssRenderer,
     container,
@@ -480,6 +487,7 @@ const fnUpdateViewportSize = function () {
 }
 
 const fnRender = function () {
+    fnLayoutAutoPins();   // Before rendering : they follow the view
     for (const mesh of benchSolidMeshes || []) {
         if (mesh.userData.benchOutline.visible) fnUpdateBenchOutline(mesh);   // Its silhouette follows the view
     }
@@ -803,10 +811,13 @@ const fnSetAxesHelperVisible = function (visible) {
 const fnCreateModelPins = function () {
     if (pinsGroup) {
         pinsGroup.clear();
+        pinsGroup.userData.autoPins = [];
+        pinsGroup.userData.autoModes = null;
     }
     if (model && pinsOptions && !pinsOptions.pinsHidden) {
         if (!pinsGroup) {
             pinsGroup = new THREE.Group();
+            pinsGroup.userData.autoPins = [];
             scene.add(pinsGroup);
         }
         fnCreateGroupPins(model, pinsOptions.pinsColored, pinsOptions.pinsRounded, pinsOptions.pinsLength, pinsOptions.pinsDirection, baseModelCenter);
@@ -825,6 +836,7 @@ const fnCreateGroupPins = function (group, pinsColored, pinsRounded, pinsLength,
             let pinLengthFactor;
             switch (pinsLength) {
                 case 0:   // PINS_LENGTH_NONE
+                case PINS_LENGTH_AUTO:  // Positioned later by fnLayoutAutoPins
                     pinLengthFactor = 0
                     break;
                 case 2:   // PINS_LENGTH_MEDIUM
@@ -898,7 +910,32 @@ const fnCreateGroupPins = function (group, pinsColored, pinsRounded, pinsLength,
             pin.position.copy(pinPosition);
             pinsGroup.add(pin);
 
-            if (pinLengthFactor > 0) {
+            if (pinsLength === PINS_LENGTH_AUTO) {
+                const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([groupCenter, pinPosition]), pinLineMaterial);
+                line.renderOrder = 1;
+                line.frustumCulled = false;   // Its end moves at each render
+                pinsGroup.add(line);
+
+                // Half axes of the part's box, in world - to slide its anchor
+                // off an anchor of another part at the same place on screen
+                const halfAxes = [];
+                const mesh = group.children.find(function (child) { return child.isMesh; });
+                if (mesh) {
+                    if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
+                    const localBox = mesh.geometry.boundingBox;
+                    const localCenter = localBox.getCenter(new THREE.Vector3());
+                    const localHalfSize = localBox.getSize(new THREE.Vector3()).multiplyScalar(0.5);
+                    const worldCenter = localCenter.clone().applyMatrix4(mesh.matrixWorld);
+                    for (let k = 0; k < 3; k++) {
+                        const p = localCenter.clone();
+                        p.setComponent(k, p.getComponent(k) + localHalfSize.getComponent(k));
+                        halfAxes.push(p.applyMatrix4(mesh.matrixWorld).sub(worldCenter));
+                    }
+                }
+
+                pin.userData.target = groupCenter.clone();   // Its own : moved by fnLayoutAutoPins
+                pinsGroup.userData.autoPins.push({ pin: pin, line: line, center: groupCenter, halfAxes: halfAxes, width: 0, height: 0 });
+            } else if (pinLengthFactor > 0) {
                 const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([groupCenter, pinPosition]), pinLineMaterial);
                 line.renderOrder = 1;
                 pinsGroup.add(line);
@@ -914,6 +951,338 @@ const fnCreateGroupPins = function (group, pinsColored, pinsRounded, pinsLength,
             }
         }
 
+    }
+
+};
+
+// PINS_LENGTH_AUTO : the pins are laid out along the 4 sides of the frame,
+// in the circular order of their anchors around the center of the anchors,
+// so that their straight leader lines do not cross. Computed in screen
+// pixels, then unprojected at the depth of the anchor - the 3D position of a
+// pin is what the LayOut export reads.
+const fnLayoutAutoPins = function () {
+
+    if (!pinsGroup || !pinsGroup.userData.autoPins || pinsGroup.userData.autoPins.length === 0) return;
+
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    if (W === 0 || H === 0) return;
+
+    camera.updateMatrixWorld();   // The controls move it without updating its matrices
+
+    // Project the anchors - measure the pins once
+
+    const fnToPixels = function (point) {
+        const ndc = point.clone().project(camera);
+        return { x: (ndc.x + 1) / 2 * W, y: (1 - ndc.y) / 2 * H, z: ndc.z };
+    };
+    const fnProjectAnchor = function (item, target) {
+        const p = fnToPixels(target);
+        item.target = target;
+        item.ndcZ = p.z;
+        item.ax = p.x;
+        item.ay = p.y;
+    };
+
+    const items = [];
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity, maxH = 0;
+    for (const autoPin of pinsGroup.userData.autoPins) {
+        if (autoPin.width === 0) {
+            const element = autoPin.pin.element;
+            if (element.parentNode !== cssRenderer.domElement) cssRenderer.domElement.appendChild(element);   // Measurable before its first render
+            autoPin.width = element.offsetWidth;
+            autoPin.height = element.offsetHeight;
+        }
+        const item = {
+            autoPin: autoPin,
+            w: autoPin.width,
+            h: autoPin.height
+        };
+        fnProjectAnchor(item, autoPin.center);
+        items.push(item);
+    }
+
+    // Anchors of several parts at the same place on screen : each one slides
+    // along the longest axis of its part on screen - staying inside its box
+
+    const clusterOf = items.map(function (item, i) { return i; });
+    const fnRoot = function (i) {
+        while (clusterOf[i] !== i) i = clusterOf[i] = clusterOf[clusterOf[i]];
+        return i;
+    };
+    for (let i = 0; i < items.length; i++) {
+        for (let j = i + 1; j < items.length; j++) {
+            if (Math.abs(items[i].ax - items[j].ax) < PINS_AUTO_ANCHOR_MIN_DISTANCE && Math.abs(items[i].ay - items[j].ay) < PINS_AUTO_ANCHOR_MIN_DISTANCE) {
+                clusterOf[fnRoot(i)] = fnRoot(j);
+            }
+        }
+    }
+    const clusters = {};
+    for (let i = 0; i < items.length; i++) {
+        const root = fnRoot(i);
+        (clusters[root] || (clusters[root] = [])).push(items[i]);
+    }
+    for (const root in clusters) {
+        const cluster = clusters[root];
+        if (cluster.length < 2) continue;
+        for (let i = 0; i < cluster.length; i++) {
+            const item = cluster[i];
+            const center = item.autoPin.center;
+            let axis = null, axisLength = 0;
+            for (const halfAxis of item.autoPin.halfAxes) {
+                const p = fnToPixels(center.clone().add(halfAxis));
+                const length = Math.hypot(p.x - item.ax, p.y - item.ay);
+                if (length > axisLength) { axis = halfAxis; axisLength = length; }
+            }
+            const t = ((i + 0.5) / cluster.length * 2 - 1) * 0.8;   // Inside ]-1, 1[ : inside the box
+            fnProjectAnchor(item, axis ? center.clone().addScaledVector(axis, t) : center);
+        }
+    }
+
+    for (const item of items) {
+        minX = Math.min(minX, item.ax); maxX = Math.max(maxX, item.ax);
+        minY = Math.min(minY, item.ay); maxY = Math.max(maxY, item.ay);
+        maxH = Math.max(maxH, item.h);
+    }
+
+    // Sides : 0 = top, 1 = right, 2 = bottom, 3 = left - clockwise on screen.
+    // Each side has its own coordinate u, increasing clockwise, on a span
+    // that leaves the corners to the top and bottom rows.
+
+    const m = PINS_AUTO_MARGIN;
+    const gap = PINS_AUTO_GAP;
+    const sideV0 = m + maxH + gap;
+    const spans = [
+        [ m, W - m ],
+        [ sideV0, H - sideV0 ],
+        [ m, W - m ],
+        [ sideV0, H - sideV0 ]
+    ];
+    const fnExtent = function (item, side) { return side % 2 === 0 ? item.w : item.h; };
+    const fnDesiredU = function (item, side) {
+        switch (side) {
+            case 0: return item.ax;
+            case 1: return item.ay;
+            case 2: return W - item.ax;
+            default: return H - item.ay;
+        }
+    };
+    const fnFree = function (side, list) {
+        let need = 0;
+        for (const item of list) need += fnExtent(item, side);
+        need += gap * Math.max(0, list.length - 1);
+        return (spans[side][1] - spans[side][0]) - need;
+    };
+
+    // Center of the anchors - kept inside the frame
+
+    const cx = Math.min(Math.max((minX + maxX) / 2, m), W - m);
+    const cy = Math.min(Math.max((minY + maxY) / 2, m), H - m);
+
+    // Circular order, starting from the top left corner
+
+    const a0 = Math.atan2(-cy, -cx);
+    const fnKey = function (x, y) {
+        let a = Math.atan2(y - cy, x - cx) - a0;
+        while (a < 0) a += Math.PI * 2;
+        while (a >= Math.PI * 2) a -= Math.PI * 2;
+        return a;
+    };
+    const kTR = fnKey(W, 0);
+    const kBR = fnKey(W, H);
+    const kBL = fnKey(0, H);
+    for (const item of items) item.key = fnKey(item.ax, item.ay);
+    items.sort(function (a, b) { return a.key - b.key; });
+
+    // Each anchor on the side its direction from the center points to
+
+    const sides = [ [], [], [], [] ];
+    for (const item of items) {
+        sides[item.key < kTR ? 0 : item.key < kBR ? 1 : item.key < kBL ? 2 : 3].push(item);
+    }
+    for (let s = 0; s < 4; s++) {
+        sides[s].sort(function (a, b) { return fnDesiredU(a, s) - fnDesiredU(b, s); });   // Fewer crossings than the angle
+    }
+
+    // Rebalance : an overflowing side gives its end pins to its neighbours -
+    // the circular order is kept
+
+    for (let i = 0; i < items.length * 4; i++) {
+        let side = -1, sideFree = 0;
+        for (let s = 0; s < 4; s++) {
+            const free = fnFree(s, sides[s]);
+            if (free < sideFree) { side = s; sideFree = free; }
+        }
+        if (side < 0) break;
+        const prev = (side + 3) % 4;
+        const next = (side + 1) % 4;
+        const first = sides[side][0];
+        const last = sides[side][sides[side].length - 1];
+        const prevFree = fnFree(prev, sides[prev]) - fnExtent(first, prev) - gap;
+        const nextFree = fnFree(next, sides[next]) - fnExtent(last, next) - gap;
+        if (Math.max(prevFree, nextFree) <= sideFree) break;   // No better place
+        if (prevFree >= nextFree) {
+            sides[prev].push(sides[side].shift());
+        } else {
+            sides[next].unshift(sides[side].pop());
+        }
+    }
+
+    // Place the pins of a side, in order, over its whole length, the same
+    // space between two heads. Three distributions of the ends :
+    //   0 = the same space before the first head and after the last one,
+    //   1 = half a space there,
+    //   2 = no space there - the heads at the ends of the side.
+    // A pin alone on its side : 0 = centered, 1 and 2 = just off the axis of
+    // its anchor, on one side or the other - back to the center as soon as
+    // its leader is far enough from the axes there.
+    // A leader close to the horizontal or the vertical is mistaken for an
+    // edge of the drawing : the distribution of the side is kept while all its
+    // leaders stay PINS_AUTO_MIN_AXIS_ANGLE away from the axes, otherwise the
+    // one with the fewest leaders too close, then the farthest from them, is
+    // chosen - the first one if equal.
+    // If it overflows, from end to end with negative spaces, pins overlap.
+
+    const autoModes = pinsGroup.userData.autoModes || (pinsGroup.userData.autoModes = [ 0, 0, 0, 0 ]);
+
+    const fnComputeUs = function (side, mode) {
+        const list = sides[side];
+        const n = list.length;
+        const lo = spans[side][0];
+        const hi = spans[side][1];
+        let extents = 0;
+        for (const item of list) extents += fnExtent(item, side);
+        const free = hi - lo - extents;
+        if (n === 1 && free >= 0 && mode > 0) {
+
+            // Alone : centered for 0, otherwise just off the axis of its
+            // anchor, on one side (1) or the other (2)
+            const item = list[0];
+            const e = fnExtent(item, side);
+            const au = fnDesiredU(item, side);
+            const p = fnToScreen(item, side, au);
+            const d = Math.hypot(p[0] - item.ax, p[1] - item.ay);
+            const offset = d * Math.tan(PINS_AUTO_MIN_AXIS_ANGLE * 1.5 * Math.PI / 180);
+            return [ Math.min(Math.max(au + (mode === 1 ? offset : -offset), lo + e / 2), hi - e / 2) ];
+
+        }
+        let space, u;
+        if (free < 0 || mode === 2) {
+            space = n > 1 ? free / (n - 1) : 0;
+            u = n > 1 ? lo : lo + free / 2;
+        } else if (mode === 1) {
+            space = free / n;
+            u = lo + space / 2;
+        } else {
+            space = free / (n + 1);
+            u = lo + space;
+        }
+        const us = [];
+        for (const item of list) {
+            const e = fnExtent(item, side);
+            us.push(u + e / 2);
+            u += e + space;
+        }
+        return us;
+    };
+    const fnToScreen = function (item, side, u) {
+        switch (side) {
+            case 0: return [ u, m + item.h / 2 ];
+            case 1: return [ W - m - item.w / 2, u ];
+            case 2: return [ W - u, H - m - item.h / 2 ];
+            default: return [ m + item.w / 2, H - u ];
+        }
+    };
+    const fnAxisScore = function (side, us) {   // Count of the leaders too close to an axis, minus the smallest angle in degrees / 90
+        let count = 0, min = 45;
+        for (let i = 0; i < us.length; i++) {
+            const item = sides[side][i];
+            const p = fnToScreen(item, side, us[i]);
+            const dx = Math.abs(p[0] - item.ax);
+            const dy = Math.abs(p[1] - item.ay);
+            if (dx < 1 && dy < 1) continue;
+            const a = Math.atan2(dy, dx) * 180 / Math.PI;
+            const angle = Math.min(a, 90 - a);
+            if (angle < PINS_AUTO_MIN_AXIS_ANGLE) count++;
+            min = Math.min(min, angle);
+        }
+        return count - min / 90;
+    };
+
+    const fnPlaceSide = function (side) {
+        const list = sides[side];
+        if (list.length === 0) return;
+        if (list.length === 1 && autoModes[side] !== 0 && fnAxisScore(side, fnComputeUs(side, 0)) < 0) {
+            autoModes[side] = 0;   // Alone : back to the center as soon as possible
+        }
+        let us = fnComputeUs(side, autoModes[side]);
+        if (fnAxisScore(side, us) >= 0) {   // At least one leader too close to an axis
+            let bestScore = Infinity;
+            for (let mode = 0; mode < 3; mode++) {
+                const modeUs = fnComputeUs(side, mode);
+                const score = fnAxisScore(side, modeUs);
+                if (score < bestScore - 1e-6) {
+                    bestScore = score;
+                    autoModes[side] = mode;
+                    us = modeUs;
+                }
+            }
+        }
+        for (let i = 0; i < list.length; i++) {
+            const item = list[i];
+            const p = fnToScreen(item, side, us[i]);
+            item.side = side;
+            item.index = i;
+            item.px = p[0];
+            item.py = p[1];
+        }
+    };
+    for (let s = 0; s < 4; s++) fnPlaceSide(s);
+
+    // Uncross : two crossing leaders swap their slots
+
+    const fnOrient = function (x1, y1, x2, y2, x3, y3) {
+        return (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
+    };
+    const fnCross = function (a, b) {
+        const d1 = fnOrient(a.ax, a.ay, a.px, a.py, b.ax, b.ay);
+        const d2 = fnOrient(a.ax, a.ay, a.px, a.py, b.px, b.py);
+        const d3 = fnOrient(b.ax, b.ay, b.px, b.py, a.ax, a.ay);
+        const d4 = fnOrient(b.ax, b.ay, b.px, b.py, a.px, a.py);
+        return d1 * d2 < 0 && d3 * d4 < 0;
+    };
+    for (let pass = 0; pass < PINS_AUTO_MAX_UNCROSS_PASSES; pass++) {
+        let swapped = false;
+        for (let i = 0; i < items.length; i++) {
+            for (let j = i + 1; j < items.length; j++) {
+                const a = items[i];
+                const b = items[j];
+                if (fnCross(a, b)) {
+                    const aSide = a.side, aIndex = a.index;
+                    const bSide = b.side, bIndex = b.index;
+                    sides[aSide][aIndex] = b;
+                    sides[bSide][bIndex] = a;
+                    fnPlaceSide(aSide);
+                    if (bSide !== aSide) fnPlaceSide(bSide);
+                    swapped = true;
+                }
+            }
+        }
+        if (!swapped) break;
+    }
+
+    // Back to 3D
+
+    for (const item of items) {
+        const position = new THREE.Vector3(item.px / W * 2 - 1, 1 - item.py / H * 2, item.ndcZ).unproject(camera);
+        const pin = item.autoPin.pin;
+        pin.position.copy(position);
+        pin.userData.position.copy(position);
+        pin.userData.target.copy(item.target);
+        const positions = item.autoPin.line.geometry.attributes.position;
+        positions.setXYZ(0, item.target.x, item.target.y, item.target.z);
+        positions.setXYZ(1, position.x, position.y, position.z);
+        positions.needsUpdate = true;
     }
 
 };
