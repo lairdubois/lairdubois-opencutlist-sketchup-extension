@@ -17,6 +17,8 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_solid_rebuild_from_clines_worker'
   require_relative '../worker/common/common_stretch_split_worker'
   require_relative '../worker/common/common_stretch_apply_worker'
+  require_relative '../worker/common/common_paneling_compute_worker'
+  require_relative '../model/paneling/paneling_mesh_def'
 
   class SmartReshapeTool < SmartTool
 
@@ -48,8 +50,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_PANELING_DIRECTION_INWARD = 'inward'
     ACTION_OPTION_PANELING_DIRECTION_OUTWARD = 'outward'
 
-    ACTION_OPTION_PANELING_JOINT_TYPE_FLAT = 'flat'
-    ACTION_OPTION_PANELING_JOINT_TYPE_MITER = 'miter'
+    ACTION_OPTION_PANELING_JOINT_TYPE_FLAT = CommonPanelingComputeWorker::JOINT_TYPE_FLAT
+    ACTION_OPTION_PANELING_JOINT_TYPE_MITER = CommonPanelingComputeWorker::JOINT_TYPE_MITER
 
     ACTION_OPTION_SLICE_MODE_SLICE = 'slice'
     ACTION_OPTION_SLICE_MODE_CUT = 'cut'
@@ -2840,6 +2842,8 @@ module Ladb::OpenCutList
 
     SlicePartDef = Struct.new(:path, :points, :triangles, :edges)  # WORLD coordinates, edges lazily read
 
+    @@last_cut_distance = 0  # The distance of the last cut, SHIFT locks the next one on it
+
     attr_reader :number, :spacings
 
     def initialize(tool, previous_action_handler = nil)
@@ -2926,6 +2930,7 @@ module Ladb::OpenCutList
 
       when STATE_SLICE
         return _get_state_main_status(state) + '.' +
+               (_fetch_option_slice_mode_cut? ? ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.default.locked_on_last_measure_status') + '.' : '') +
                ' | ←↑→ = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_2_arrows_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
@@ -3130,6 +3135,7 @@ module Ladb::OpenCutList
         if @slice_side.nil?
           UI.beep
         else
+          @@last_cut_distance = @reference_plane[0].vector_to(@slice_plane[0]).dot(@reference_plane[1]).abs unless @reference_plane.nil?
           _slice_entities([ @slice_plane ], @slice_side)
         end
         return true
@@ -3148,6 +3154,13 @@ module Ladb::OpenCutList
 
       if tool.is_key_alt_or_command?(key) && (@state == STATE_SELECT || @state == STATE_SLICE)
         return true # Block default behavior for the ALT key on Windows
+      end
+
+      # SHIFT : locked on the last cut distance
+      if @state == STATE_SLICE && _fetch_option_slice_mode_cut? && tool.is_key_shift?(key)
+        UI.beep if @@last_cut_distance == 0
+        _refresh
+        return true
       end
 
       # SHIFT + / - : one plane more or less
@@ -3217,6 +3230,11 @@ module Ladb::OpenCutList
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
       return true if super
+
+      if @state == STATE_SLICE && _fetch_option_slice_mode_cut? && tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
 
       if tool.is_key_alt_or_command?(key) && is_quick && (@state == STATE_SELECT || @state == STATE_SLICE)
         @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, fire_event: true)
@@ -3879,6 +3897,11 @@ module Ladb::OpenCutList
         # A 3 points plane has no side of its own : its normal follows the mouse
         normal = normal.reverse
         @reference_plane = [ point, normal ]
+      end
+      if _fetch_option_slice_mode_cut? && @tool.is_key_shift_down? && @@last_cut_distance > 0
+        # Locked on the last cut distance, on the mouse side
+        side = point.vector_to(p).dot(normal) < 0 ? -1 : 1
+        p = point.offset(normal, side * @@last_cut_distance)
       end
       @slice_plane = [ p, normal ]
     end
@@ -5899,54 +5922,55 @@ module Ladb::OpenCutList
       )
     end
 
-    def _intersect_planes(planes, ref_plane, ref_centroid)
-      return [] unless planes.is_a?(Array) && planes.size >= 3
+    # Draws +panel_def+ (a CommonPanelingComputeWorker::PanelDef) in
+    # +entities+, its points read in their space. The front face is the ground
+    # one inward, the up one +outward+ - +normal+ being the lined face's - the
+    # faces all oriented outside the solid.
+    def self.draw_panel(entities, panel_def, normal, outward)
 
-      points = []
-
-      # Calculate all intersection lines of plane pairs
-      lines = planes.combination(2).map { |plane1, plane2| Geom.intersect_plane_plane(plane1, plane2) }.compact
-
-      # Calculate all unique intersection points of the lines
-      lines.combination(3).each { |line1, line2, line3|
-        p1 = Geom.intersect_line_line(line1, line2)
-        next if p1.nil? || points.include?(p1)
-        p2 = Geom.intersect_line_line(line2, line3)
-        points << p1 if p1 == p2
-      }
-
-      # Filter points
-      points.select! { |point|
-        point.on_plane?(ref_plane) &&
-          planes.all? { |plane|
-            !(v = point.vector_to(point.project_to_plane(plane))).valid? ||
-              v.samedirection?(plane[1])
-          }
-      }
-
-      if points.size > 1
-
-        _, plane_normal = ref_plane
-        x_axis = ref_centroid.vector_to(points.first).normalize!
-        y_axis = plane_normal.cross(x_axis).normalize!
-
-        # Sort points in clockwise order
-        points.sort_by! { |point|
-          v = ref_centroid.vector_to(point)
-          x = v.dot(x_axis)
-          y = v.dot(y_axis)
-          Math.atan2(y, x)
-        }
-
+      gd_faces = panel_def.gd_polygons.map { |polygon| entities.add_face(polygon) }
+      up_faces = panel_def.up_polygons.map { |polygon| entities.add_face(polygon) }
+      panel_def.sides.each do |points|
+        begin
+          entities.add_face(points)
+        rescue ArgumentError
+          # Collinear or degenerated side
+        end
       end
 
-      points
+      gd_faces.each do |face|
+        face.reverse! unless face.normal.samedirection?(normal)
+        face.reverse! if outward
+        orient_faces_from(face)
+      end
+      up_faces.each do |face|
+        face.reverse! if face.normal.samedirection?(normal) != outward
+      end
+
     end
 
-    # A corner point is the intersection of three planes, and the drawing is
-    # guaranteed a closed manifold solid — see #_get_shell_error — so every
-    # vertex has its three faces to provide them. The `gd_points.size < 3` guard
-    # below only ever catches degenerate geometry.
+    # Propagates the orientation of +face+ to all the faces connected to it :
+    # two faces sharing an edge agree when they run it in opposite directions.
+    # (Sketchup::Face#orient_faces is not in the Ruby API.)
+    def self.orient_faces_from(face)
+      visited = Set.new([ face ])
+      queue = [ face ]
+      until queue.empty?
+        current = queue.shift
+        current.edges.each do |edge|
+          edge.faces.each do |other|
+            next unless visited.add?(other)
+            other.reverse! if edge.reversed_in?(current) == edge.reversed_in?(other)
+            queue << other
+          end
+        end
+      end
+    end
+
+    # Each panel is built from two sections - on its ground plane and on its
+    # up plane - joined by side faces, computed by CommonPanelingComputeWorker.
+    # The drawing is guaranteed a closed manifold solid — see #_get_shell_error
+    # — so every edge has its neighbour to bound the panel.
     def _compute
 
       _clear_computed
@@ -5957,115 +5981,34 @@ module Ladb::OpenCutList
       thickness = _fetch_option_thickness.abs
       thickness *= -1 unless outward
       active_entities = _get_active_entities
-      extruded_face_manipulators = Set.new
 
       # [ definition, transformation, CONTAINER space face manipulators, points, signature, front centroid ]
       # of every panel created by this pass, the pool #_find_reusable_panel_def
       # picks a definition to share from
       panel_defs = []
 
-      @selected_face_manipulators.each do |sfm|
+      mesh = PanelingMeshDef.from_face_manipulators(@drawing_def.face_manipulators)
+      joint_types = {}
+      @edge_joint_types.each { |edge, joint_type| mesh.edge_keys_of(edge).each { |key| joint_types[key] = joint_type } }
 
-        gd_centroid = sfm.centroid
-        up_centroid = sfm.centroid.offset(sfm.normal, thickness)
+      CommonPanelingComputeWorker.new(mesh, @selected_face_manipulators.map { |fm| mesh.face_index_of(fm) }.compact,
+        thickness: thickness,
+        joint_types: joint_types,
+        default_joint_type: _fetch_option_paneling_join_type
+      ).run.each do |panel|
 
-        gd_plane = sfm.plane
-        up_plane = [ up_centroid, sfm.normal ]
-
-        # 1. Extract points from face outer vertices
-
-        gd_points = []
-        up_points = []
-
-        vertex_gd_points = {}
-        vertex_th_points = {}
-
-        sfm.outer_loop_manipulator.vertex_manipulators.each do |vm|
-
-          # Ground points
-
-          planes = vm.vertex.faces
-                     .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
-                     .compact
-                     .map { |fm|
-                       if fm == sfm || (miter = _get_faces_joint_type_miter?(fm, sfm)) || !miter && !extruded_face_manipulators.include?(fm)
-                         fm.plane
-                       else
-                         [ fm.position.offset(fm.normal, thickness), fm.normal ]
-                       end
-                     }
-
-          if (points = _intersect_planes(planes, gd_plane, gd_centroid)).any?
-            vertex_gd_points[vm.vertex] = points
-            gd_points.concat(points)
-          end
-
-          unless thickness.zero?
-
-            # Up points
-
-            planes = vm.vertex.faces
-                       .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
-                       .compact
-                       .map { |fm|
-                         if fm == sfm || !(miter = _get_faces_joint_type_miter?(fm, sfm)) && extruded_face_manipulators.include?(fm) || miter && @selected_face_manipulators.include?(fm)
-                           [ fm.position.offset(fm.normal, thickness), fm.normal ]
-                         else
-                           fm.plane
-                         end
-                       }
-
-            if (points = _intersect_planes(planes, up_plane, up_centroid)).any?
-              vertex_th_points[vm.vertex] = points
-              up_points.concat(points)
-            end
-
-          end
-
-        end
-
-        gd_points.uniq! { |point| point.to_a }
-        up_points.uniq! { |point| point.to_a }
-
-        next if gd_points.size < 3 || up_points.size < 3
-
-        # 2. Create part definition + instance
+        sfm = mesh.face_manipulators[panel.face_index]
+        gd_points = panel.gd_polygons.flatten(1)
+        up_points = panel.up_polygons.flatten(1)
 
         definition = _create_definition(sfm.face, PLUGIN.get_i18n_string('default.part_single').capitalize)
         entities = definition.entities
 
-        # 3. Draw main faces
+        # 1. Draw faces
 
-        gd_face = entities.add_face(gd_points)
-        gd_face.reverse! unless gd_face.normal.samedirection?(sfm.normal)
-        gd_face.reverse! if outward
+        SmartReshapePanelingActionHandler.draw_panel(entities, panel, sfm.normal, outward)
 
-        unless thickness.zero?
-          up_face = entities.add_face(up_points)
-          up_face.reverse! unless outward
-        end
-
-        # 4. Connect faces
-
-        unless thickness.zero?
-
-          edges = []
-          sfm.outer_loop_manipulator.vertex_manipulators.each do |vm|
-            a1 = vertex_gd_points[vm.vertex]
-            a2 = vertex_th_points[vm.vertex]
-            next if a1.nil? || a1.empty? || a2.nil? || a2.empty?
-            a1 = a1.cycle.take(a2.size) if a2.size > a1.size
-            a2 = a2.cycle.take(a1.size) if a1.size > a2.size
-            a1.zip(a2).each { |p1, p2| edges.concat(entities.add_edges(p1, p2)) }
-          end
-
-          # 4. Find all other faces
-
-          edges.each(&:find_faces)
-
-        end
-
-        # 5. Reuse the definition of an identical panel, or keep this one
+        # 2. Reuse the definition of an identical panel, or keep this one
 
         points = gd_points + up_points
         signature = _panel_points_signature(points)
@@ -6073,7 +6016,7 @@ module Ladb::OpenCutList
 
         if (panel_def = _find_reusable_panel_def(entities, points, signature, front_centroid, panel_defs)).nil?
 
-          # 6. Adapt part axes
+          # 3. Adapt part axes
 
           z_axis = sfm.normal # Front face is always outside
           x_axis = EdgeManipulator.new(sfm.longest_outer_edge, sfm.transformation).direction
@@ -6105,9 +6048,6 @@ module Ladb::OpenCutList
           active_entities.add_instance(panel_def[0], panel_def[1])
 
         end
-
-        # Flag face as extruded
-        extruded_face_manipulators << sfm
 
       end
 
