@@ -4,7 +4,8 @@
     // CONSTANTS
     // ======================
 
-    const EW_URL = 'https://www.lairdubois.fr/opencutlist';
+    // Manual download page offering both the stable and the lab versions (fallback when the manifest is unavailable)
+    const DOWNLOAD_URL = 'https://www.opencutlist.org/download';
 
     const MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
     const MANIFEST_LAB_URL = 'https://www.lairdubois.fr/opencutlist/manifest-lab'
@@ -593,11 +594,19 @@
         });
         $btnUpgrade.on('click', function () {
 
+            // No archive URL to download : fallback to the manual download page
+            if (!that.capabilities.manifest || !that.capabilities.manifest.url) {
+                rubyCallCommand('core_open_url', { url: DOWNLOAD_URL });
+                $modal.modal('hide');
+                $modal.remove();
+                return false;
+            }
+
             $panelInfos.hide();
             $panelProgress.show();
             $footer.hide();
 
-            rubyCallCommand('core_upgrade', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.appendOclMetasToUrlQueryParams(that.capabilities.manifest.url) : EW_URL }, function (response) {
+            rubyCallCommand('core_upgrade', { url: that.appendOclMetasToUrlQueryParams(that.capabilities.manifest.url) }, function (response) {
                 if (response.cancelled) {
 
                     // Close and remove modal
@@ -632,7 +641,7 @@
         $btnDownload.on('click', function () {
 
             // Open url
-            rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.appendOclMetasToUrlQueryParams(that.capabilities.manifest.url) : EW_URL });
+            rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.appendOclMetasToUrlQueryParams(that.capabilities.manifest.url) : DOWNLOAD_URL });
 
             // Close and remove modal
             $modal.modal('hide');
@@ -856,13 +865,13 @@
                     }
 
                     // Dev alert
-                    if (that.capabilities.is_rbz && that.capabilities.is_lab) {
-                        const fnShowDevAlert = function () {
-                            that.notify(Twig.twig({ ref: 'core/_notify-dev.twig' }).render({ capabilities: that.capabilities }), 'warning', [], 10000, 'dialogTabsLeft');
-                            that.$element.off('maximized.ladb.dialog', fnShowDevAlert);
-                        }
-                        that.$element.on('maximized.ladb.dialog', fnShowDevAlert)
-                    }
+                    // if (that.capabilities.is_rbz && that.capabilities.is_lab) {
+                    //     const fnShowDevAlert = function () {
+                    //         that.notify(Twig.twig({ ref: 'core/_notify-dev.twig' }).render({ capabilities: that.capabilities }), 'warning', [], 10000, 'dialogTabsLeft');
+                    //         that.$element.off('maximized.ladb.dialog', fnShowDevAlert);
+                    //     }
+                    //     that.$element.on('maximized.ladb.dialog', fnShowDevAlert)
+                    // }
 
                 }
 

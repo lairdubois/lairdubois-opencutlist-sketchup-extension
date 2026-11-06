@@ -43,10 +43,11 @@ module TestUp
       assert(collection.include?(value), message || "expected #{collection.inspect} to include #{value.inspect}")
     end
 
+    # Returns the exception, like Minitest
     def assert_raises(*classes)
       yield
-    rescue *classes
-      true
+    rescue *classes => e
+      e
     else
       raise AssertionFailed, "expected #{classes.join(' or ')} to be raised"
     end
