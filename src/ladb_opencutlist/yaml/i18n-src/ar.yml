@@ -1461,6 +1461,7 @@ tab:
       option_pins_length_1: قصير
       option_pins_length_2: متوسط
       option_pins_length_3: كبير
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: حدد طول سهم البطاقة
       option_pins_direction: الاتجاه
       option_pins_direction_0: وفقا للمحور الأحمر

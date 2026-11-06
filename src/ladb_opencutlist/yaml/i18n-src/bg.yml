@@ -1214,6 +1214,7 @@ tab:
       option_pins_length_1: Къса
       option_pins_length_2: Средна
       option_pins_length_3: Дълга
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Позволява да изберете дължината на водещата линия.
       option_pins_direction: Посока
       option_pins_direction_0: По червената ос
@@ -1455,6 +1456,7 @@ tab:
       formats: Формати
       cut_options: Параметри на рязане
       estimate_options: Настройки на калкулацията
+      export_options: Настройки на експорта
       attributes: Атрибути
       thickness: Дебелина
       thickness_help: |-

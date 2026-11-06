@@ -1361,6 +1361,7 @@ tab:
       option_pins_length_1: קטן
       option_pins_length_2: בינונית
       option_pins_length_3: גדולה
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: מאפשר לבחור את אורך החץ של הסיכות.
       option_pins_direction: כיוון
       option_pins_direction_0: לאורך הציר האדום

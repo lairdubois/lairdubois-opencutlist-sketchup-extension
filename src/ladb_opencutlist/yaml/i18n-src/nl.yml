@@ -7,7 +7,7 @@ _disabled_msg: |
   Raadpleeg de [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general) om de vertaling te voltooien.
 # the reload message will be displayed when a user switches to this language
 _reload_msg: Om alle wijzigingen weer te geven, moet u het OpenCutList-venster **sluiten** en **opnieuw openen**.
-_description: Genereer onderdelenlijst, zaagschema's voor panelen en balken voor houtbewerkers. Open Source, crowdfunded en gebruiksvriendelijk ;)
+_description: Genereer onderdelenlijst, zaagschema's voor panelen en planken voor houtbewerkers. Open Source, crowdfunded en gebruiksvriendelijk ;)
 default:
   minimize: Minimaliseren
   maximize: Maximaliseren
@@ -614,9 +614,9 @@ tab:
       part_number_sequence_by_group_help: Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte).
       part_folding: Groepeer identieke onderdelen
       part_folding_help: |
-        Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde afmetingen**, met **dezelfde badges** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn in het *snijblad*.
+        Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde afmetingen**, met **dezelfde badges** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn in het *onderdelenlijst*.
 
-        De onderdelen worden nog steeds als verschillend beschouwd voor labels en zaagplannen.
+        De onderdelen worden nog steeds als verschillend beschouwd voor labels en zaagschema.
       hide_entity_names: Verberg instantie namen
       hide_entity_names_help: Wanneer deze optie ingeschakeld is, dan zullen de **instantie namen** niet weergegeven worden.
       hide_descriptions: Beschrijvingen verbergen
@@ -627,8 +627,8 @@ tab:
       hide_cutting_dimensions_help: Wanneer deze optie is ingeschakeld, dan zullen de **ruwe** afmetingen van de onderdelen niet getoond worden.
       hide_bbox_dimensions: Verberg de netto afmetingen
       hide_bbox_dimensions_help: Wanneer deze optie ingeschakeld is, dan zullen de **netto** afmetingen niet weergegeven worden.
-      hide_final_areas: Verberg de afgewerkte oppervlakten van *Plaatmateriaal*
-      hide_final_areas_help: Wanneer deze optie ingeschakeld is, dan zullen de **afgewerkte oppervlakten** van het type *Plaatmateriaal* niet getoond worden.
+      hide_final_areas: Verberg de afgewerkte oppervlakten van *Panelen*
+      hide_final_areas_help: Wanneer deze optie ingeschakeld is, dan zullen de **afgewerkte oppervlakten** van onderdelen van het type *Paneel* niet getoond worden.
       hide_edges: Verberg de kolommen met kantenbanden
       hide_edges_help: Wanneer deze optie ingeschakeld is, dan zullen de **kantenbanden kolommen** van het type *Paneel* niet weergegeven worden.
       hide_faces: Verberg de kolommen met fineer
@@ -686,7 +686,7 @@ tab:
       number: N°
       name: Benaming
       count: Aant.
-      cutting: Onderdelen
+      cutting: Zaagmaat
       bbox: Afgewerkt
       final: Afgewerkt
       total_cutting: Σ Ruw
@@ -702,7 +702,7 @@ tab:
     export:
       title: Exporteren
       info_0: |
-        Met deze functie kunt u gegevens van het *stuklijst* exporteren naar het klembord of naar een bestand in [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) of [XLSX](https://nl.wikipedia.org/wiki/Office_Open_XML) formaat.
+        Met deze functie kunt u gegevens van het *onderdelenlijst* exporteren naar het klembord of naar een bestand in [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) of [XLSX](https://nl.wikipedia.org/wiki/Office_Open_XML) formaat.
       customize_help: |
         Een kolom in de lijst opnieuw ordenen, verbergen, toevoegen, verwijderen of selecteren om de **titel** en de **formule** aan te passen die de weergegeven waarde voor elke geëxporteerde rij genereert.
       add_column: Voeg een kolom toe
@@ -813,7 +813,7 @@ tab:
         incompatible_unit: Eenheid incompatibel met materiaalschattingsopties
         multiplier_coefficient: Vermenigvuldigingsfactor
       error:
-        no_typed_material_parts: Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** of **$t(tab.materials.type_5)**) is verstrekt om het rapport te genereren.
+        no_typed_material_parts: Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** of **$t(tab.materials.type_5)**) is verstrekt om de schatting te genereren.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fout**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fouten**."
       warning:
@@ -821,9 +821,9 @@ tab:
         is_part_selection: De schatting is beperkt tot **geselecteerde onderdelen**.
       tip:
         not_enough_data: |
-          Om het schatting correct te berekenen,:
-          - de gebruikte materialen hebben ten minste één dichtheid en één prijs.
-          - de gebruikte accessoires hebben ten minste één dichtheid en één prijs.
+          Om het schatting correct te berekenen:
+          - de gebruikte materialen moeten hebben ten minste één dichtheid en één prijs.
+          - de gebruikte accessoires moeten hebben ten minste één dichtheid en één prijs.
     # @no-translate
     cuttingdiagram:
       title: Zaagschema
@@ -1073,7 +1073,7 @@ tab:
       options_config: Configuratie
       options_display: Weergave
       options_tuning: Afstemming
-      option_std_bin_1d_dimensional: Standaardbalken
+      option_std_bin_1d_dimensional: Standaard plank
       option_std_bin_1d_edge: Standaardbanden
       option_std_bin_1d_help: |
         Selecteer hier de standaard afmeting van bekantrecht hout of kantenband die gedupliceerd zal worden om optimaal alle onderdelen te bevatten.
@@ -1087,7 +1087,7 @@ tab:
       option_scrap_bin_1d_edge_sizes: Kantenband overschotten
       option_scrap_bin_1d_sizes_placeholder: lengte x aantal ; ...
       option_scrap_bin_1d_sizes_help: |
-        Geef hier de lijst op van uw resterende staven of stroken die voor de uittekening moeten worden meegenomen.
+        Geef hier de lijst op van uw resterende staven of stroken die voor de zaagschema moeten worden meegenomen.
 
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       option_scrap_bin_1d_none: Geen enkele
@@ -1105,7 +1105,7 @@ tab:
       option_scrap_bin_2d_veneer_sizes: Fineerresten
       option_scrap_bin_2d_sizes_placeholder: lengte x breedte x aantal ; ...
       option_scrap_bin_2d_sizes_help: |
-        Geef hier de lijst met plaat- of fineerresten op die bij voorrang in het zaagplan moeten worden meegenomen.
+        Geef hier de lijst met plaat- of fineerresten op die bij voorrang in het zaagschema moeten worden meegenomen.
 
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       option_scrap_bin_2d_none: Geen enkele
@@ -1151,7 +1151,7 @@ tab:
       option_irregular_allowed_rotations_0: Geen
       option_irregular_allowed_rotations_90: Stappen van 90°
       option_irregular_allowed_rotations_180: Stappen van 180°
-      option_irregular_allowed_rotations_free: Vrij in te vullen
+      option_irregular_allowed_rotations_free: Vrij
       option_irregular_allow_mirroring: Spiegel toegestaan
       option_irregular_allow_mirroring_help: |
         Bepaalt of het spiegelen van het onderdeel is toegestaan voor de plaatsing.
@@ -1174,13 +1174,13 @@ tab:
       option_items_formula_help: |
         Maakt het mogelijk om *Ruby*-code te schrijven om de identificatietekst van de stukken op het diagram aan te passen.
       option_bin_folding_1d_dimensional: Groepeer identieke planken
-      option_bin_folding_1d_edge: Groepeer overeenkomstige randen
+      option_bin_folding_1d_edge: Groepeer identieke kantbanden
       option_bin_folding_2d_sheet_good: Groepeer identieke panelen
-      option_bin_folding_2d_veneer: Groepeer identieke fineren
+      option_bin_folding_2d_veneer: Groepeer identieke fineervellen
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
       option_bin_folding_1d_help: |
-        Groepeer panelen of kantenband met gelijke delen en zaagsneden.
+        Groepeer planken of kantbanden met gelijke onderdelen en zaagsneden.
       option_bin_folding_2d_help: |
         Hiermee kunt u panelen of fineervellen combineren die dezelfde onderdelen en sneden bevatten.
       option_bin_folding_warning: |
@@ -1189,7 +1189,7 @@ tab:
       option_hide_part_list_1d_dimensional_0: Weergegeven voor elke plank
       option_hide_part_list_1d_edge_0: Weergegeven voor elke kantenband
       option_hide_part_list_2d_sheet_good_0: Weergegeven voor elk paneel
-      option_hide_part_list_2d_veneer_0: Displays voor elk fineervel
+      option_hide_part_list_2d_veneer_0: Weergegeven voor elk fineervel
       option_hide_part_list_1: Verborgen
       option_hide_part_list_1d_help: Toon of verberg de lijst van onderdelen in elke plank of kantenband.
       option_hide_part_list_2d_help: Toon of verberg de lijst van onderdelen voor elke plaat.
@@ -1212,9 +1212,9 @@ tab:
       option_origin_corner_1: Linker benedenhoek
       option_origin_corner_2: Rechter bovenhoek
       option_origin_corner_3: Rechter benedenhoek
-      option_origin_corner_help: Maakt het mogelijk de oorsprongshoek te kiezen voor het plaatsen van de stukken in de panelen, platen, staven of stroken.
+      option_origin_corner_help: Maakt het mogelijk de oorsprongshoek te kiezen voor het plaatsen van de onderdelen in de panelen, fineervel, planken of kantbanden.
       option_highlight_primary_cuts: Primaire snedes
-      option_highlight_primary_cuts_0: Enkel overzicht
+      option_highlight_primary_cuts_0: Alleen bij aanwijzen
       option_highlight_primary_cuts_1: Altijd zichtbaar
       option_highlight_primary_cuts_help: Laat toe om primaire snedes uit te lichten.
       option_hide_edges_preview: Randband weergave
@@ -1274,10 +1274,10 @@ tab:
         unplaced_parts: Niet-geplaatst onderdeel
         unplaced_parts_plural: Ongeplaatste onderdelen
         parts: Onderdeel
-        parts_plural: Stukken
+        parts_plural: Onderdelen
         leftovers: Overschot
         leftovers_plural: Overschotten
-        leftovers_to_keep: Vallen om te houden
+        leftovers_to_keep: Reststuk om te bewaren
         leftovers_to_keep_plural: Reststukken om te bewaren
         cut: Snede
         cut_plural: Sneden
@@ -1298,11 +1298,11 @@ tab:
           Hiermee kunt u de export van het blad activeren en de kleuren ervan kiezen.
         option_bin_dimensional: Plank
         option_bin_dimensional_help: |
-          Hiermee kunt u de export van de balk activeren en de kleuren ervan kiezen.
+          Hiermee kunt u de export van de plank activeren en de kleuren ervan kiezen.
         option_bin_edge: Band
         option_bin_edge_help: |
           Hiermee kunt u de export van de band activeren en de kleuren ervan kiezen.
-        option_parts: Stukken
+        option_parts: Onderdelen
         option_parts_help: |
           Hiermee kunt u de export van onderdelen activeren en hun kleuren kiezen.
         option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
@@ -1316,18 +1316,18 @@ tab:
           Hiermee kunt u de export van onderdeelidentificatieteksten activeren en de kleuren ervan kiezen.
         option_leftovers: Overschot
         option_leftovers_help: |
-          Hiermee kunt u de export van klad activeren en de kleuren ervan kiezen.
+          Hiermee kunt u de export van reststukken activeren en de kleuren ervan kiezen.
         option_cuts: Sneden
         option_cuts_help: |
-          Hiermee kunt u de export van uitsneden activeren en de kleur ervan kiezen.
+          Hiermee kunt u de export van sneden activeren en de kleur ervan kiezen.
         warning:
           is_bin_selection: De **verborgen blokken** worden niet geëxporteerd.
         error:
           overflow_gt_spacing: |
-            De bewerkingsoverslag ({{ overflow }}) moet kleiner dan of gelijk zijn aan de ingestelde afstand ({{ spacing }}) in deze zaagschema.
+            De bewerkingstoeslag ({{ overflow }}) moet kleiner dan of gelijk zijn aan de ingestelde afstand ({{ spacing }}) in deze zaagschema.
       error:
         no_part: Geen enkel onderdeel.
-        no_bin_1d: Er is geen standaardstaaf of -strook geselecteerd en er is geen reststuk gedefinieerd.
+        no_bin_1d: Er is geen plank of kantband geselecteerd en er is geen reststuk gedefinieerd.
         no_bin_2d: Er is geen standaardpaneel of -plaat geselecteerd en er is geen reststuk gedefinieerd.
         invalid_part_shapes: De vorm van het stuk '{{ name }}' is ongeldig.
         no_solution: Er is geen oplossing gevonden om **alle stukken** in het beschikbare materiaal te plaatsen.
@@ -1338,8 +1338,8 @@ tab:
       warning:
         is_part_selection: Het zaagschema beperkt zich tot **geselecteerde onderdelen**.
         cutting_dimensions: Dit zaagschema gebruikt de **ruwe afmetingen** van de onderdelen.
-        cutting_dimensions_increase_1d: Afmetingen vermeerderd met meerwaarde van de lengte (**{{ length_increase }}**) die geconfigureerd werd in het materiaal '{{ material_name }}'.
-        cutting_dimensions_increase_2d: Afmetingen vermeerderd met de meerwaarde die geconfigureerd werd in het materiaal '{{ material_name }}' in de lengte (**{{ length_increase }}**) en de breedte (**{{ width_increase }}**).
+        cutting_dimensions_increase_1d: Afmetingen vermeerderd met overmaat van de lengte (**{{ length_increase }}**) die geconfigureerd werd in het materiaal '{{ material_name }}'.
+        cutting_dimensions_increase_2d: Afmetingen vermeerderd met de overmaat die geconfigureerd werd in het materiaal '{{ material_name }}' in de lengte (**{{ length_increase }}**) en de breedte (**{{ width_increase }}**).
         cutting_dimensions_edge_decrement: Afmetingen verminderd met de dikte van de kantenband. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiketten
@@ -1356,8 +1356,8 @@ tab:
         Rangschik de volgende eigenschappen om de sorteervolgorde van de etiketten te bepalen.
         Elke eigenschap kan <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
       offset_help: |
-        De *marge* laat u toe om de positie van het **eerste etiket** op de **eerste pagina** te bepalen.
-        Selecteer de box die overeenkomt met uw keuze.
+        De *offset* laat u toe om de positie van het **eerste etiket** op de **eerste pagina** te bepalen.
+        Selecteer de vakje die overeenkomt met uw keuze.
       option_page: Papier
       option_page_format: Formaat
       option_page_format_portrait: Portret
@@ -1383,7 +1383,7 @@ tab:
       option_size: Afmeting
       option_custom_formula: Formule
       option_anchor: Anker
-      option_anchor_start: Start - Bodem
+      option_anchor_start: Begin - Onder
       option_anchor_middle: Midden - Bodem
       option_anchor_end: Einde - Bodem
       option_anchor_start_top: Begin - Boven
@@ -1466,6 +1466,7 @@ tab:
       option_pins_length_1: Kort
       option_pins_length_2: Medium
       option_pins_length_3: Lang
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Hiermee kunt u de lengte van de labelpijl kiezen.
       option_pins_direction: Richting
       option_pins_direction_0: Langs de Rode as
@@ -1496,7 +1497,7 @@ tab:
       option_camera_target: Positie
       option_camera_target_auto: Automatisch
       option_camera_target_custom: Gepersonaliseerd
-      option_explode: Sprankelend
+      option_explode: Explosietekening
       error:
         no_part: Er is geen onderdeel om te tekenen.
         failed_to_save_as_skp: Kan het SKP-bestand niet schrijven om naar Layout te verzenden.
@@ -1532,9 +1533,9 @@ tab:
 
           Wilt u de nieuwe precisie gebruiken?
     write:
-      title: Miniatuurvoorbeeld Onderdelen exporteren
+      title: Onderdelen exporteren
       info_2d: |
-        Miniatuurvoorbeeld Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formaat.
+        Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formaat.
       info_3d: |
         Met deze module kunt u de **3D-geometrie** van onderdelen exporteren als bestanden [STL](https://wikipedia.org/wiki/STL_(file_format)) of [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
       option_file_format: Formaat
@@ -1562,12 +1563,12 @@ tab:
       option_use_count_0: Eén bestand per onderdeel
       option_use_count_1: Eén bestand per onderdeelinstantie
       option_use_count_help: |
-        Bepaalt of er rekening wordt gehouden met het aantal instanties van een component.
+        Bepaalt of er rekening wordt gehouden met het aantal instanties van een onderdeel.
       option_part_drawing_type: Projectie
       option_part_drawing_type_help: |
         Hiermee kunt u de geëxporteerde weergave kiezen.
-      option_faces: Fineren
-      option_faces_0: Gebruik alleen het beoogde gezicht
+      option_faces: Vlakken
+      option_faces_0: Gebruik alleen het beoogde vlak
       option_faces_1: Gebruik alle zijden van het onderdeel
       option_faces_help: |
         Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.
@@ -1594,19 +1595,19 @@ tab:
         *Deze optie detecteert geen andere soorten curven.*
       option_merge_holes: Ontleding
       option_merge_holes_0: Basis
-      option_merge_holes_1: Contour + Openingen + Uitsteeksel
+      option_merge_holes_1: Contour + Gaten + Bewerkingstoeslag
       option_merge_holes_help: |
         **Basis**
         De vorm van het stuk wordt geëxporteerd met de projectie van elk vlak op een laag die overeenkomt met de diepte ervan.
 
-        **Contour + Openingen + Overschot**
-        Activeert de scheiding van de buitencontour van de onderdelen van hun gaten, evenals de berekening van de bewerkingsoverslag die wordt toegepast op de oppervlakken langs de contour en de holtes.
-      option_merge_holes_overflow: Verspaningsoverschot
+        **Contour + Gaten + Bewerkingstoeslag**
+        Activeert de scheiding van de buitencontour van de onderdelen van hun gaten, evenals de berekening van de bewerkingstoeslag die wordt toegepast op de oppervlakken langs de contour en de holtes.
+      option_merge_holes_overflow: Bewerkingstoeslag
       option_merge_holes_overflow_help: |
-        Maakt het mogelijk de afstand van de bewerkingsoverslag te bepalen die wordt toegepast op de oppervlakken langs de contour en de uitsparingen.
+        Maakt het mogelijk de afstand van de bewerkingstoeslag te bepalen die wordt toegepast op de oppervlakken langs de contour en de holte.
       option_include_paths: Paden
       option_include_paths_0: $t(default.no)
-      option_include_paths_1: Gebruik randen die niet aan een gezicht zijn gekoppeld
+      option_include_paths_1: Gebruik randen die niet aan een vlak zijn gekoppeld
       option_include_paths_help: |
         Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.
       option_parts: Stukken
@@ -1638,16 +1639,16 @@ tab:
       number_without_hardware: Nummer (zonder accessoires)
       size: Afmeting
       area: Oppervlakte
-      volume: Geschikt volume
+      volume: Volume
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Uw model is leeg. U moet me iets meer geven ;)
       no_component_in_selection: Geen enkele component instantie werd gevonden in uw selectie.
       no_component_in_model: Geen enkele component instantie werd gevonden in uw scène.
-      unknow_part: Het geselecteerde onderdeel bestaat niet in de stuklijst.
-      obsolete_cutlist: Onmogelijk. De stuklijst is vervallen. Genereer hem opnieuw.
+      unknow_part: Het geselecteerde onderdeel bestaat niet in de onderdelenlijst.
+      obsolete_cutlist: Onmogelijk. De onderdelenlijst is vervallen. Genereer hem opnieuw.
     warning:
-      is_entity_selection: Deze stuklijst is een gedeeltelijke weergave van uw model omdat hij enkel de geselecteerde elementen bevat.
+      is_entity_selection: Deze onderdelenlijst is een gedeeltelijke weergave van uw model omdat hij enkel de geselecteerde elementen bevat.
       no_typed_materials_in_model: Uw model gebruikt geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**).
       no_typed_materials_in_selection: Uw selectie bevat geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**).
       export_empty: Uw export bevat geen enkel onderdeel.
@@ -1656,11 +1657,11 @@ tab:
       part_selected_plural: "{{ count }} onderdelen geselecteerd in de onderdelenlijst."
     tip:
       no_component: |
-        De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instances zijn.
+        De onderdelen die u wil weergeven in de *onderdelenlijst* moeten **component** instantie zijn.
         Wanneer je enkel groepen gebruikt, zet die dan om in componenten.
         Het gebruik van componenten laat toe om identieke onderdelen te repliceren zonder ze te hoeven dupliceren.
       no_typed_materials: Pas een materiaal toe op de onderdelen die je wil zien in je onderdelenlijst en definieer het type van dat materiaal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**) in de tab <i class="ladb-opencutlist-icon-materials"></i> **Materialen**.
-    obsolete_base: Om gesynchroniseerd te blijven moet je de stuklijst opnieuw genereren.
+    obsolete_base: Om gesynchroniseerd te blijven moet je de onderdelenlijst opnieuw genereren.
   materials:
     label: Materialen
     title: Materialen
@@ -1684,7 +1685,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Nerfrichting
-      raw_estimated_0: Geschat op basis van het nuttige debiet volume
+      raw_estimated_0: Geschat op basis van het nuttige volume
       colorized: Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
       texture_load: Een nieuwe afbeelding laden
       texture_export: De afbeelding exporteren
@@ -1720,18 +1721,19 @@ tab:
       formats: Formaat
       cut_options: Zaagopties
       estimate_options: Schattingsopties
+      export_options: Exporteer opties
       attributes: Attributen
       thickness: Dikte
       thickness_help: |
-        Definitieve dikte van het materiaal.
+        Afgewerkte dikte van het materiaal.
 
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       length_increase: Lengte overmaat
       length_increase_help: Overmaat toegepast op de netto lengte van het onderdeel om de **zaaglengte** te bepalen.
-      length_increase_help_plural: Overschot toegepast op de verwerkbare lengte van de onderdelen om hun **zaaglengte** te bepalen.
+      length_increase_help_plural: Overmaat toegepast op de verwerkbare lengte van de onderdelen om hun **zaaglengte** te bepalen.
       width_increase: Breedte overmaat
       width_increase_help: Overmaat toegepast op de netto breedte van het onderdeel om de **zaagbreedte** te bepalen.
-      width_increase_help_plural: Overmaat toegepast op de **bewerkbare breedte** van de onderdelen om hun zaagbreedte te bepalen.
+      width_increase_help_plural: Overmaat toegepast op de bewerkbare breedte van de onderdelen om hun **zaagbreedte** te bepalen.
       thickness_increase: Dikte overmaat
       thickness_increase_help: Overmaat toegepast op de netto dikte van het onderdeel om de **zaagdikte** te bepalen.
       thickness_increase_help_plural: Overmaat toegepast op de **bewerkbare dikte** van de onderdelen om hun zaagdikte te bepalen.
@@ -1747,7 +1749,7 @@ tab:
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       std_thicknesses: Standaard diktes
       std_thicknesses_help: |
-        **Beschikbare** standaard diktes voor dit materiaal.
+        Beschikbare standaard **ruwe** diktes voor dit materiaal.
 
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       std_sections: Standaard doorsneden
@@ -1777,7 +1779,7 @@ tab:
 
         **Eerst materiaalvolume nodig**
         Het totale volume is de som van de volumes van de panelen, platen, staven of strips van de onderdelen na zaagschema.
-      raw_estimated_0: Nuttige debiet volume
+      raw_estimated_0: Nuttige volume
       raw_estimated_1: Benodigd grondstof volume
       multiplier_coefficient: Vermenigvuldigingsfactor
       multiplier_coefficient_help: Maakt het mogelijk de vermenigvuldigingsfactor aan te geven die wordt toegepast op het gemeten ruwe volume.
@@ -1810,7 +1812,7 @@ tab:
     export_to_skm:
       title: Exporteer een .skm bestand
     option:
-      minimize_on_smart_paint: Verminderen na *'Kleurdelen met...'*
+      minimize_on_smart_paint: Minimaliseren na *'Kleur onderdelen met...'*
       minimize_on_smart_paint_help: Als deze optie is ingeschakeld, wordt het venster OpenCutList geminimaliseerd wanneer de functie *'Kleur onderdelen met...'* wordt gebruikt.
       general: Algemeen
       material_order_strategy: Sortering van materialen
@@ -1893,7 +1895,7 @@ tab:
       no_scale_mask_6: Vervormbaar vanuit de hoeken (XYZ)
       explode: Exploderen
       explode_message: Bevestigt u het exploderen van **{{ name }}**?
-      erase: Leeg maken
+      erase: Verwijderen
       erase_message: Weet u zeker dat u **{{ name }}** wilt verwijderen?
     deep_make_unique:
       title: Uniek maken
@@ -1916,8 +1918,8 @@ tab:
       hide_descriptions_help: Als deze optie is geselecteerd, worden de **beschrijvingen** van de onderdelen niet weergegeven.
       hide_tags: Verberg de badges
       hide_tags_help: Wanneer deze optie ingeschakeld is, dan zullen de **badges** die op de onderdelen geplaatst werden niet weergegeven worden.
-      minimize_on_set_active: Samenvouwen na '$t(tab.outliner.tooltip.set_active_node)'
-      minimize_on_set_active_help: Als deze optie is ingeschakeld, wordt het OpenCutList-venster samengevouwen wanneer de functie *'$t(tab.outliner.tooltip.set_active_node)'* wordt gebruikt.
+      minimize_on_set_active: Minimaliseren na '$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: Als deze optie is ingeschakeld, wordt het OpenCutList-venster geminimaliseerd wanneer de functie *'$t(tab.outliner.tooltip.set_active_node)'* wordt gebruikt.
     snippet:
       name_size: Benaming - Afmeting
     error:
@@ -1926,7 +1928,7 @@ tab:
       node_not_found: Knooppunt niet gevonden
       entity_not_found: Instantie niet gevonden
       invalid_target: De doelinstantie laat deze handeling niet toe
-      obsolete_outliner: Onmogelijk, de gegenereerde structuur is verouderd. Regenereer daar.
+      obsolete_outliner: Onmogelijk, de gegenereerde structuur is verouderd. Genereer hem opnieuw.
     tip:
       no_node: |
         Uw model heeft momenteel geen instanties om hier weer te geven.
@@ -2077,13 +2079,13 @@ tab:
         tags: Badges
       tooltip:
         errors: Dit deel wordt niet geïmporteerd omdat het de volgende fouten bevat
-        warnings: Dit deel is geïmporteerd, maar het bevat de volgende fouten
+        warnings: Dit onderdeel is geïmporteerd, maar het bevat de volgende fouten
       error:
         failed_to_load_csv_file: |
           Het CSV-bestand kan niet worden geladen: **{{ error }}**
           *Controleer of u het juiste gegevensscheidingsteken hebt gekozen.*
         empty_file: Het bestand lijkt leeg te zijn of kon niet correct worden gelezen.
-        no_importable_part: Er kunnen geen onderdelen worden ingevoerd. Wijs de gewenste velden toe aan de overeenkomstige kolommen.
+        no_importable_part: Er kunnen geen onderdelen worden ingevoerd. Wijs de verplichte velden toe aan de overeenkomstige kolommen.
         invalid_name: Ongeldige benaming
         invalid_length: Ongeldige lengte
         invalid_width: Ongeldige breedte
@@ -2286,15 +2288,15 @@ tab:
       import_global_presets_success: |
         De *OpenCutList*-voorinstellingen zijn succesvol geïmporteerd.
         Om rekening te houden met de wijzigingen, moet u het OpenCutList-venster **sluiten** en **heropenen**.
-      dump_global_presets: reset de voorkeursinstellingen
-      dump_model_presets: reset model voorkeursinstellingen
-      reset_global_presets: reset alle voorkeursinstellingen
+      dump_global_presets: Voorinstellingen dumpen
+      dump_model_presets: Modelinstellingen dumpen
+      reset_global_presets: Voorinstellingen resetten
       reset_global_presets_confirm: |
         U staat op het punt om al uw opgeslagen *OpenCutList* voorinstellingen te resetten.
         Deze actie is definitief. **Alle voorinstellingen gaan verloren**.
         Bevestig om door te gaan.
       reset_global_presets_success: |
-        De *OpenCutList* voorkeuren zijn opnieuw ingesteld.
+        De *OpenCutList* voorinstellingen zijn opnieuw ingesteld.
         Om de wijzigingen weer te geven, moet u het venster OpenCutList **sluiten** en **opnieuw openen**.
       reset_model_presets: Reset modelvoorinstellingen
       reset_model_presets_confirm: |
@@ -2318,7 +2320,7 @@ tab:
     version: Versie
     credits: Ontwikkeling en programmering
     credits_authors: |
-      *OpenCutList* is ontwikkeld door [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) en [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Bijdragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) opsommen*.
+      *OpenCutList* is ontwikkeld door [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) en [Martin Müller](https://www.lairdubois.fr/@mobilarte). Alle *[bijdragers](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) weergeven*.
     credits_translations: Vertalingen
     credits_translators: |
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Nederlands*)
@@ -2361,7 +2363,7 @@ tool:
     vcb_length: Lengte
     vcb_thickness: Dikte
     vcb_size: Afmetingen
-    vcb_radius: Radius
+    vcb_radius: Straal
     vcb_diameter: Diameter
     vcb_distance: Afstand
     vcb_spacings: Tussenruimte
@@ -2458,9 +2460,9 @@ tool:
   smart_build:
     title: Opbouwen
     action_0: Een module plaatsen
-    action_0_status: Een scheidingswand opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
-    action_0_state_0_status: Klik op een wand om een scheidingswand op te bouwen
-    action_0_state_1_status: Klik op een wand om scheidingswanden op te bouwen
+    action_0_status: Een module plaatsen die uit een SKP-bestand is geïmporteerd en is uitgerekt tot de afmetingen van de getekende doos
+    action_0_state_0_status: Selecteer een modulebestand in de bibliotheek
+    action_0_state_1_status: Klik om de oorsprong van de module te plaatsen
     action_0_state_2_status: Klik om de breedte van de module te bepalen (X-as)
     action_0_state_2_lock_status: Vergrendelen op de breedte van het bronbestand
     action_0_state_2_arrows_status: Vergrendelen op een as
@@ -2479,14 +2481,14 @@ tool:
     action_0_add_up_label: BOVENZIJDE
     action_0_flip_status: Voorzijde en achterzijde omwisselen
     action_0_flip_up_status: Boven- en onderzijde omwisselen
-    action_1: Een front opbouwen
-    action_1_status: Een front opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
-    action_1_state_0_status: Klik in een ruimte om een front op de opening op te bouwen
+    action_1: Een scheidingswand opbouwen
+    action_1_status: Een scheidingswand bouwen in een holte die wordt gevormd door een groep bestaande onderdelen
+    action_1_state_0_status: Klik op een wand om een scheidingswand op te bouwen
     action_1_state_1_status: Klik op een wand om scheidingswanden op te bouwen
     action_2: Een front opbouwen
-    action_2_status: Een achterwand opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
-    action_2_state_0_status: Klik in een ruimte om een achterwand op te bouwen aan de opening tegenover de kijkrichting
-    action_2_state_0_merge_status: Sleep naar aangrenzende ruimtes voor één gemeenschappelijke achterwand
+    action_2_status: Een gevel bouwen die een holte afsluit die wordt gevormd door een groep bestaande onderdelen
+    action_2_state_0_status: Klik in een holte om een gevel aan de opening ervan te bouwen
+    action_2_state_0_merge_status: Schuif naar de aangrenzende holtes voor een gezamenlijke gevel
     action_3: Een achterwand opbouwen
     action_3_status: Een achterwand opbouwen die een ruimte afsluit die wordt gevormd door een groep bestaande onderdelen
     action_3_state_0_status: Klik in een ruimte om een achterwand op te bouwen op de opening tegenover het aanzicht
@@ -2636,7 +2638,7 @@ tool:
     action_0_state_1a_status: Klik op een doorsnedevlak om het te verplaatsen
     action_0_state_1b_status: Een doorsnedevlak toevoegen
     action_0_state_1c_status: Een doorsnedevlak wissen
-    action_0_state_1d_status: Klik om de geometrie tussen de twee snijvlakken te verplaatsen
+    action_0_state_1d_status: Klik om de geometrie tussen de twee doorsnedevlak te verplaatsen
     action_0_state_10_status: Sleep het doorsnedevlak om het te verplaatsen
     action_0_state_11_status: Klik om het doorsnedevlak toe te voegen
     action_0_state_12_status: Klik op een doorsnedevlak om het te verwijderen
@@ -2663,7 +2665,7 @@ tool:
     action_option_group_thickness: Dikte
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
-    action_option_group_paneling_joint_type: Samenstelling
+    action_option_group_paneling_joint_type: Verbinding
     action_option_group_paneling_direction: Richting
     action_option_group_csg_operation: Bewerking
     action_option_group_options: Opties
@@ -2715,16 +2717,16 @@ tool:
     action_3: Pipet
     action_3_status: Klik op een vlak om een monster van het materiaal te nemen
     action_4: Schoonmaken
-    action_4_status: Klik op een onderdeel om alle materialen en alle instanties ervan uit de definitie te verwijderen
+    action_4_status: Klik op een onderdeel om alle materialen uit de definitie en alle instanties ervan te verwijderen
     action_option_group_instances: Aantal exemplaren
     action_option_group_edges: Aantal kantenbanden
-    action_option_group_faces: Aantal aanzichten
+    action_option_group_faces: Aantal vlakken
     action_option_instances_0_status: Kleur alleen de beoogde onderdeelinstantie
     action_option_instances_1_status: Kleur alle exemplaren van het beoogde onderdeel
     action_option_edges_0_status: Kleur alleen de beoogde kant
     action_option_edges_1_status: Kleur de beoogde kant en de tegenoverliggende kant van het onderdeel
     action_option_edges_2_status: Kleur de 4 kanten van het beoogde onderdeel
-    action_option_faces_0_status: Kleur alleen het beoogde aanzicht
+    action_option_faces_0_status: Kleur alleen het beoogde vlak
     action_option_faces_1_status: Kleur 2 zijden van het beoogde stuk
     state_8_status: Vink de te vervangen materialen aan en bevestig
     select_filter_title: Te vervangen materialen
@@ -2748,14 +2750,14 @@ tool:
       not_face: Het doelvlak is geen paneelvlak
   smart_axes:
     title: Oriënteren
-    action_0: Terugkeren
+    action_0: Omdraaien
     action_0_status: Klik op een onderdeel om het exemplaar ervan langs een van de afmetingen te spiegelen
     action_1: Wissel lengte ↔ breedte
     action_1_status: Klik op een onderdeel om de lengte te verwisselen met de breedte
     action_2: Wissel Voorzijde ↔ Achterzijde
     action_2_status: Klik op een stuk om de aflezing van de voorkant te verwisselen met de achterkant
     action_3: Pas de assen aan
-    action_3_status: Richt op een gebied van een onderdeel en klik op een rand om de assen aan te passen
+    action_3_status: Richt op een vlak van een onderdeel en klik op een rand om de assen aan te passen
     action_4: Oorsprong verplaatsen
     action_4_status: Richt op een vlak van een onderdeel en klik op een punt om de oorsprong daar te plaatsen
     action_5: Nerfcontinuïteit instellen
@@ -2764,7 +2766,7 @@ tool:
     action_5_state_10_status: Klik op een element in de lijst om de status van de nerfcontinuïteitsgroep te wijzigen
     action_option_group_direction: Richting
     action_option_direction_0: L
-    action_option_direction_1: La
+    action_option_direction_1: B
     action_option_direction_2: D
     action_option_direction_0_status: Draai het stuk in de lengte om
     action_option_direction_1_status: Draai het stuk naar de breedte
@@ -2827,14 +2829,14 @@ tool:
     action_0: Exporteer een 3D-onderdeel
     action_0_status: Klik op een onderdeel
     action_1: Exporteer een 2D-onderdeel
-    action_1_status: Klik op de voorkant van een stuk
-    action_2: Een aanzicht exporteren
-    action_2_status: Klik op een aanzicht
-    action_3: Een deel exporteren
+    action_1_status: Klik op een vlak van een onderdeel
+    action_2: Een vlak exporteren
+    action_2_status: Klik op een vlak
+    action_3: Een pad exporteren
     action_3_status: Klik op een rand
     action_option_group_file_format: Formaat
     action_option_group_unit: Eenheid
-    action_option_group_faces: Fineren
+    action_option_group_faces: Vlakken
     action_option_group_options: Opties
     action_option_file_format_dxf_status: Exporteren naar DXF-bestand
     action_option_file_format_stl_status: Exporteren naar STL-bestand

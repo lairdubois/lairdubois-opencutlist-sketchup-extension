@@ -15,6 +15,7 @@ default:
   stop: Oprește
   validate: Aplică
   confirm: Confirmă
+  finish: Finalizează
   ok: Ok
   open: Deschide
   see: Vezi
@@ -27,6 +28,7 @@ default:
   export: Exportă
   import: Importă
   load: Încarcă
+  replace: Înlocuiește
   preview: Previzualizare
   options: Opțiuni
   caution: Atenție
@@ -129,6 +131,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Desenează Piese
+      smart_build: Construiește piese
       smart_handle: Gestionează Piese
       smart_reshape: Remodelează Piese
       smart_paint: Vopsește Piese
@@ -145,7 +148,7 @@ core:
   dialog:
     title: OpenCutList de L'Air du Bois
   leftbar:
-    import: Import
+    import: Importă
     more: Mai multe
     more_docs: Doc.
     # this link only appears in the french version, points to https://www.lairdubois.fr/
@@ -171,6 +174,8 @@ core:
       A apărut o eroare la exportul către *{{ path }}*.
       **{{ error }}**
     unsupported_file_format: "Format de fișier nesuportat: **{{ format }}**"
+    unsupported_skp_version: |
+      Fișierul SKP a fost creat cu o versiune mai recentă de SketchUp: {{ version }}
   success:
     exported_to: Export reușit către {{ path }}.
     copied_to_clipboard: Copiat în clipboard
@@ -215,16 +220,21 @@ core:
       *Crearea unei presetări personalizate vă permite să păstrați setările curente ale formularului la nivel global, astfel încât să le puteți refolosi ulterior în toate șabloanele.*
 
       Introduceți numele presetării:
+    rename_prompt_title: Redenumire
+    rename_prompt: Introduceți noul nume al presetării **"{{ name }}"**
     delete_confirm_title: Ștergere
     delete_confirm: Sunteți sigur că doriți să ștergeți presetarea **"{{ name }}"**?
     override_confirm_title: Actualizare
     override_confirm: Confirmați actualizarea presetării **"{{ name }}"** cu parametrii formularului?
+    new_error: Imposibil, o presetare **"{{ name }}"** există deja
     new_success: Presetarea **"{{ name }}"** a fost creată
     override_success: Presetarea **"{{ name }}"** a fost actualizată
     restore_success: Formularul a fost completat cu presetarea **"{{ name }}"**
+    rename_success: Presetarea **"{{ name }}"** a fost redenumită în **"{{ new_name }}"**
     delete_success: Presetarea **"{{ name }}"** a fost ștearsă
     tooltip:
       save_to: Actualizați presetarea '{{ name }}'
+      rename: Redenumește presetarea '{{ name }}'
       delete: Ștergeți presetarea '{{ name }}'
     dictionary:
       component_textinput_color: Paletă de Culori
@@ -243,6 +253,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -265,6 +278,10 @@ core:
       remove: Elimină culoarea
     textinput_code:
       snippets: Exemple de formule
+      help: Tastați **@** pentru a deschide lista variabilelor de date.
+    textinput_file:
+      browse: Răsfoiește
+      browse_library: Răsfoiește și copiază în bibliotecă
     textinput_size:
       quantity: Cant.
     three_viewer:
@@ -286,6 +303,29 @@ core:
       failed_to_load: |
         Nu s-a putut deschide documentația.
         Verificați dacă sunteți conectat la internet.
+  solid:
+    error:
+      empty: Solidul nu conține nicio geometrie
+      empty_named: „{{ name }}” nu conține nicio geometrie
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
+      non_manifold_edges: Solidul conține {{ count }} muchie non-manifold
+      non_manifold_edges_plural: Solidul conține {{ count }} muchii non-manifold
+      non_manifold_edges_named: „{{ name }}” conține {{ count }} muchie non-manifold
+      non_manifold_edges_named_plural: „{{ name }}” conține {{ count }} muchii non-manifold
+      open_edges: Solidul conține {{ count }} muchie deschisă
+      open_edges_plural: Solidul conține {{ count }} muchii deschise
+      open_edges_named: „{{ name }}” conține {{ count }} muchie deschisă
+      open_edges_named_plural: „{{ name }}” conține {{ count }} muchii deschise
+      locked_instances: "Operațiunea nu poate modifica o instanță blocată: {{ list }}"
+    rebuild:
+      error:
+        no_segment: Nicio linie de construcție utilizabilă în selecție
+        no_face: Nu a putut fi reconstruită nicio buclă închisă coplanară
+  library:
+    libraries: Biblioteci
+    user: Biblioteca mea
+    bundled: Biblioteca OCL
+    family_modules: Module
 tab:
   cutlist:
     label: Piese
@@ -363,6 +403,7 @@ tab:
       flipped: Această piesă este în oglindă în raport cu definiția componentei sale
       symmetrical: Detectarea pieselor în oglindă este dezactivată pentru această piesă
       ignore_grain_direction: Orientarea fibrei este ignorată pentru această piesă
+      follow_grain_direction: Detectarea continuității fibrei este activată pentru această piesă
       auto_oriented: Această piesă a fost reorientată automat
       oko_label_filter: Include / Exclude această etichetă
       add_label_filter: Filtrează după '{{ label }}'
@@ -387,6 +428,7 @@ tab:
       children_size_increase: Această dimensiune este supradimensionată pentru {{ count }} piese grupate
       invalid_final_area: Atenție, această arie cumulabilă nu a putut fi calculată deoarece {{ count }} piesă (din {{ total }}) are o arie nevalidă
       invalid_final_area_plural: Atenție, această arie cumulabilă nu a putut fi calculată deoarece {{ count }} piese (din {{ total }}) au o arie nevalidă
+      is_instance_name: Denumirea acestei piese este preluată din numele instanței grupului
       is_dynamic_attributes_name: Denumirea acestei piese este extrasă din atributul 'Name' al componentei dinamice
       has_edges: Această piesă conține {{ count }} aplicare de cant
       has_edges_plural: Această piesă conține {{ count }} aplicări de cant
@@ -456,7 +498,7 @@ tab:
       extra_help: Lista de proprietăți specifice tipului de material "**$t(tab.materials.type_{{ material_type }})**".
       edges: Canturi
       faces: Fețe
-      name: Denumire
+      name: Nume
       material: Material
       cumulable: Cumulabil
       cumulable_help: |
@@ -515,9 +557,20 @@ tab:
       symmetrical_help: |
         Dacă această opțiune este selectată, detectarea unei *piese în oglindă* nu va avea efect asupra acestei piese.
       ignore_grain_direction: Orientarea Fibrei
+      ignore_grain_direction_help: |
+        Această opțiune permite ignorarea, pentru această piesă, a direcției fibrei definite pe material.
       ignore_grain_direction_0: Fibra urmărește lungimea
       ignore_grain_direction_1: Ignoră direcția fibrei pentru această piesă
+      follow_grain_direction: Continuitatea fibrei
+      follow_grain_direction_help: |
+        Activând această opțiune, instanțele acestei piese vor putea fi considerate piese așezate în **Continuitatea fibrei** cu vecinele lor care au:
+        - același *Grup de continuitate a fibrei*
+        - același Plan
+        - aceeași Orientare
+        - același Material cu fibră
+        - aceeași Grosime
       follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Detectarea continuității fibrei activată
       axes: Axe
       axes_help: Reordonați dimensiunile pentru a se potrivi cu culorile dorite ale axelor în piesa dvs.
       axes_tip: |
@@ -619,11 +672,13 @@ tab:
       filters_warning_plural: Acest filtru afișează doar **{{ count }}** piese dintr-un total de {{ total }}.
       edge_material_names_filter: Filtrează după materialul cantului
       veneer_material_names_filter: Filtrează după materialul furnirului
+      names_filter: Denumiri de filtrat
       tags_filter: Filtrează după etichete
+      tags_filter_any: Toate etichetele (Badges)
       dimensions_help: Dimensiuni explicate
       summary: Rezumat
       material_type: Tip
-      material_thickness: Material / Grosime
+      material_thickness: Material / Dimensiune
       part_count: Cantitate
       area: Arie
       area_short: Arie
@@ -706,10 +761,10 @@ tab:
       description: Descriere
       url: URL
       tags: Etichete (Badges)
-      edge_ymin: Lungime cant 1
-      edge_ymax: Lungime cant 2
-      edge_xmin: Lățime cant 1
-      edge_xmax: Lățime cant 2
+      edge_ymin: Lungime Cant 1
+      edge_ymax: Lungime Cant 2
+      edge_xmin: Lățime Cant 1
+      edge_xmax: Lățime Cant 2
       face_zmin: Spate
       face_zmax: Față
       layer: Etichetă (Tag)
@@ -1075,8 +1130,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Orizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
       option_rectangleguillotine_first_stage_orientation_any: Oricare
+      option_rectangleguillotine_sort_subplates_criteria: Sortarea nivelurilor
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Definește criteriile de sortare a pieselor pe fiecare nivel.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: După dimensiune descrescătoare
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: După densitate descrescătoare
       option_rectangleguillotine_keep: Dimensiunea Minimă a Resturilor
       option_rectangleguillotine_keep_help: Resturile care sunt mai mari decât lungimea și lățimea minimă sunt marcate **de păstrat**.
+      option_rectangle_leftover_mode: Direcția de dispunere
+      option_rectangle_leftover_mode_help: |
+        Definește direcția de dispunere a pieselor pe ultimul panou incomplet.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: Pe lățimea panoului
+      option_rectangle_leftover_mode_y: Pe lungimea panoului
       option_irregular_allowed_rotations: Rotații Permise
       option_irregular_allowed_rotations_help: |
         Setează rotațiile permise pentru plasarea pieselor.
@@ -1085,11 +1151,18 @@ tab:
       option_irregular_allowed_rotations_0: Niciuna
       option_irregular_allowed_rotations_90: Pași de 90°
       option_irregular_allowed_rotations_180: Pași de 180°
+      option_irregular_allowed_rotations_free: Liber
       option_irregular_allow_mirroring: Oglindire Permisă
       option_irregular_allow_mirroring_help: |
         Definește dacă piesa are voie să fie oglindită pentru a fi plasată.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Direcția de dispunere
+      option_irregular_leftover_mode_help: |
+        Definește direcția de dispunere a pieselor pe ultimul panou incomplet.
+      option_irregular_leftover_mode_bottom_left: Auto
+      option_irregular_leftover_mode_left: Pe lățimea panoului
+      option_irregular_leftover_mode_bottom: Pe lungimea panoului
       option_spacing: Spațiere
       option_spacing_help: |
         Spațierea minimă între fiecare piesă.
@@ -1158,6 +1231,8 @@ tab:
       option_time_limit_help: |
         Fixează limita de timp pentru calcul
       grain_groups:
+        title: "{{ count }} grup de continuitate a fibrei"
+        title_plural: "{{ count }} grupuri de continuitate a fibrei"
         name: Nume
         item_count: "# Piese"
       tooltip:
@@ -1259,6 +1334,7 @@ tab:
         unplaced_parts: "**1 piesă** nu a putut fi plasată."
         unplaced_parts_plural: "**{{ count }} piese** nu au putut fi plasate."
         unusable_part_1: Piesă prea mare
+        unusable_part_2: Grup de continuitate a fibrei prea mare
       warning:
         is_part_selection: Această diagramă de tăiere este limitată la **piesele selectate**.
         cutting_dimensions: Această diagramă de tăiere folosește dimensiunile **brute** ale pieselor.
@@ -1270,7 +1346,7 @@ tab:
       options_layout: Aranjament (Layout)
       options_settings: Configurație
       options_part_order_strategy: Sortare
-      options_offset: Decalaj (Offset)
+      options_offset: Decalaj
       size: Dimensiunea reală a etichetei
       add_element: Adaugă element
       duplicate_element: $t(default.duplicate)
@@ -1390,6 +1466,7 @@ tab:
       option_pins_length_1: Scurtă
       option_pins_length_2: Medie
       option_pins_length_3: Lungă
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Selectează lungimea liniei indicatoare.
       option_pins_direction: Orientare
       option_pins_direction_0: De-a lungul axei Roșii
@@ -1472,7 +1549,13 @@ tab:
 
         - Structura **Straturi (Layers)** desenează toate liniile plan, diferențiind între diverse tipuri de linii folosind doar straturile. *Această structură oferă o compatibilitate mai mare cu software-uri terțe.*
         - Structura **Straturi + Blocuri** creează un bloc per piesă și inserează aceste blocuri de câte ori sunt repetate piesele. *Această structură oferă mai multă flexibilitate pentru editarea fișierului.*
+      option_dxf_depth_to_z: Adâncimi pe Z
       option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Distribuie adâncimile straturilor pe Z
+      option_dxf_depth_to_z_help: |
+        Permite activarea distribuirii straturilor pe axa Z în funcție de adâncimea lor.
+
+        Dezactivați această opțiune pentru a exporta un DXF doar în 2D.
       option_unit: Unitate
       option_unit_help: |
         Selectează unitatea folosită în fișierul exportat.
@@ -1589,6 +1672,7 @@ tab:
     type_4: Cant
     type_5: Feronerie
     type_6: Furnir
+    type_7: Prelucrare
     tooltip:
       type_0: Tip material '$t(tab.materials.type_0)'
       type_1: Tip material '$t(tab.materials.type_1)'
@@ -1637,6 +1721,7 @@ tab:
       formats: Formate
       cut_options: Parametri de Tăiere
       estimate_options: Opțiuni de Estimare
+      export_options: Opțiuni de Export
       attributes: Atribute
       thickness: Grosime
       thickness_help: |
@@ -1714,7 +1799,7 @@ tab:
     texture_load:
       title: Încarcă imagine
     texture_export:
-      title: Exportă imagine
+      title: Exportă imaginea
     import_from_skm:
       title: Importă fișier .skm
       ask_replace: |
@@ -1774,7 +1859,7 @@ tab:
       select_active_nodes: Selectează / Deselectează toate instanțele active
       select_node: Selectează
       unselect_node: Deselectează
-      open_node_url: Deschide URL piesă
+      open_node_url: Deschide URL-ul piesei
     edit_node:
       title_model: Proprietățile modelului
       title_instance: Proprietățile instanței **{{ name }}**
@@ -1784,13 +1869,15 @@ tab:
       name: Nume
       instance_name: Instanță
       material: Material
+      is_grain_group: Definește ca **Grup de continuitate a fibrei**
+      is_grain_group_help: Activând această opțiune, această instanță va putea fi considerată un **Grup de continuitate a fibrei** pentru piesele pe care le conține și care au *Continuitatea fibrei* activă.
       definition_name: Definiție
       description: Descriere
       url: URL
       tags: Etichete (Badges)
       layer_name: Etichetă (Tag)
       snapto: Atașează
-      snapto_none: Fără
+      snapto_none: Niciuna
       snapto_0: Oricare
       snapto_1: Orizontal
       snapto_2: Vertical
@@ -1928,14 +2015,24 @@ tab:
     obsolete_base: Pentru a rămâne sincronizat, trebuie să reîncărcați fișierul CSV.
   importers:
     default:
+      open_file: Deschide un fișier {{ extension }}
       import_to_model: Importă în model
       error:
+        no_data: Nicio dată de importat.
+        no_model: Niciun model nu este deschis. Este imposibil să importați în neant ;)
         file_not_found: "Fișier negăsit : **{{ filename }}**"
+        bad_extension: Fișierul *{{ filename }}* nu are extensia necesară (**{{ extensions }}**).
+        failed_to_import: Importul a eșuat.
       success:
         imported_title: Import finalizat
     csv:
       label: CSV
       title: Importă Piese
+      help: |
+        Această pagină vă permite să importați în model o serie de piese (de formă paralelipipedică) dintr-un fișier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+        Astfel veți putea folosi puterea listei de debitare *OpenCutList* pentru piese generate cu alt program decât *SketchUp*.
+
+        Faceți clic pe butonul **Deschide un fișier CSV** pentru a începe.
       load:
         title: Încărcare Fișier CSV
         info_0: |
@@ -1979,7 +2076,7 @@ tab:
         bbox_width: Lățime
         bbox_thickness: Grosime
         material: Material
-        tags: Etichete
+        tags: Etichete (Badges)
       tooltip:
         errors: Această piesă nu va fi importată deoarece a produs următoarele erori
         warnings: Această piesă va fi importată, dar a produs următoarele avertismente
@@ -2002,22 +2099,81 @@ tab:
       obsolete_base: Pentru a rămâne sincronizat, trebuie să reîncărcați fișierul CSV.
     bxf2:
       label: BXF2
+      title: Importă o configurație Blum
+      help: |
+        Această pagină vă permite să importați în model o configurație dintr-un fișier BXF2.
+        Fișierele BXF2 pot fi create cu [Configuratorul de mobilier](https://e-services.blum.com/) de la [Blum](https://www.blum.com).
+
+        Faceți clic pe butonul **Deschide un fișier BXF2** pentru a începe.
+      load:
+        title: Încărcarea unui fișier BXF2
       import:
+        title: Importul configurației în model
+        info_0: |
+          Sunteți pe cale să importați în model o configurație de **{{ count }} corp**.
+        info_0_plural: |
+          Sunteți pe cale să importați în model o configurație de **{{ count }} corpuri**.
+        info_1: Veți avea posibilitatea de a-i defini amplasarea în modelul activ.
         materials: Materiale
         layers: Etichete (Tags)
+        geometry: Geometrie
         option_parts_formula: Formulă
+        option_parts_formula_help: Formula vă permite să personalizați numele pieselor importate.
+        option_part_wood_material_name: Lemn
+        option_part_wood_material_name_help: Materialul care se aplică pieselor din **lemn**.
+        option_part_aluminium_material_name: Aluminiu
+        option_part_aluminium_material_name_help: Materialul care se aplică pieselor din **aluminiu**.
+        option_part_glass_material_name: Sticlă
+        option_part_glass_material_name_help: Materialul care se aplică pieselor din **sticlă**.
+        option_front_part_layer_name: Fronturi
+        option_front_part_layer_name_help: Eticheta (Tag) care se aplică pieselor de front.
+        option_back_part_layer_name: Spate
+        option_back_part_layer_name_help: Eticheta (Tag) care se aplică spatelui corpurilor.
+        option_machining_material_name: Prelucrări
+        option_machining_material_name_help: Materialul care se aplică **prelucrărilor**.
+        option_machining_layer_name: Prelucrări
+        option_machining_layer_name_help: Eticheta (Tag) care se aplică prelucrărilor.
+        option_hardware_material_name: Feronerie
+        option_hardware_material_name_help: Materialul care se aplică **feroneriei**.
+        option_hardware_layer_name: Feronerie
+        option_hardware_layer_name_help: Eticheta (Tag) care se aplică feroneriei.
+        option_no_material_help: "*Lăsați acest câmp gol pentru a nu aplica niciun material*."
+        option_default_material_help: "*Dacă acest câmp este gol, va fi creat un material implicit*."
+        option_no_layer_help: "*Lăsați acest câmp gol pentru a nu aplica nicio etichetă (Tag)*."
+        option_subtract_machinings: Scobește prelucrările în piese
+        option_subtract_machinings_help: "**Canalele**, **fălțuirile** și **teșiturile** pieselor, inclusiv cele legate de feronerie, sunt scăzute din volumul lor în loc să fie desenate. Găurile rămân desenate."
+        warning:
+          subtract_machinings_failed: "Prelucrările nu au putut fi scobite în aceste piese, sunt desenate în schimb: {{ names }}"
         old_name: Nume original
         new_name: Nume nou
         count: Cant.
         formula:
           part: Piesă
+          project: Proiect
+          cabinet: Mobilă
+      model:
+        author: Autor
+        date: Dată
       cabinet:
+        list: Lista de mobilier
         description: Nume
         width: Lățime
         height: Înălțime
+        depth: Adâncime
       article:
+        list: Lista articolelor
+        total_quantity: Cant.
+        article_number: Ref.
         description: Descriere
         material: Material
+      error:
+        failed_to_load_bxf2_file: |
+          Fișierul BXF2 nu poate fi încărcat: **{{ error }}**
+      warning:
+        partial_support: |
+          Aveți nevoie de **SketchUp 2021.1** sau o versiune ulterioară pentru a beneficia de toate funcționalitățile.
+          Geometriile 3D ale pieselor de feronerie **nu vor putea fi importate**.
+      obsolete_base: Pentru a rămâne sincronizat, trebuie să reîncărcați fișierul BXF2.
   tutorials:
     label: Tutoriale
     title: Tutoriale
@@ -2117,8 +2273,18 @@ tab:
     currency_precision: Precizie
     presets:
       export_global_presets: Exportă presetări
+      export_global_presets_help: |
+        Această funcționalitate vă permite să exportați presetările într-un fișier **.json**.
+        Selectați presetările pe care doriți să le exportați.
+        Dacă presetările selectate fac referire la fișiere **.skp** sau **.skm**, acestea sunt incluse într-o arhivă **.oclp** pentru ca exportul să poată fi partajat ca atare.
       export_global_presets_success: Presetările au fost exportate cu succes.
+      export_global_presets_success_with_assets: Presetările au fost exportate cu succes, împreună cu {{ count }} fișier(e) asociat(e).
       import_global_presets: Importă presetări
+      import_global_presets_help: |
+        Selectați presetările din fișierul **.json** sau **.oclp** pe care doriți să le importați.
+        Atenție, dacă există deja o presetare cu același nume, aceasta va fi înlocuită cu versiunea importată.
+        Fișierele conținute într-o arhivă **.oclp** sunt copiate în biblioteca dumneavoastră, în locul pe care îl ocupau în biblioteca expeditorului.
+      open_library_dir: Deschide dosarul bibliotecii
       import_global_presets_success: |
         Presetările *OpenCutList* au fost importate cu succes.
         Pentru a reflecta modificările, trebuie să **închideți** și să **redeschideți** fereastra OpenCutList.
@@ -2143,6 +2309,8 @@ tab:
       error:
         no_preset_to_export: Nicio presetare de exportat.
         no_preset_to_import: Nicio presetare de importat.
+        failed_to_export: "Presetările nu pot fi exportate: **{{ error }}**."
+        failed_to_open_library_dir: "Dosarul bibliotecii nu poate fi deschis: **{{ error }}**."
         failed_to_import: "Eroare la importul Presetărilor: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Acest fișier a fost modificat. Nu poate fi importat.
         failed_to_import_bad_file_format: Format fișier invalid.
@@ -2199,34 +2367,45 @@ tool:
     vcb_diameter: Diametru
     vcb_distance: Distanță
     vcb_spacings: Mărime Spațiu (Gap)
+    vcb_angle: Unghi
     locked_on_last_measure_status: Blochează pe ultima măsurătoare
+    library_choose: Alegeți o bibliotecă
+    modal_only_help: Setare disponibilă doar în această fereastră, absentă din bara de instrumente
     error:
       no_direction: Vă rugăm să indicați o direcție cu mouse-ul
       invalid_length: Lungimea {{ value }} este invalidă
-      invalid_thickness: Grosime invalidă
+      invalid_thickness: Grosime {{ value }} invalidă
       invalid_multiplicator: Factorul {{ value }} este invalid
       invalid_divider: Divizorul {{ value }} este invalid
       invalid_offset: Decalajul {{ value }} este invalid
+      invalid_angle: Unghiul {{ value }} nu este valid
       invalid_segment_count: Numărul de segmente {{ value }} este invalid. Trebuie să fie între 3 și 999.
       syntax_error: "Eroare de sintaxă: {{ error }}"
       unexpected_close_parenthesis: Paranteză de închidere neașteptată
       missing_close_parenthesis: Paranteză de închidere lipsă
       missing_operand: Operand lipsă
       zero_division: Împărțire la zero
+      invalid_argument_count: O funcție min, max, floor sau ceil necesită cel puțin două valori
+      comma_argument_separator: "Separați valorile prin „;”: virgula este și separatorul zecimal"
+      invalid_dimension: "O lungime se adună doar cu o lungime: un număr fără unitate este un factor"
+      no_matching_value: Niciuna dintre valorile propuse nu este potrivită
       lt_min_distance: Distanța {{ value1 }} este mai mică decât distanța minimă de {{ value2 }}
       gt_max_distance: Distanța {{ value1 }} este mai mare decât distanța maximă de {{ value2 }}
       locked_part: Piesă blocată
+      not_sibling_part: Această piesă nu se află în același grup sau componentă cu restul selecției
       selection_contains_locked_entities: Selecția conține elemente blocate
       wrong_material_type: Piesa vizată trebuie să fie de tipul '{{ type }}'
   smart_select:
     state_0_status: Faceți clic pe o piesă pentru a o selecta
     state_0_to_6_status: Selectați un element părinte
+    state_0_to_7_status: Selecție multiplă
     state_4_status: Trageți peste o piesă identică cu același părinte pentru a o adăuga la selecție, apoi eliberați pentru a continua
     state_5_status: Glisați pentru a adăuga la selecție și eliberați pentru a continua
     state_6_status: Selectați un element din listă
     state_7_status: Faceți clic pe o piesă pentru a o adăuga sau a o decupa din selecție
     warning:
       no_active_part: Mai întâi trebuie să treceți cu mouse-ul peste o piesă
+      no_parent_group: Piesa de sub cursor nu are un grup sau o componentă părinte
   smart_draw:
     title: Desenează
     action_0: Desenează Dreptunghi
@@ -2269,27 +2448,146 @@ tool:
     action_option_options_draw_in_0: Desenează în elementul activ
     action_option_options_draw_in_1: Desenează în obiectul părinte al piesei vizate de primul punct
     action_option_options_draw_in_status: Desenează în obiectul părinte al piesei vizate de primul punct
+    action_option_options_pick_material: Pipetă
+    action_option_options_pick_material_status: Aplică materialul piesei vizate de primul punct piesei create
     action_option_options_ask_name: Denumirea pieselor
     action_option_options_ask_name_status: Introduceți manual numele pieselor
     action_toggle_move_copy_status: Comută între copiere/mutare
     action_change_move_anchor_status: Schimbă punctul de ancorare
     success:
       part_created: "Piesă nouă creată: {{ name }}"
+      part_created_plural: "{{ count }} piese noi create: {{ name }}"
   smart_build:
+    title: Construiește
+    action_0: Plasează un modul
+    action_0_status: Plasează un modul importat dintr-un fișier SKP, întins la dimensiunile cutiei desenate
+    action_0_state_0_status: Selectați un fișier de modul din bibliotecă
+    action_0_state_1_status: Faceți clic pentru a plasa originea modulului
+    action_0_state_2_status: Faceți clic pentru a defini lățimea modulului (axa X)
+    action_0_state_2_lock_status: Blochează la lățimea fișierului sursă
     action_0_state_2_arrows_status: Blocare pe o axă
+    action_0_state_3_status: Faceți clic pentru a defini adâncimea modulului (axa Y)
+    action_0_state_3_lock_status: Blochează la adâncimea fișierului sursă
     action_0_state_3_arrows_status: Blochează normala planului XY pe o axă
+    action_0_state_4_status: Faceți clic pentru a defini înălțimea modulului (axa Z)
+    action_0_state_4_lock_status: Blochează la înălțimea fișierului sursă
+    action_0_state_5_status: Faceți clic pe instanța de adăugat
+    action_0_state_6_status: Faceți clic pe fața din FAȚĂ a modulului
+    action_0_state_7_status: Faceți clic pe fața de SUS a modulului
+    action_0_add_title: Adaugă un modul
+    action_0_add_name: Nume fișier
+    action_0_add_overwrite: Fișierul „{{ name }}.skp” există deja. Doriți să îl înlocuiți?
+    action_0_add_front_label: FAȚĂ
+    action_0_add_up_label: SUS
+    action_0_flip_status: Inversează fața și spatele
+    action_0_flip_up_status: Inversează susul și josul
+    action_1: Construiește un despărțitor
+    action_1_status: Construiește un despărțitor într-o cavitate formată de un grup de piese existente
+    action_1_state_0_status: Faceți clic pe un perete pentru a construi un despărțitor
+    action_1_state_1_status: Faceți clic pe un perete pentru a construi despărțitoare
+    action_2: Construiește un front
+    action_2_status: Construiește un front care închide o cavitate formată de un grup de piese existente
+    action_2_state_0_status: Faceți clic într-o cavitate pentru a construi un front pe deschiderea ei
+    action_2_state_0_merge_status: Glisați până la cavitățile vecine pentru un front comun
+    action_3: Construiește un spate
+    action_3_status: Construiește un spate care închide o cavitate formată de un grup de piese existente
+    action_3_state_0_status: Faceți clic într-o cavitate pentru a construi un spate pe deschiderea ei opusă vederii
+    action_3_state_0_merge_status: Glisați până la cavitățile vecine pentru un spate comun
+    action_option_group_groove: Canal
+    action_2_option_group_offset: Joc
     action_option_group_thickness: Grosime
+    action_option_group_overlay: Montaj
     action_option_group_axes: Axe
     action_option_group_measure_type: Măsurare
+    action_option_group_measure_origin: Origine
     action_option_group_options: Opțiuni
+    action_option_offset_front_panel_offset: Joc
+    action_option_offset_front_panel_offset_status: Definește jocul lăsat pe fiecare margine a frontului
+    action_option_groove_groove_depth: Adâncimea canalului
+    action_option_groove_groove_depth_status: Definește adâncimea canalului în care este introdus spatele
+    action_option_groove_groove_panel_reduction: Reducerea panoului
+    action_option_groove_groove_panel_reduction_status: Definește cu cât este redus spatele pe fiecare margine introdusă într-un canal, lăsând acest joc pe fundul canalului
+    action_option_groove_groove_width_clearance: Joc pe lățime
+    action_option_groove_groove_width_clearance_status: Definește cu cât canalul este prelucrat mai lat decât grosimea spatelui, în întregime spre exteriorul corpului
+    action_option_groove_groove_setback: Retragere
+    action_option_groove_groove_setback_status: Definește cu cât se retrage spatele spre interiorul corpului și, deci, unde este prelucrat canalul
+    action_option_groove_groove_through: Canal continuu
+    action_option_groove_groove_through_status: Prelungește canalul până la capătul pieselor care o acoperă pe cea vecină, atunci când iese acolo fără a fi vizibil
     action_option_thickness_thickness: Grosime
+    action_option_thickness_thickness_status: Definește grosimea panourilor
+    action_option_overlay_inset_status: "Front încastrat: montat în deschidere, la nivel cu fața din față"
+    action_3_option_overlay_inset_status: "Spate în canal: introdus într-un canal prelucrat în piesele care mărginesc deschiderea"
+    action_option_overlay_full_overlay_status: "Front aplicat: montat în fața feței din față, acoperind panourile până la fața exterioară a corpului și până la jumătatea grosimii panourilor interioare"
+    action_3_option_overlay_full_overlay_status: "Spate aplicat: montat pe partea din spate a corpului, acoperind panourile până la fața exterioară și până la jumătatea grosimii panourilor interioare, fără nicio prelucrare"
+    action_option_overlay_against_protrusions_status: "Front aplicat între proeminențe: montat aplicat pe panourile de la nivelul deschiderii și ajustat lângă cele care ies în afară"
+    action_3_option_overlay_against_protrusions_status: "Spate aplicat între proeminențe: montat aplicat pe panourile de la nivelul deschiderii și ajustat între cele care ies în afară (laterale depășite), fără nicio prelucrare"
+    action_option_measure_type_inside_status: Poziționează grosimea în interiorul punctului vizat
+    action_option_measure_type_centered_status: Centrează grosimea pe punctul vizat
+    action_option_measure_type_outside_status: Poziționează grosimea în exteriorul punctului vizat
+    action_option_measure_origin_wall_status: Măsoară de la pereții interiori ai cavității
+    action_option_measure_origin_overall_status: Măsoară de la pereții exteriori ai pieselor care închid cavitatea
     action_option_axes_active_status: Manipulează de-a lungul axelor active
+    action_option_axes_context_status: Manipulează de-a lungul axelor grupului sau componentei gazdă
     action_option_options_measure_reversed: Măsurare Inversată
     action_option_options_measure_reversed_status: Inversează măsurătoarea
+    action_option_options_reduce_envelope: Piese retrase
+    action_option_options_reduce_envelope_status: Ia în considerare piesele retrase
+    action_option_options_reuse_definition: Reutilizează piesele
+    action_option_options_reuse_definition_status: Reutilizează piesa existentă cu aceeași formă și aceeași vecinătate în loc să creezi una nouă
+    action_option_options_mirror: Montaj în oglindă
+    action_option_options_mirror_status: Montează fiecare front de rang par în oglindă față de vecinul său
+    action_option_options_pick_material: Pipetă
+    action_option_options_pick_material_status: Aplică materialul piesei de sub cursor pieselor create
+    action_option_options_face_camera: Cu fața spre cameră
+    action_option_options_face_camera_status: Rotește automat fața modulului spre cameră
+    action_option_options_top_up: Sus spre Z+
+    action_option_options_top_up_status: Rotește automat partea de sus a modulului cât mai mult în sus (Z+)
     action_option_options_ask_name: Denumirea pieselor
     action_option_options_ask_name_status: Introduceți manual numele pieselor
+    action_option_options_layer_name: Etichetă (Tag)
+    action_option_anchor_center_x_status: Centrat pe X
+    action_option_anchor_center_y_status: Centrat pe Y
+    action_option_anchor_center_z_status: Centrat pe Z
+    action_option_anchor_origin_status: Originea componentei
+    action_option_no_layer_help: "*Lăsați acest câmp gol pentru a nu aplica nicio etichetă (Tag)*."
+    detecting_cavities: Detectarea cavităților...
+    error:
+      invalid_divider_seed: Acest tip de piesă nu permite construirea unui despărțitor
+      invalid_divider_container: "Această piesă este izolată: nu împarte un grup sau o componentă cu alte piese"
+      invalid_divider_cavity: Nicio cavitate în această poziție
+      no_divider_cavity: Nu a fost detectată nicio cavitate în acest grup sau componentă
+      invalid_front_panel_seed: Acest tip de piesă nu permite construirea unui front
+      invalid_front_panel_container: "Această piesă este izolată: nu împarte un grup sau o componentă cu alte piese"
+      invalid_front_panel_cavity: Nicio cavitate deschisă spre dumneavoastră în această poziție
+      no_front_panel_cavity: Nu a fost detectată nicio cavitate în acest grup sau componentă
+      invalid_back_panel_seed: Acest tip de piesă nu permite construirea unui spate
+      invalid_back_panel_container: "Această piesă este izolată: nu împarte un grup sau o componentă cu alte piese"
+      invalid_back_panel_cavity: Nicio cavitate deschisă pe partea opusă vederii în această poziție
+      no_back_panel_cavity: Nu a fost detectată nicio cavitate în acest grup sau componentă
+      too_complex_cavity: Geometrie prea complexă pentru a detecta cavități
+      closed_front_panel_opening: Această deschidere este deja închisă de un front
+      closed_back_panel_opening: Această deschidere este deja închisă de un spate
+      divider_number_overflow: Imposibil de distribuit {{ number }} despărțitoare în această cavitate
+      front_panel_number_overflow: Imposibil de distribuit {{ number }} fronturi pe această deschidere
+      back_panel_number_overflow: Imposibil de distribuit {{ number }} spate pe această deschidere
+      back_panel_severs_parts: "Canalul ar tăia complet: {{ names }}. Reduceți-i adâncimea"
+      module_file_not_found: "Fișierul de modul nu a fost găsit: {{ file }}"
+      module_file_invalid: "Fișierul de modul nu poate fi încărcat: {{ file }}"
+      module_file_invalid_name: "Nume de fișier invalid: {{ name }}"
+      module_file_save_failed: "Fișierul de modul nu poate fi salvat: {{ name }}.skp"
+      module_stretch_failed: Modulul nu poate fi întins la aceste dimensiuni
+    warning:
+      no_back_panel_machining: "Niciun canal nu a putut fi prelucrat: nicio piesă vecină nu mărginește spatele la această adâncime"
+      no_module_file: Niciun fișier .skp în acest dosar
+      module_axis_no_scale: "Modul care nu poate fi întins pe {{ axis }}: blocat de comportamentul componentei"
+      module_axis_curve_intersect: "Modul care nu poate fi întins pe {{ axis }}: unul dintre planurile de secțiune traversează o curbă care nu poate fi întinsă"
     success:
       part_created: "Piesă nouă creată: {{ name }}"
+      part_created_plural: "{{ count }} piese noi create: {{ name }}"
+      part_reused: "O nouă instanță a piesei existente: {{ name }}"
+      part_reused_plural: "{{ count }} instanțe noi ale piesei existente: {{ name }}"
+      module_file_saved: "Modul salvat: {{ name }}.skp"
+      module_created: "Modul nou plasat: {{ name }}"
   smart_handle:
     title: Gestionează
     action_0: Selectează
@@ -2302,12 +2600,17 @@ tool:
     action_2_state_2_status: Faceți clic pentru a plasa copiile piesei sau introduceți două distanțe
     action_3: Mută
     action_3_status: Mută o piesă de-a lungul unei axe
-    action_3_state_1_status: Faceți clic pentru a stabili primul punct de măsurare
+    action_3_state_1_status: Faceți clic pentru a seta primul punct de măsurare
     action_3_state_2_status: Faceți clic pentru a plasa piesa sau introduceți o distanță
     action_4: Distribuie
     action_4_status: Distribuie o piesă de-a lungul unei axe
     action_4_state_1_status: Faceți clic pentru a seta primul punct de măsurare
     action_4_state_2_status: Faceți clic pentru a seta al doilea punct de măsurare sau introduceți o distanță
+    action_5: Interacționează
+    action_5_status: Deschide sau închide o ușă
+    action_5_state_0_status: Faceți clic pe o ușă pentru a o deschide sau închide, sau glisați-o pentru a-i regla deschiderea
+    action_5_state_0_amend_status: Introduceți un unghi pentru a corecta deschiderea, sau faceți clic pe o ușă pentru a o deschide sau închide
+    action_5_state_20_status: Glisați pentru a regla deschiderea ușii și eliberați pentru a confirma
     action_option_group_copy_measure_type: Măsurare
     action_option_group_move_measure_type: Măsurare
     action_option_group_axes: Axe
@@ -2322,6 +2625,9 @@ tool:
     action_toggle_raytest_status: Proiecție pe punctul următor
     warning:
       copies_disable_mirror: Copiile multiple dezactivează opțiunea '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: Această piesă nu este o ușă echipată cu balamale
+      incoherent_door: Balamalele acestei uși nu se rotesc în jurul aceleiași axe
   smart_reshape:
     title: Remodelează
     action_0: Întinde
@@ -2330,19 +2636,39 @@ tool:
     action_0_state_1a_status: Faceți clic pe un plan de secțiune pentru a-l muta
     action_0_state_1b_status: Adaugă un plan de secțiune
     action_0_state_1c_status: Șterge un plan de secțiune
+    action_0_state_1d_status: Faceți clic pentru a muta geometria situată între cele două planuri de secțiune
     action_0_state_10_status: Trageți planul de secțiune pentru a-l muta
     action_0_state_11_status: Faceți clic pentru a adăuga planul de secțiune
     action_0_state_12_status: Faceți clic pe un plan de secțiune pentru a-l șterge
     action_0_state_2_status: Faceți clic pentru a confirma întinderea sau introduceți o distanță
     action_1: Creare panouri
+    action_1_status: Creează o serie de piese pornind de la un solid închis sau de la un desen din linii de construcție
+    action_1_state_0_status: Faceți clic pe un solid închis sau pe un grup de linii de construcție pentru a defini geometria de referință
     action_1_state_1_status: Selectați fețele pentru extrudare
+    action_1_rollover_face_status: Fața de sub cursor
+    action_1_select_similar_status: Selectează toate fețele cu formă identică
+    action_1_select_all_edges_status: Selectează toate muchiile în contact
+    action_2: Unește
+    action_2_status: Unește mai multe piese într-una singură
+    action_2_state_0_status: Selectați piesa A
+    action_2_state_1_status: Selectați piesa B
+    action_3: Decupează
+    action_3_status: Decupează o piesă cu alta
+    action_3_state_0_status: Selectați piesa A
+    action_3_state_1_status: Selectați piesa B
+    action_4: Intersectează
+    action_4_status: Creează o piesă corespunzătoare intersecției mai multor piese
+    action_4_state_0_status: Selectați piesa A
+    action_4_state_1_status: Selectați piesa B
     action_option_group_thickness: Grosime
     action_option_group_stretch_measure_type: Măsurare
     action_option_group_axes: Axe
     action_option_group_paneling_joint_type: Îmbinare
     action_option_group_paneling_direction: Orientare
+    action_option_group_csg_operation: Operațiune
     action_option_group_options: Opțiuni
     action_option_thickness_thickness: Grosime
+    action_option_thickness_thickness_status: Definește grosimea panourilor
     action_option_stretch_measure_type_outside_status: Măsurătoare externă
     action_option_stretch_measure_type_offset_status: Măsoară diferența
     action_option_axes_active_status: Manipulează de-a lungul axelor active
@@ -2353,6 +2679,19 @@ tool:
     action_option_paneling_direction_inward_status: Direcție spre interior
     action_option_paneling_direction_outward_status: Direcție spre exterior
     action_option_options_centered_status: Centrează pe elementele întinse
+    action_option_options_make_unique_status: Fă unice elementele remodelate
+    action_option_options_keep_a: Păstrează A
+    action_option_options_keep_a_status: Păstrează instanțele A după operațiune și plasează rezultatul într-o piesă nouă
+    action_option_options_keep_b: Păstrează B
+    action_option_options_keep_b_status: Păstrează instanțele B după operațiune
+    action_option_options_remove_unused_definitions_status: Șterge definițiile de componentă care nu mai sunt folosite după operațiune
+    action_option_options_reuse_definition: Reutilizează piesele
+    action_option_options_reuse_definition_status: Partajează aceeași definiție de componentă între panourile cu formă identică
+    action_option_options_reuse_definition_mirrored: Montaj în oglindă
+    action_option_options_reuse_definition_mirrored_status: Montaj în oglindă pentru panourile cu formă identică aflate față în față
+    notify:
+      validate_a: Confirmați pentru a trece la selecția lui B
+      validate_b: Confirmați pentru a aplica operațiunea
     error:
       curve_intersect: Unul dintre planele de secțiune intersectează o curbă neîntensibilă
   smart_paint:
@@ -2387,6 +2726,8 @@ tool:
     action_option_edges_2_status: Colorează cele 4 muchii ale piesei țintă
     action_option_faces_0_status: Colorează doar fața țintă
     action_option_faces_1_status: Colorează cele 2 fețe ale piesei țintă
+    state_8_status: Bifați materialele de înlocuit, apoi confirmați
+    select_filter_title: Materiale de înlocuit
     edges: "{{ count }} cant"
     edges_plural: "{{ count }} canturi"
     edge_ymin: Lungime 1
@@ -2400,6 +2741,7 @@ tool:
     warning:
       no_material: Fără material
       no_material_type: Fără material de tipul '{{ type }}'
+      selection_disable_instances_all: Selecția dreptunghiulară dezactivează opțiunea '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: Obiectul vizat nu este o piesă (componentă)
       not_edge: Fața vizată nu este o muchie a panoului
@@ -2416,6 +2758,10 @@ tool:
     action_3_status: Vizați o față a unei piese și faceți clic pe o muchie pentru a-i adapta axele
     action_4: Mută Originea
     action_4_status: Vizați o față a unei piese și faceți clic pe un punct pentru a plasa originea acolo
+    action_5: Configurează continuitatea fibrei
+    action_5_status: Faceți clic pe o piesă pentru a activa sau dezactiva detectarea continuității fibrei
+    action_5_to_state_10_status: Alege grupul de continuitate a fibrei
+    action_5_state_10_status: Faceți clic pe un element din listă pentru a-i modifica statutul de grup de continuitate a fibrei
     action_option_group_direction: Direcție
     action_option_direction_0: L
     action_option_direction_1: l
@@ -2428,6 +2774,8 @@ tool:
     error:
       not_part: Obiectul vizat nu este o piesă (componentă)
       not_orientable: Tipul acestei piese nu permite orientarea ei
+      not_grained: Piesa vizată nu are fibră
+      not_single_thickness_layer: Piesa vizată trebuie să fie compusă dintr-un singur strat
   # @no-translate
   smart_join:
     title: Asamblare
@@ -2468,5 +2816,6 @@ tool:
       not_flat_face: Această suprafață nu este plană
       incompatible_active_path: Traseul activ nu permite exportul acestei piese
   smart_importers_bxf2:
-    title: Import
+    title: Importă
     action_0: $t(tab.importers.bxf2.title)
+    action_0_status: Plasați configurația

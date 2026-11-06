@@ -15,6 +15,7 @@ default:
   stop: Zaustavi
   validate: Primeni
   confirm: Potvrdi
+  finish: Završi
   ok: Ok
   open: Otvori
   see: Prikaži
@@ -27,6 +28,7 @@ default:
   export: Izvezi
   import: Uvezi
   load: Učitaj
+  replace: Zameni
   preview: Pregled
   options: Opcije
   caution: Oprez
@@ -1373,6 +1375,7 @@ tab:
       option_pins_length_1: Mala
       option_pins_length_2: Prosečno
       option_pins_length_3: Veliko
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Dužina strelice oznaka.
       option_pins_direction: Pravac
       option_pins_direction_0: Duž crvene ose

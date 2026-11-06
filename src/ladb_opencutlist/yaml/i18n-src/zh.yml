@@ -1466,6 +1466,7 @@ tab:
       option_pins_length_1: 短
       option_pins_length_2: 中等
       option_pins_length_3: 长
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: 选择引线的长度.
       option_pins_direction: 方向
       option_pins_direction_0: 沿红轴方向

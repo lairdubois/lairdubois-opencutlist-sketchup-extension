@@ -1466,6 +1466,7 @@ tab:
       option_pins_length_1: Mały
       option_pins_length_2: Średni
       option_pins_length_3: Długi
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Wybierz długość linii odniesienia.
       option_pins_direction: Kierunek
       option_pins_direction_0: Wzdłuż czerwonej osi
@@ -1720,6 +1721,7 @@ tab:
       formats: Formaty
       cut_options: Parametry cięcia
       estimate_options: Opcje szacowania
+      export_options: Opcje eksportu
       attributes: Atrybuty
       thickness: Grubość
       thickness_help: |
