@@ -4790,6 +4790,8 @@ module Ladb::OpenCutList
 
     LAYER_3D_PANELING_PREVIEW = 10
 
+    DRAG_PICK_RADIUS = 15  # px, half the pick aperture of #_snap_paneling
+
     # Any fixed reflection does. #_find_reusable_panel_def composes it with the
     # proper alignments FaceMatcherHelper answers to reach the mirrored
     # placements ; which plane it reflects about is irrelevant, the alignment
@@ -4821,6 +4823,13 @@ module Ladb::OpenCutList
       @selected_face_manipulators = Set.new
 
       @edge_joint_types = {}
+
+      # A drag over the dots : the state the first dot took on the button
+      # down (nil = no drag), the dots already set by this drag, and the last
+      # 2D mouse position to catch the dots crossed between two moves.
+      @drag_selected = nil
+      @dragged_face_manipulators = Set.new
+      @drag_last_point_2d = nil
 
     end
 
@@ -5022,9 +5031,36 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_PANELING
-        _snap_paneling(flags, x, y, view)
+        if @drag_selected.nil?
+          _snap_paneling(flags, x, y, view)
+        else
+          # A drag only sees the dots : no hovered edge to blink in between
+          @hover_face_manipulators.clear
+          @hover_edge_manipulators.clear
+          _drag_faces(view, x, y)
+        end
         _preview_paneling(view)
         return true
+
+      end
+
+      false
+    end
+
+    def onToolLButtonDown(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_PANELING
+        if @hover_edge_manipulators.none? && @hover_face_manipulators.any?
+          # The dot under the cursor gives the state the whole drag sets
+          @drag_selected = !@selected_face_manipulators.include?(@hover_face_manipulators.first)
+          @dragged_face_manipulators.clear
+          @drag_last_point_2d = Geom::Point3d.new(x, y, 0)
+          @hover_face_manipulators.each { |fm| _drag_face(fm) }
+          _preview_paneling(view)
+          return true
+        end
 
       end
 
@@ -5045,17 +5081,17 @@ module Ladb::OpenCutList
         end
 
       when STATE_PANELING
-        if @hover_edge_manipulators.any?
-          @hover_edge_manipulators.each do |em|
-            _toggle_edge_joint_type(em.edge)
-          end
-          _compute
+        unless @drag_selected.nil?
+          # Dots are only selected by a drag (a simple click is a drag of one dot)
+          changed = @dragged_face_manipulators.any?
+          _end_drag
+          _compute if changed
           _refresh
           return true
         end
-        if @hover_face_manipulators.any?
-          @hover_face_manipulators.each do |fm|
-            _toggle_selected(fm)
+        if @hover_edge_manipulators.any?
+          @hover_edge_manipulators.each do |em|
+            _toggle_edge_joint_type(em.edge)
           end
           _compute
           _refresh
@@ -5067,6 +5103,9 @@ module Ladb::OpenCutList
     end
 
     def onToolLButtonDoubleClick(tool, flags, x, y, view)
+      # The second click of a double click : a full click, whatever button
+      # events SketchUp sends around it (a lone up ends no drag)
+      onToolLButtonDown(tool, flags, x, y, view)
       onToolLButtonUp(tool, flags, x, y, view)
     end
 
@@ -5174,6 +5213,7 @@ module Ladb::OpenCutList
       @hover_edge_manipulators.clear
       @selected_face_manipulators.clear
       @edge_joint_types.clear
+      _end_drag
       super
       set_state(STATE_SELECT)
     end
@@ -5430,7 +5470,8 @@ module Ladb::OpenCutList
 
       @drawing_def.face_manipulators.each do |fm|
 
-        hover_face = @hover_face_manipulators.include?(fm)
+        # A drag shows the faces it changed, not the hovered ones already in its state
+        hover_face = @drag_selected.nil? ? @hover_face_manipulators.include?(fm) : @dragged_face_manipulators.include?(fm)
         selected = @selected_face_manipulators.include?(fm)
 
         if hover_face && @hover_edge_manipulators.none?
@@ -5707,6 +5748,55 @@ module Ladb::OpenCutList
 
     def _clear_selected
       @selected_face_manipulators.clear
+    end
+
+    # -----
+
+    # Sets the dot to the state of the drag. A dot already in that state is
+    # ignored : it is not part of the drag. Passing over a dragged dot again
+    # never flips it back, it is in the state of the drag.
+    def _drag_face(face_manipulator)
+      return if @selected_face_manipulators.include?(face_manipulator) == @drag_selected
+      @dragged_face_manipulators << face_manipulator
+      _toggle_selected(face_manipulator)
+    end
+
+    # Drags over the dots hovered by the move from the last mouse position to
+    # (x, y) : a fast move skips dots between two onMouseMove, so the dots
+    # are tested against the whole 2D segment, not only the cursor.
+    def _drag_faces(view, x, y)
+      return unless @drawing_def.is_a?(DrawingDef)
+
+      p1 = @drag_last_point_2d
+      p2 = Geom::Point3d.new(x, y, 0)
+      @drag_last_point_2d = p2
+
+      @drawing_def.face_manipulators.each do |fm|
+        next if @dragged_face_manipulators.include?(fm)
+        sp = view.screen_coords(fm.centroid.transform(@drawing_def.transformation))
+        next unless _distance_to_segment_2d(sp, p1, p2) <= DRAG_PICK_RADIUS
+        _drag_face(fm)
+        if @tool.is_key_ctrl_or_option_down?
+          _find_matching_face_manipulators(fm, @drawing_def.face_manipulators, mirror: true).each { |mfm| _drag_face(mfm) }
+        end
+      end
+
+    end
+
+    def _end_drag
+      @drag_selected = nil
+      @dragged_face_manipulators.clear
+      @drag_last_point_2d = nil
+    end
+
+    def _distance_to_segment_2d(point, p1, p2)
+      dx = p2.x.to_f - p1.x.to_f
+      dy = p2.y.to_f - p1.y.to_f
+      px = point.x.to_f - p1.x.to_f
+      py = point.y.to_f - p1.y.to_f
+      length_2 = dx * dx + dy * dy
+      t = length_2 > 0 ? [ [ (px * dx + py * dy) / length_2, 0.0 ].max, 1.0 ].min : 0.0
+      Math.hypot(px - t * dx, py - t * dy)
     end
 
     # -----
