@@ -131,7 +131,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Моделирование деталей
-      smart_build: Создать детали
+      smart_build: Создание мебели
       smart_handle: Действия с деталями
       smart_reshape: Модификация деталей
       smart_paint: Раскраска деталей
@@ -1466,6 +1466,7 @@ tab:
       option_pins_length_1: Малая
       option_pins_length_2: Средняя
       option_pins_length_3: Большая
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Позволяет задать длину стрелки булавки.
       option_pins_direction: Направление
       option_pins_direction_0: По красной оси
@@ -1720,6 +1721,7 @@ tab:
       formats: Форматы
       cut_options: Параметры раскроя
       estimate_options: Параметры расчета
+      export_options: Параметры экспорта
       attributes: Атрибуты
       thickness: Толщина
       thickness_help: |
@@ -1781,6 +1783,29 @@ tab:
       raw_estimated_1: Объем использованного материала
       multiplier_coefficient: Коэффициент умножения
       multiplier_coefficient_help: Позволяет указать коэффициент умножения, применяемый к измеренному объему брутто.
+      machining_separated: Контуры обработки
+      machining_separated_help: |
+        Позволяет настроить экспорт геометрии обработки для этого материала в 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Контуры обработки вырезаются из исходной формы детали и объединяются со слоями соответствующей глубины.
+        *Выступающие за пределы детали контуры обработки обрезаются.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Деталь сохраняет свою исходную форму. Каждый контур обработки экспортируется «как есть» без объединения с остальными, на отдельный слой `MACHININGS` (для каждой глубины), названный по имени материала.
+      machining_separated_0: Пазы и углубления в детали
+      machining_separated_1: Раздельно на свои слои
+      machining_material_colored: Цвета экспорта
+      machining_material_colored_help: |
+        Позволяет настроить цвета для контуров обработки, вынесенных на отдельные слои при 2D-экспорте (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Контур обработки окрашивается в цвет этого материала, без заливки.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Контуры обработки окрашиваются в зависимости от того, какой элемент они вырезают в детали: в цвета отверстий, если они сквозные, либо в цвета ниш во всех остальных случаях. Это необходимо для станков, которые определяют тип обработки по цвету линий.
+      machining_material_colored_0: Автоматически
+      machining_material_colored_1: Цвет материала
       std_attributes_dim_placeholder: Введите размер
       std_volumic_masses: Плотность
       std_volumic_masses_help: Позволяет определить плотность для всех размеров, а также для каждого стандартного размера материала.

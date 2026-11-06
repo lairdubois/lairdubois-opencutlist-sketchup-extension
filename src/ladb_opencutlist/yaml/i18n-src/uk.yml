@@ -1466,6 +1466,7 @@ tab:
       option_pins_length_1: Мала
       option_pins_length_2: Середня
       option_pins_length_3: Велика
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Дозволяє вибрати довжину стрілки шпильок.
       option_pins_direction: Напрямок
       option_pins_direction_0: По Червоній осі

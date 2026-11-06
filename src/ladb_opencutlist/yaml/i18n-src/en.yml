@@ -1504,7 +1504,7 @@ tab:
         cut_plural: Cuts
         cut_trimming: Trimming cut
         cut_primary: Primary cut
-        cut_primary_plural: Primary cuts
+        cut_primary_plural: Primary Cuts
         cut_none: None
         cut_depth: Level {{ depth }}
       write:
@@ -1687,7 +1687,8 @@ tab:
       option_pins_length_1: Short
       option_pins_length_2: Medium
       option_pins_length_3: Long
-      option_pins_length_help: Allows you to select the length of the leader line.
+      option_pins_length_4: $t(default.automatic)
+      option_pins_length_help: Allows you to choose the length of the leader line.
       option_pins_direction: Direction
       option_pins_direction_0: Along the Red axis
       option_pins_direction_1: Along the Green axis
@@ -2716,7 +2717,7 @@ tool:
     action_0_state_4_lock_status: Lock to the height of the source file
     action_0_state_5_status: Click the instance you want to add
     action_0_state_6_status: Click on the FRONT side of the module
-    action_0_state_7_status: Click on the TOP side of the module
+    action_0_state_7_status: Click the TOP face of the module
     action_0_add_title: Add a module
     action_0_add_name: Filename
     action_0_add_overwrite: The file "{{ name }}.skp" already exists. Would you like to replace it?

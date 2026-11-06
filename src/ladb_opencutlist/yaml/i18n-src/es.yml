@@ -1466,6 +1466,7 @@ tab:
       option_pins_length_1: Corta
       option_pins_length_2: Media
       option_pins_length_3: Larga
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Permite elegir la longitud de la línea guía de los marcadores.
       option_pins_direction: Dirección
       option_pins_direction_0: A lo largo del eje rojo

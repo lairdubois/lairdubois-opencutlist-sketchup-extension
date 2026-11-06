@@ -1687,6 +1687,7 @@ tab:
       option_pins_length_1: Kurz
       option_pins_length_2: Mittel
       option_pins_length_3: Lang
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Ermöglicht die Auswahl der Länge der Verweislinie.
       option_pins_direction: Ausrichtung
       option_pins_direction_0: Längs der roten Achse
@@ -2812,7 +2813,7 @@ tool:
       too_complex_cavity: Die Geometrie ist zu komplex, um darin Fächer zu erkennen
       closed_front_panel_opening: Diese Öffnung ist bereits durch ein Frontteil verschlossen
       closed_back_panel_opening: Diese Öffnung ist bereits durch eine Rückwand verschlossen
-      divider_number_overflow: Es ist nicht möglich, {{ number }} Trennwände in diesem Zwischenraum zu verteilen
+      divider_number_overflow: Es ist nicht möglich, {{ number }} Trennwände in diesem Fach zu verteilen
       front_panel_number_overflow: Es ist nicht möglich, {{ number }} Frontteile auf diese Öffnung zu verteilen
       back_panel_number_overflow: Es ist nicht möglich, {{ number }} Rückwände auf diese Öffnung zu verteilen
       back_panel_severs_parts: "Die Nut würde durchgehend verlaufen: {{ names }}. Verringern Sie ihre Tiefe"
@@ -2825,7 +2826,7 @@ tool:
       no_back_panel_machining: "Es konnte keine Nut gefräst werden: In dieser Tiefe grenzt kein benachbartes Teil an die Rückwand an"
       no_module_file: In diesem Ordner befinden sich keine .skp-Dateien
       module_axis_no_scale: "Das Modul kann entlang der {{ axis }} nicht skaliert werden: durch das Verhalten der Komponente verhindert"
-      module_axis_curve_intersect: "Nicht skalierbares Modul entlang der {{ axis }}: Eine der Schnittebenen verläuft durch eine nicht skalierbare Kurve"
+      module_axis_curve_intersect: "Nicht skalierbares Modul entlang der {{ axis }}: Eine der Trennebenen verläuft durch eine nicht skalierbare Kurve"
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
       part_created_plural: "{{ count }} neu erstellte Teile: {{ name }}"

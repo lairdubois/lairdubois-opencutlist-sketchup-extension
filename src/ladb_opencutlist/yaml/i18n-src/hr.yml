@@ -104,6 +104,8 @@ tab:
       duplicate_element: $t(default.duplicate)
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
+    layout:
+      option_pins_length_4: $t(default.automatic)
     write:
       option_dxf_depth_to_z_0: $t(default.no)
       option_smoothing_0: $t(default.no)

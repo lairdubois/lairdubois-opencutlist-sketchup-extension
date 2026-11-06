@@ -429,10 +429,10 @@ tab:
       invalid_final_area: Attenzione, l'area non può essere calcolata perché {{ count }} parte (di {{ total }}) ha l'area invalida
       invalid_final_area_plural: Attenzione, l'area non può essere calcolata perché {{ count }} parti (di {{ total }}) hanno l'area invalida
       is_instance_name: La denominazione di questa parte è ricavata dal nome dell'istanza del gruppo
-      is_dynamic_attributes_name: La denominazione usa l'attributo 'Name' del componente dinamico
+      is_dynamic_attributes_name: La denominazione di questa parte è tratta dall'attributo 'Name' del componente dinamico
       has_edges: Questa parte contiene {{ count }} lato bordato
       has_edges_plural: Questa parte contiene {{ count }} bordature
-      has_faces: Questa parte contiene {{ count }} superficie placcata
+      has_faces: Questa parte contiene {{ count }} faccia placcata
       has_faces_plural: Questa parte contiene {{ count }} superfici placcate
       size_increased_0: |
         Aumentato del sovramateriale del materiale
@@ -448,10 +448,10 @@ tab:
       edge_ymax: Lunghezza bordo 2
       edge_xmin: Larghezza bordo 1
       edge_xmax: Larghezza bordo 2
-      face_zmin: Piallaccio interno
-      face_zmax: Piallaccio esterno
+      face_zmin: Controfaccia
+      face_zmax: Faccia
       dblclick_to_copy_all_edges: Fai doppio clic qui per duplicare questo valore sugli altri bordature
-      dblclick_to_copy_all_faces: Fare doppio clic qui per duplicare questo valore sull'altra superficie
+      dblclick_to_copy_all_faces: Fare doppio clic qui per duplicare questo valore sull'altra faccia
       dblclick_to_sort_axes: Fare doppio clic qui per riordinare automaticamente gli assi secondo le dimensioni del pezzo
       part_axes: Assi interni della parte
       select_unselect_all_parts: Seleziona/deseleziona tutte le parti del gruppo
@@ -581,11 +581,11 @@ tab:
       axes_origin_position_none: Non cambiare l'origine
       axes_origin_position_min: Posiziona l'origine sullo spigolo
       axes_origin_position_center: Posiziona l'origine al centro
-      axes_origin_position_front_min: Posizionare l'origine nell'angolo del frontale
-      axes_origin_position_front_center: Posizionare l'origine al centro del frontale
+      axes_origin_position_front_min: Posizionare l'origine nell'angolo della faccia
+      axes_origin_position_front_center: Posizionare l'origine al centro dellla faccia
       over_length: Per lunghezza
       over_width: Per larghezza
-      edge_disabled_help: La bordatura non è configurabile perchè nel modello non è stata trovata alcuna faccia che può ospitare un materiale di tipo bordatura.
+      edge_disabled_help: La bordatura non è configurabile perché nel modello non è stata trovata alcuna faccia nella parte che può ospitare un materiale di tipo bordatura.
       face_disabled_help: Questa superficie non è configurabile perché non è stata rilevata alcuna faccia portatrice di materiale su questo bordo della parte nel modello.
       multiple_values: Valori multipli
       loading_preview: Preparazione dell'anteprima
@@ -611,7 +611,7 @@ tab:
       part_number_with_letters: Usa le lettere per contrassegnare le parti
       part_number_with_letters_help: Selezionando questa opzione, le parti vengono contrassegnate utilizzando caratteri alfabetici (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reimpostare i numeri di parte per gruppo
-      part_number_sequence_by_group_help: Selezionando questa opzione, la numerazione delle parti viene fatta ripartire da 1 (o A) per ogni gruppo (parti con materiale e spessore identico).
+      part_number_sequence_by_group_help: Selezionando questa opzione, la numerazione delle parti viene fatta ripartire da 1 (o A) per ogni gruppo (parti con materiale e spessore grezzo identico).
       part_folding: Raggruppa parti uguali
       part_folding_help: |
         Selezionando questa opzione, gli elementi di **materiale Legno massello, Pannello o Barre**, che hanno la **stessa dimensione grezza**, gli **stessi badge** e la **stessa superficie finita** *(se la visualizzazione di tale superficie non è nascosta)* saranno raggruppati sulla stessa linea nella *distinta*.
@@ -624,7 +624,7 @@ tab:
       hide_tags: Nascondi i badge
       hide_tags_help: Selezionando questa opzione, i **badge** posizionati sulle parti non verranno visualizzati.
       hide_cutting_dimensions: Nascondi le dimensioni grezze
-      hide_cutting_dimensions_help: Selezionando questa opzione, verranno escluse le dimensioni **semilavorate**.
+      hide_cutting_dimensions_help: Selezionando questa opzione, le dimensioni **grezze** delle parti verranno escluse.
       hide_bbox_dimensions: Nascondi le dimensioni finite
       hide_bbox_dimensions_help: Selezionando questa opzione, verranno nascoste le dimensioni **finite** delle parti.
       hide_final_areas: Nascondi il valore dell'area delle parti di tipo *Pannelli*
@@ -645,7 +645,7 @@ tab:
         Ogni proprietà può essere ordinata<i class="ladb-opencutlist-icon-sort-asc"></i> *in aumento* o <i class="ladb-opencutlist-icon-sort-desc"></i>*in diminuzione*.
       part_order_strategy: Ordinamento parti
       part_order_strategy_help: |
-        Modifica le seguenti proprietà per cambiare i criteri di ordinamenti all'interno dei singoli gruppi.
+        Modifica le seguenti proprietà per cambiare i criteri di ordinamento delle parti all'interno dei singoli gruppi.
         Le proprietà possono essere ordinate in modo <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *discendente*.
       dimension_column_order_strategy: Ordinamento delle dimensioni
       dimension_column_order_strategy_help: |
@@ -687,7 +687,7 @@ tab:
       name: Denominazione
       count: Qtà
       cutting: Grezzo
-      bbox: Finito
+      bbox: Utile
       final: Effettiva
       total_cutting: Σ Grezzo
       total_final: Σ Effettiva
@@ -745,7 +745,7 @@ tab:
       cutting_thickness: Spessore - grezzo
       edge_cutting_length: Lunghezza bordatura - grezza
       edge_cutting_width: Larghezza bordatura - grezza
-      bbox_length: Lunghezza
+      bbox_length: Lunghezza utile
       bbox_width: Larghezza
       bbox_thickness: Spessore
       final_area: Area - finale
@@ -765,8 +765,8 @@ tab:
       edge_ymax: Lunghezza bordo 2
       edge_xmin: Larghezza bordo 1
       edge_xmax: Larghezza bordo 2
-      face_zmin: Piallaccio interno
-      face_zmax: Piallaccio esterno
+      face_zmin: Controfaccia
+      face_zmax: Faccia
       layer: Tag
       layers: Tag
       batch: Lotto
@@ -1087,7 +1087,7 @@ tab:
       option_scrap_bin_1d_edge_sizes: Avanzi di bordatura
       option_scrap_bin_1d_sizes_placeholder: lunghezza x quantità ; ...
       option_scrap_bin_1d_sizes_help: |
-        Indica qui l'elenco degli avanzi di barra o di bordo da considerare per l'impaginazione dei pezzi.
+        Indica qui l'elenco degli avanzi di barra o di bordo da considerare per il schema di taglio.
 
         *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       option_scrap_bin_1d_none: Nessuna
@@ -1105,7 +1105,7 @@ tab:
       option_scrap_bin_2d_veneer_sizes: Avanzi di impiallacciatura
       option_scrap_bin_2d_sizes_placeholder: lunghezza x larghezza x quantità ; ...
       option_scrap_bin_2d_sizes_help: |
-        Indica qui l'elenco degli avanzi di pannello o i fogli da utilizzare per l'impaginazione dei pezzi.
+        Indica qui l'elenco degli avanzi di pannello o i fogli da utilizzare per il schema di taglio.
 
         *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       option_scrap_bin_2d_none: Nessuna
@@ -1145,9 +1145,9 @@ tab:
       option_rectangle_leftover_mode_y: Sulla lunghezza del pannello
       option_irregular_allowed_rotations: Rotazioni consentite
       option_irregular_allowed_rotations_help: |
-        Consente la rotazione degli elementi durante il posizionamento
+        Definisce gli incrementi degli angoli di rotazione possibili del pezzo per il suo posizionamento.
 
-        *Elementi con venatura possono essere ruotati solo di 0 o 180°.*
+        *I materiali con venatura consentono solo incrementi di 0 e 180°.*
       option_irregular_allowed_rotations_0: Nessuna
       option_irregular_allowed_rotations_90: Passi di 90°
       option_irregular_allowed_rotations_180: Passi di 180°
@@ -1167,9 +1167,9 @@ tab:
       option_spacing_help: |
         Distanza minima tra i pezzi
         Questo valore corrisponde allo spessore della lama o del dispositivo di taglio.
-      option_trimming: Scarto perimetro
-      option_trimming_1d_help: Margine di tolleranza alle due estremità della barra o del bordo va considerato come scarto.
-      option_trimming_2d_help: Margine perimetrale del pannello o del foglio da considerarsi come scarto.
+      option_trimming: Margine di rifilatura
+      option_trimming_1d_help: Margine di rifilatura alle due estremità della barra o del bordo va considerato come scarto.
+      option_trimming_2d_help: Margine di rifilatura del pannello o del foglio da considerarsi come scarto.
       option_items_formula: Formula
       option_items_formula_help: |
         Permette di scrivere istruzioni in linguaggio *Ruby* per personalizzare il testo identificativo degli elementi nel diagramma di taglio.
@@ -1196,7 +1196,7 @@ tab:
       option_part_drawing_type: Forma degli elementi
       option_part_drawing_type_0: Nascosto
       option_part_drawing_type_1: Vista della faccia anteriore
-      option_part_drawing_type_2: Vista della faccia posteriore
+      option_part_drawing_type_2: Vista della controfaccia
       option_part_drawing_type_help: |
         Mostra o nasconde la l'effettiva forma degli elementi e la loro lavorazione sul diagramma.
 
@@ -1241,7 +1241,7 @@ tab:
       list:
         summary: Sommario
         cached: Caricato dalla cache
-        trimming: Scarto perimetro
+        trimming: Margine di rifilatura
         settings: Impostazioni
         stats: Statistiche
         time: Tempo
@@ -1281,8 +1281,8 @@ tab:
         leftovers_to_keep_plural: Ritagli da conservare
         cut: Taglio
         cut_plural: Tagli
-        cut_trimming: Sezionatura
-        cut_primary: Sezionatura principale
+        cut_trimming: Margine di rifilatura
+        cut_primary: Taglio primario
         cut_primary_plural: Tagli principali
         cut_none: Nessuna
         cut_depth: Livello {{ depth }}
@@ -1406,8 +1406,8 @@ tab:
         part_edge_cutting_size: Dimensioni del bordo
         part_edge_cutting_length: Lunghezza bordatura - grezza
         part_edge_cutting_width: Larghezza bordatura - grezza
-        part_size: Dimensione
-        part_length: Lunghezza
+        part_size: Dimensione utile
+        part_length: Lunghezza utile
         part_width: Larghezza
         part_thickness: Spessore
         part_tags: Badge
@@ -1416,10 +1416,10 @@ tab:
         part_edge_ymax: Bordo Lunghezza 2
         part_edge_xmin: Bordo Larghezza 1
         part_edge_xmax: Bordo Larghezza 2
-        part_face_zmin: Impiallacciatura sul retro
-        part_face_zmax: Impiallacciatura sul lato frontale
+        part_face_zmin: Impiallacciatura sulla controfaccia
+        part_face_zmax: Impiallacciatura sul lato a vista
         thumbnail_proportional_drawing: Miniatura (Vista faccia anteriore)
-        thumbnail_proportional_drawing_bottom: Miniatura (Vista faccia posteriore)
+        thumbnail_proportional_drawing_bottom: Miniatura (Vista controfaccia)
         thumbnail_proportional: Miniatura proporzionale
         thumbnail_square: Miniatura quadrata
         group_material: Materiale / Dimensione
@@ -1453,7 +1453,7 @@ tab:
       option_pins: Richiami
       option_pins_hidden: Visualizzazione
       option_pins_hidden_0: Con richiami
-      option_pins_hidden_1: Senza etichette
+      option_pins_hidden_1: Senza richiamo
       option_pins_hidden_help: Mostra o nascondi i richiami che contengono il numero o la denominazione.
       option_pins_colored: Colore
       option_pins_colored_0: Senza colore
@@ -1466,6 +1466,7 @@ tab:
       option_pins_length_1: Corta
       option_pins_length_2: Media
       option_pins_length_3: Lunga
+      option_pins_length_4: $t(default.automatic)
       option_pins_length_help: Permette di scegliere la lunghezza della freccia dei richiami.
       option_pins_direction: Direzione
       option_pins_direction_0: Lungo l'asse Rosso
@@ -1601,7 +1602,7 @@ tab:
 
         **Profilo + Forature + Sovrametallo**
         Attiva la separazione del contorno esterno delle parti dai loro fori e il calcolo del sovrametallo applicato alle superfici situate ai margini del contorno e delle cavità.
-      option_merge_holes_overflow: Abbondanza di lavorazione
+      option_merge_holes_overflow: Sovrametallo
       option_merge_holes_overflow_help: |
         Consente di definire la distanza di sporgenza di lavorazione applicata alle superfici situate ai margini del contorno e delle cavità.
       option_include_paths: Percorsi
@@ -1616,7 +1617,7 @@ tab:
       option_parts_depths_help: |
         Permette di scegliere i colori delle cavità delle parti.
 
-        *Per impostazione predefinita, il colore utilizzato è un gradiente proporzionale alla profondità della cavità tra il colore dei pezzi e quello dei fori.*
+        *Per impostazione predefinita, il colore utilizzato è un gradiente proporzionale alla profondità della cavità tra il colore dei pezzi e quello dei forature.*
       option_parts_holes: Forature
       option_parts_holes_help: |
         Permette di scegliere i colori delle forature delle parti.
@@ -1728,8 +1729,8 @@ tab:
 
         *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       length_increase: Sovramateriale sulla lunghezza
-      length_increase_help: Sovramateriale sulla lunghezza del parte per definirne la **lunghezza grezza**.
-      length_increase_help_plural: Sovramateriale sulla lunghezza delle parti per definirne la **lunghezza grezza**.
+      length_increase_help: Sovramateriale sulla lunghezza utile del parte per definirne la **lunghezza grezza**.
+      length_increase_help_plural: Sovramateriale sulla lunghezza utile delle parti per definirne la **lunghezza grezza**.
       width_increase: Sovramateriale sulla larghezza
       width_increase_help: Sovramateriale sulla larghezza del parte per definirne la **larghezza grezza**.
       width_increase_help_plural: Sovramateriale sulla larghezza delle parti per definirne la **larghezza grezza**.
@@ -1777,7 +1778,7 @@ tab:
         Il volume totale sarà la somma dei volumi debitati delle parti.
 
         **Volume di materia prima necessario**
-        Il volume totale sarà la somma dei volumi dei pannelli, laminati, barre o strisce delle parti dopo il posizionamento.
+        Il volume totale sarà la somma dei volumi dei pannelli, laminati, barre o bordature delle parti dopo il posizionamento nello schema di taglio.
       raw_estimated_0: Volume debitato utile
       raw_estimated_1: Volume di materia prima necessario
       multiplier_coefficient: Coefficiente moltiplicatore
@@ -2094,7 +2095,7 @@ tab:
         optional: Campi facoltativi
         name: Denominazione
         count: Quantità
-        bbox_length: Lunghezza
+        bbox_length: Lunghezza utile
         bbox_width: Larghezza
         bbox_thickness: Spessore
         material: Materiale
@@ -2525,7 +2526,7 @@ tool:
     action_option_group_anchor: Ancoraggio
     action_option_group_options: Opzioni
     action_option_offset_front_panel_offset: Gioco
-    action_option_offset_front_panel_offset_status: Definisce il gioco lasciato su ciascun bordo dell'anta
+    action_option_offset_front_panel_offset_status: Definisce il gioco lasciato su ciascun lato del frontale
     action_option_groove_groove_depth: Profondità della scanalatura
     action_option_groove_groove_depth_status: Definisce la profondità della scanalatura in cui è inserito il fondo
     action_option_groove_groove_panel_reduction: Riduzione del pannello
@@ -2561,8 +2562,8 @@ tool:
     action_option_options_mirror_status: Monta ogni frontale di posizione pari a specchio rispetto a quello adiacente
     action_option_options_pick_material: Contagocce
     action_option_options_pick_material_status: Applica il materiale della parte sotto il cursore alle parti create
-    action_option_options_face_camera: Verso la telecamera
-    action_option_options_face_camera_status: Ruota automaticamente il fronte del modulo verso la telecamera
+    action_option_options_face_camera: Faccia verso la telecamera
+    action_option_options_face_camera_status: Ruota automaticamente il frontale del modulo verso la telecamera
     action_option_options_top_up: Alto verso Z+
     action_option_options_top_up_status: Ruota automaticamente l'alto del modulo il più possibile verso l'alto (Z+)
     action_option_options_ask_name: Nomenclatura delle parti
@@ -2731,11 +2732,11 @@ tool:
     filter_6: $t(tab.materials.type_6)
     filter_7: $t(tab.materials.type_7)
     action_0: Colorare parti
-    action_0_status: Seleziona un elemento a cui applicare il materiale
+    action_0_status: Seleziona un elemento a cui applicare un materiale all sua istanza
     action_1: Colorare bordatura
-    action_1_status: Seleziona un bordo del pannello a cui applicare il materiale '$t(tab.materials.type_4)'
+    action_1_status: Seleziona un bordo di un pezzo di tipo pannello a cui applicare il materiale '$t(tab.materials.type_4)'
     action_2: Colorare le facce
-    action_2_status: Seleziona una faccia del pannello a cui applicare il materiale '$t(tab.materials.type_6)'
+    action_2_status: Seleziona una faccia di un pezzo di tipo pannello a cui applicare il materiale '$t(tab.materials.type_6)'
     action_3: Prelevare
     action_3_status: Seleziona una faccia del pannello da cui copiare il materiale
     action_4: Pulire
@@ -2760,8 +2761,8 @@ tool:
     edge_xmax: Larghezza 2
     faces: "{{ count }} faccia"
     faces_plural: "{{ count }} facce"
-    face_zmin: Piallaccio interno
-    face_zmax: Piallaccio esterno
+    face_zmin: Controfaccia
+    face_zmax: Faccia
     warning:
       no_material: Nessun materiale
       no_material_type: Nessun materiale di tipo '{{ type }}'
@@ -2776,8 +2777,8 @@ tool:
     action_0_status: Clicca su una parte per capovolgerne l'istanza lungo una delle sue dimensioni
     action_1: Inverti Lunghezza ↔ Larghezza
     action_1_status: Seleziona un elemento per invertire la lunghezza con la larghezza
-    action_2: Inverti Fronte ↔ Retro
-    action_2_status: Seleziona un elemento per invertire il fronte con il retro
+    action_2: Inverti Faccia ↔ Controfaccia
+    action_2_status: Clicca su una parte per invertire la lettura della sua faccia con quella del controfaccia
     action_3: Adatta gli assi
     action_3_status: Punta una faccia dell'elemento e clicca su uno spigolo per adattarvi gli assi
     action_4: Sposta l'origine
@@ -2834,7 +2835,7 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: Isola i fori passanti e unisci le profondità di ogni recesso
+    action_option_options_merge_holes_status: Isola i fori passanti e unisci le profondità di ciascuna cavità
     action_option_options_include_paths_status: Esportazione di bordi non associati a una faccia contenuta nella parte come tracciato
     error:
       not_part: Questa faccia non appartiene ad un elemento (componente)
