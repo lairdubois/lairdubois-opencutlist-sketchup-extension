@@ -5408,6 +5408,19 @@ module Ladb::OpenCutList
       @pick_ip.degrees_of_freedom
     end
 
+    # Whether #picked_point is a position that still means something once
+    # projected on a line of the given +direction+ : a vertex, an edge across
+    # it, a face facing it - not a mere point on an edge or a face it slides
+    # along, nor a point floating in the void.
+    def picked_point_stable_along?(direction)
+      return false if @picked_point.nil? || @pick_ip.nil? || !@pick_ip.valid?
+      ip = @pick_ip
+      !(ip.degrees_of_freedom > 2 ||
+        ip.instance_path.empty? && ip.degrees_of_freedom > 1 ||
+        ip.face && ip.face == ip.instance_path.leaf && ip.vertex.nil? && ip.edge.nil? && !ip.face.normal.transform(ip.transformation).parallel?(direction) ||
+        ip.edge && ip.degrees_of_freedom == 1 && !ip.edge.start.position.vector_to(ip.edge.end.position).transform(ip.transformation).perpendicular?(direction))
+    end
+
     def picked_plane_manipulator
       return FaceManipulator.new(@picked_face, Sketchup::InstancePath.new(@picked_face_path).transformation) unless @picked_face.nil? || @picked_face_path.nil?
       return PlaneManipulator.new([ @picked_edge.start.position, Z_AXIS ], Sketchup::InstancePath.new(@picked_edge_path).transformation) unless @picked_edge.nil? || @picked_edge_path.nil? || !@picked_edge.line[1].perpendicular?(Z_AXIS)

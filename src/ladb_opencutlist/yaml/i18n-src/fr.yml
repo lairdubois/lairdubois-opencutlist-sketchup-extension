@@ -2730,6 +2730,7 @@ tool:
     action_1: Construire un Séparateur
     action_1_status: Construire un séparateur dans une cavité formée par un groupe de pièces existantes
     action_1_state_0_status: Cliquez sur une paroi pour construire un séparateur
+    action_1_state_0_lock_status: Garder la cavité et la direction pour viser un point ailleurs dans le modèle
     action_1_state_1_status: Cliquez sur une paroi pour construire des séparateurs
     action_2: Construire une Façade
     action_2_status: Construire une façade fermant une cavité formée par un groupe de pièces existantes
@@ -2803,6 +2804,7 @@ tool:
       invalid_divider_seed: Ce type de pièce ne permet pas la construction d'un séparateur
       invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_divider_cavity: Aucune cavité à cette position
+      locked_divider_out_of_cavity: Ce point tombe en dehors de la cavité verrouillée
       no_divider_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
       invalid_front_panel_seed: Ce type de pièce ne permet pas la construction d'une façade
       invalid_front_panel_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
