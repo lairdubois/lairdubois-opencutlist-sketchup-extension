@@ -181,7 +181,7 @@ core:
     copied_to_clipboard: Gekopieerd naar het klembord
   event:
     model_change: Het actieve model is gewijzigd.
-    options_change: Er zijn opties aangepast.
+    options_change: De opties van het model zijn gewijzigd.
     material_change: Ten minste een materiaal is aangepast.
     selection_change: De selectie in het actieve model is gewijzigd.
     layers_change: De tags in het actieve model zijn gewijzigd.
@@ -430,8 +430,8 @@ tab:
       invalid_final_area_plural: Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben
       is_instance_name: De benaming van dit onderdeel komt uit de instantienaam van de groep
       is_dynamic_attributes_name: De benaming van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
-      has_edges: Dit onderdeel bevat {{ count }} kantband
-      has_edges_plural: Dit onderdeel bevat {{ count }} kantbanden
+      has_edges: Dit onderdeel bevat {{ count }} kantenband
+      has_edges_plural: Dit onderdeel bevat {{ count }} kantenbanden
       has_faces: Dit onderdeel bevat {{ count }} gefineerd oppervlak
       has_faces_plural: Dit onderdeel bevat {{ count }} gefineerde oppervlakken
       size_increased_0: |
@@ -444,7 +444,7 @@ tab:
         Verhoogd met de overmaat van het materiaal en het onderdeel
         ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: Verminderd met de dikte van de kanten ({{ decrement }})
-      edge_ymin: Kantband lengte 1
+      edge_ymin: Kantenband lengte 1
       edge_ymax: Kantenband lengte 2
       edge_xmin: Kantenband breedte 1
       edge_xmax: Kantenband breedte 2
@@ -698,7 +698,7 @@ tab:
       thickness: Dikte
       thickness_short: D.
       edges: Randafwerkingen
-      faces: Fineren
+      faces: Vlakken
     export:
       title: Exporteren
       info_0: |
@@ -743,8 +743,8 @@ tab:
       cutting_length: Lengte - onbewerkt
       cutting_width: Breedte - onbewerkt
       cutting_thickness: Dikte - onbewerkt
-      edge_cutting_length: Lengte van de kanten
-      edge_cutting_width: Bruto breedte kantband
+      edge_cutting_length: Bruto lengte kantenband
+      edge_cutting_width: Bruto breedte kantenband
       bbox_length: Lengte
       bbox_width: Breedte
       bbox_thickness: Dikte
@@ -1101,7 +1101,7 @@ tab:
         *Bewerk de materiaaleigenschappen van '{{ material_name }}' om deze lijst bij te werken.*
       option_std_bin_2d_add: Voeg een afmeting toe
       option_std_bin_2d_none: Geen enkele
-      option_scrap_bin_2d_sheet_good_sizes: Paneel overschotten
+      option_scrap_bin_2d_sheet_good_sizes: Paneel reststuk
       option_scrap_bin_2d_veneer_sizes: Fineerresten
       option_scrap_bin_2d_sizes_placeholder: lengte x breedte x aantal ; ...
       option_scrap_bin_2d_sizes_help: |
@@ -1136,7 +1136,7 @@ tab:
       option_rectangleguillotine_sort_subplates_criteria_l1l2: Op aflopende grootte
       option_rectangleguillotine_sort_subplates_criteria_dl2l1:  Op aflopende dichtheid
       option_rectangleguillotine_keep: Minimale grootte van reststukken
-      option_rectangleguillotine_keep_help: Rest met twee afmetingen groter dan de minimumgrootte worden gemarkeerd met **om te bewaren**.
+      option_rectangleguillotine_keep_help: Reststukken waarvan beide afmetingen groter zijn dan de minimumafmeting, worden gemarkeerd met **bewaren**.
       option_rectangle_leftover_mode:  Leg-/spreidingsrichting
       option_rectangle_leftover_mode_help: |
         Bepaalt de spreidingsrichting van de onderdelen op de laatste niet-volledig benutte plaat.
@@ -1174,13 +1174,13 @@ tab:
       option_items_formula_help: |
         Maakt het mogelijk om *Ruby*-code te schrijven om de identificatietekst van de stukken op het diagram aan te passen.
       option_bin_folding_1d_dimensional: Groepeer identieke planken
-      option_bin_folding_1d_edge: Groepeer identieke kantbanden
+      option_bin_folding_1d_edge: Groepeer identieke kantenbanden
       option_bin_folding_2d_sheet_good: Groepeer identieke panelen
       option_bin_folding_2d_veneer: Groepeer identieke fineervellen
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
       option_bin_folding_1d_help: |
-        Groepeer planken of kantbanden met gelijke onderdelen en zaagsneden.
+        Groepeer planken of kantenbanden met gelijke onderdelen en zaagsneden.
       option_bin_folding_2d_help: |
         Hiermee kunt u panelen of fineervellen combineren die dezelfde onderdelen en sneden bevatten.
       option_bin_folding_warning: |
@@ -1212,7 +1212,7 @@ tab:
       option_origin_corner_1: Linker benedenhoek
       option_origin_corner_2: Rechter bovenhoek
       option_origin_corner_3: Rechter benedenhoek
-      option_origin_corner_help: Maakt het mogelijk de oorsprongshoek te kiezen voor het plaatsen van de onderdelen in de panelen, fineervel, planken of kantbanden.
+      option_origin_corner_help: Maakt het mogelijk de oorsprongshoek te kiezen voor het plaatsen van de onderdelen in de panelen, fineervel, planken of kantenbanden.
       option_highlight_primary_cuts: Primaire snedes
       option_highlight_primary_cuts_0: Alleen bij aanwijzen
       option_highlight_primary_cuts_1: Altijd zichtbaar
@@ -1276,7 +1276,7 @@ tab:
         parts: Onderdeel
         parts_plural: Onderdelen
         leftovers: Overschot
-        leftovers_plural: Overschotten
+        leftovers_plural: Reststukken
         leftovers_to_keep: Reststuk om te bewaren
         leftovers_to_keep_plural: Reststukken om te bewaren
         cut: Snede
@@ -1314,7 +1314,7 @@ tab:
         option_texts: Identificaties
         option_texts_help: |
           Hiermee kunt u de export van onderdeelidentificatieteksten activeren en de kleuren ervan kiezen.
-        option_leftovers: Overschot
+        option_leftovers: Reststukken
         option_leftovers_help: |
           Hiermee kunt u de export van reststukken activeren en de kleuren ervan kiezen.
         option_cuts: Sneden
@@ -1327,7 +1327,7 @@ tab:
             De bewerkingstoeslag ({{ overflow }}) moet kleiner dan of gelijk zijn aan de ingestelde afstand ({{ spacing }}) in deze zaagschema.
       error:
         no_part: Geen enkel onderdeel.
-        no_bin_1d: Er is geen plank of kantband geselecteerd en er is geen reststuk gedefinieerd.
+        no_bin_1d: Er is geen plank of kantenband geselecteerd en er is geen reststuk gedefinieerd.
         no_bin_2d: Er is geen standaardpaneel of -plaat geselecteerd en er is geen reststuk gedefinieerd.
         invalid_part_shapes: De vorm van het stuk '{{ name }}' is ongeldig.
         no_solution: Er is geen oplossing gevonden om **alle stukken** in het beschikbare materiaal te plaatsen.
@@ -1403,9 +1403,9 @@ tab:
         part_cutting_length: Ruwe lengte
         part_cutting_width: Ruwe breedte
         part_cutting_thickness: Ruwe dikte
-        part_edge_cutting_size: Bruto afmeting kantband
-        part_edge_cutting_length: Bruto lengte kantband
-        part_edge_cutting_width: Bruto breedte kantband
+        part_edge_cutting_size: Bruto afmeting kantenband
+        part_edge_cutting_length: Bruto lengte kantenband
+        part_edge_cutting_width: Bruto breedte kantenband
         part_size: Afmeting
         part_length: Lengte
         part_width: Breedte
@@ -1610,7 +1610,7 @@ tab:
       option_include_paths_1: Gebruik randen die niet aan een vlak zijn gekoppeld
       option_include_paths_help: |
         Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.
-      option_parts: Stukken
+      option_parts: Onderdelen
       option_parts_help: |
         Hiermee kunt u de kleuren van de onderdelen kiezen.
       option_parts_depths: Holtes
@@ -2710,7 +2710,7 @@ tool:
     filter_7: $t(tab.materials.type_7)
     action_0: Onderdelen kleuren
     action_0_status: Klik op een onderdeel om een materiaal op zijn exemplaar toe te passen
-    action_1: Kantbanden kleuren
+    action_1: Kantenbanden kleuren
     action_1_status: Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen
     action_2: Vlakken kleuren
     action_2_status: Klik op een vlak van een paneelonderdeel om er een materiaal '$t(tab.materials.type_6)' op toe te passen

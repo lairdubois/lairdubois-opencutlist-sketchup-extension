@@ -2240,9 +2240,9 @@ tab:
       Děkujeme za váš příspěvek!
     objective_funded_progress: financováno na {{ progress }}%
   settings:
-    label: Nastavení
+    label: Předvolby
     title: Předvolby
-    global_settings: Globální preference
+    global_settings: Globální předvolba
     language: Jazyk
     language_auto: Automatický
     font_size: Velikost písma
