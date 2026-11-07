@@ -432,7 +432,7 @@ tab:
       is_dynamic_attributes_name: La denominación de esta pieza se extrae del atributo 'Name' del componente dinámico
       has_edges: Esta pieza contiene {{ count }} canto chapado
       has_edges_plural: Esta pieza contiene {{ count }} tiras de los cantos
-      has_faces: Esta pieza contiene {{ count }} superficie chapada
+      has_faces: Esta pieza contiene {{ count }} cara chapada
       has_faces_plural: Esta pieza contiene {{ count }} superficies chapadas
       size_increased_0: |
         Aumentado con la sobremedida del Material
@@ -451,7 +451,7 @@ tab:
       face_zmin: Dorso
       face_zmax: Frente
       dblclick_to_copy_all_edges: Haga doble clic aquí para duplicar este valor en todos los demás bordes
-      dblclick_to_copy_all_faces: Haga doble clic aquí para duplicar este valor en la otra superficie
+      dblclick_to_copy_all_faces: Haga doble clic aquí para duplicar este valor en la otra cara
       dblclick_to_sort_axes: Haga doble clic aquí para reordenar automáticamente los ejes según las dimensiones de la pieza
       part_axes: Ejes internos de la pieza
       select_unselect_all_parts: Selecciona/Deselecciona todas las piezas del grupo

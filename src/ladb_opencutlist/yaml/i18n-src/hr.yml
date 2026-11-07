@@ -5,13 +5,117 @@ _disabled_msg: |
   Ovaj jezik još nije **u potpunosti preveden**.
 
   Ako želite pomoći dovršiti prijevod, posjetite [OpenCutList dokumentaciju](https://docs.opencutlist.org/for-translators/general).
+# the reload message will be displayed when a user switches to this language
+_reload_msg: Kako bi se primijenile sve promjene, morate **zatvoriti** i **ponovno otvoriti** prozor OpenCutList.
+_description: Generator popisa dijelova i planova krojenja ploča i letvi za stolare. Otvorenog koda, financiran od korisnika i jednostavan za korištenje ;)
+default:
+  minimize: Smanji
+  maximize: Povećaj
+  cancel: Odustani
+  stop: Zaustavi
+  validate: Primijeni
+  confirm: Potvrdi
+  finish: Završi
+  ok: U redu
+  open: Otvori
+  see: Prikaži
+  close: Zatvori
+  clear: Obriši
+  refresh: Osvježi
+  generate: Generiraj
+  regenerate: Ponovno generiraj
+  print: Ispiši
+  export: Izvezi
+  import: Uvezi
+  load: Učitaj
+  replace: Zamijeni
+  preview: Pregled
+  options: Opcije
+  caution: Pozor
+  remove: Ukloni
+  remove_all: Ukloni sve
+  delete: Obriši
+  create: Stvori
+  duplicate: Dupliciraj
+  ignore: Zanemari
+  download: Preuzmi
+  upgrade: Ažuriraj
+  copy: Kopiraj
+  select_all: Odaberi sve
+  unselect_all: Poništi odabir
+  draw: Nacrtaj
+  estimate: Procijeni
+  rename: Preimenuj
+  next: Dalje
+  "yes": Da
+  "no": Ne
+  automatic: Automatski
+  # this is name of a new file saved by SketchUp
+  empty_filename: Bez naslova.skp
+  help: Pomoć
+  # mild expression of frustration or disappointment, polite and family-friendly
+  error: Ups!
+  warning: Pozor
+  tip: Savjet
+  good: Dobro
+  bad: Loše
+  by: od
+  # date format in use in your language
+  date_format: d.m.Y. H:i
+  # short date format in use in your language
+  date_format_short: d.m.Y.
+  decimal: Decimalno
+  fractional: Razlomačko
+  unit_0: Inč
+  unit_1: Stopa
+  unit_2: Milimetar
+  unit_3: Centimetar
+  unit_4: Metar
+  unit_5: Jard
+  unit_mass_0: Kilogram
+  unit_mass_1: Funta
+  unit_angle_0: Stupnjevi
+  instance_single: komad
+  instance_plural: komada
+  part_single: dio
+  part_plural: dijelova
+  cut_single: rez
+  cut_plural: rezova
+  thickness_layer_single: sloj
+  thickness_layer_plural: slojeva
+  setup_model_units: Postavi mjerne jedinice modela
+  load_more: Učitaj još
+  reset_to_app_defaults: Vrati izvorne postavke
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
+  constrain_key: Shift
+  copy_key_win: Ctrl
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: Tab
+  file: Datoteka
+  file_plural: Datoteke
+  stroke_color: Boja linije
+  fill_color: Boja ispune
+  length: Duljina
+  width: Širina
+  thickness: Debljina
+  height: Visina
+  deprecated: Zastarjelo
 core:
   menu:
+    submenu: OpenCutList
     item:
+      generate_cutlist: Generiraj popis dijelova
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: Uredi instancu
+      edit_parent_part_instance: Uredi grupu/komponentu koja sadrži instancu
+      hide_part_instance: Sakrij instancu
+      unhide_part_instance: Prikaži instancu
+      edit_part_instance_properties: Uredi svojstva instance
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
@@ -20,13 +124,145 @@ core:
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: Vrati početni položaj prozora
+  toolbar:
+    name: OpenCutList
+    tools: Alati
+    command:
+      dialog: OpenCutList
+      smart_draw: Nacrtaj dijelove
+      smart_build: Izradi dijelove
+      smart_handle: Rukovanje dijelovima
+      smart_reshape: Preoblikovanje dijelova
+      smart_paint: Oboji dijelove
+      smart_axes: Orijentacija dijelova
+      smart_join: Sastavi dijelove
+      smart_export: Izvezi dijelove
+  messagebox:
+    dir_override: |
+      »{{ target }}« već postoji. Želite li ga zamijeniti?
+
+      Mapa s istim nazivom već postoji u mapi {{ parent }}. Ako je zamijenite, izvorni sadržaj bit će izgubljen.
+  savepanel:
+    export_to_file: Izvezi u datoteku {{ file_format }}
+  dialog:
+    title: OpenCutList by L'Air du Bois
+  leftbar:
+    import: Uvoz
+    more: Više
+    more_docs: Dok.
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
+    more_reviews: Recenzije
+    more_plans: Modeli
+    # only appears in the french version
+    more_extensions: Proširenja
+    more_update: Ažuriranje
+  bottombar:
+    report_a_bug: Prijavi grešku
+  warning:
+    dev: |
+      Koristite **razvojnu** verziju *OpenCutList*-a.
+      Ova je verzija dostupna samo za testiranje.
+      Ne preporučuje se njezino korištenje u produkciji.
+
+      Za prijavu greške: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Nije dostupno u ovom kontekstu
+  error:
+    exception: "Greška: **{{ error }}**"
+    forbidden: "Nije dopušteno: **{{ error }}**"
+    extern: "Vanjska greška: **{{ error }}**"
+    feature_unavailable: Ova funkcija zahtijeva SketchUp {{ version }} ili noviji
+    failed_export_to: |
+      Došlo je do greške prilikom izvoza u *{{ path }}*.
+      **{{ error }}**
+    unsupported_file_format: "Nepodržani format datoteke: **{{ format }}**"
+    unsupported_skp_version: |
+      SKP datoteka izrađena je novijom verzijom SketchUpa: {{ version }}
+  success:
+    exported_to: Uspješno izvezeno u {{ path }}.
+    copied_to_clipboard: Kopirano u međuspremnik
+  event:
+    model_change: Aktivni model se promijenio.
+    options_change: Opcije modela su promijenjene.
+    material_change: Barem jedan materijal je promijenjen.
+    selection_change: Odabir u aktivnom modelu se promijenio.
+    layers_change: Oznake u aktivnom modelu su se promijenile.
+    drawing_change: Crtež aktivnog modela je izmijenjen.
+  upgrade:
+    unavailable: Nije moguće utvrditi najnoviju verziju *OpenCutList*-a.
+    available: |
+      Dostupna je novija verzija *OpenCutList*-a.
+      Ažurirajte kako biste dobili najnovije mogućnosti!
+    up_to_date: |
+      Imate najnoviju verziju *OpenCutList*-a.
+
+      *Kako biste nam pomogli dodati još više poboljšanja, razmislite o financijskoj podršci projektu!*
+    downloading: Preuzimanje u tijeku
+    changelog: Što je novo?
+    ignore_update: Preskoči ovo ažuriranje
+    download_rescue: Problem s preuzimanjem?
+    manual_download: Ručno preuzimanje
+    zzz: Trenutno se odmaram nakon ažuriranja. Da bih ponovno bio u punoj formi, morate ponovno pokrenuti SketchUp.
+    success: |
+      Ažuriranje OpenCutList-a je završeno!
+
+      PONOVNO POKRENITE SKETCHUP kako bi promjene stupile na snagu.
+    error:
+      download: Greška prilikom preuzimanja arhive.
+      unzip: Greška prilikom raspakiravanja arhive.
   preset:
+    label: Predlošci
+    manage: Upravljanje predlošcima
+    save_to: Spremi kao
+    restore_from: Vrati iz
+    app_defaults: Tvornički predložak
+    user_defaults: Moj zadani predložak
+    new: Novi predložak
+    new_prompt: |
+      *Stvaranjem vlastitog predloška trenutne postavke obrasca spremaju se globalno, kako biste ih kasnije mogli ponovno koristiti u svim svojim modelima.*
+
+      Unesite naziv predloška:
+    rename_prompt_title: Preimenovanje
+    rename_prompt: Unesite novi naziv predloška **"{{ name }}"**
+    delete_confirm_title: Brisanje
+    delete_confirm: Jeste li sigurni da želite izbrisati predložak **"{{ name }}"**?
+    override_confirm_title: Ažuriranje
+    override_confirm: Jeste li sigurni da želite ažurirati predložak **"{{ name }}"** postavkama iz obrasca?
+    new_error: Nije moguće, predložak **"{{ name }}"** već postoji
+    new_success: Predložak **"{{ name }}"** je stvoren
+    override_success: Predložak **"{{ name }}"** je ažuriran
+    restore_success: Obrazac je popunjen predloškom **"{{ name }}"**
+    rename_success: Predložak **"{{ name }}"** preimenovan je u **"{{ new_name }}"**
+    delete_success: Predložak **"{{ name }}"** je obrisan
+    tooltip:
+      save_to: Ažuriraj predložak '{{ name }}'
+      rename: Preimenuj predložak '{{ name }}'
+      delete: Obriši predložak '{{ name }}'
     dictionary:
+      component_textinput_color: Paleta boja
       cutlist_cuttingdiagram1d_options: $t(default.deprecated)
       cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
       cutlist_cuttingdiagram2d_options: $t(default.deprecated)
       cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_layout_single_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title) ($t(default.part_single))
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
+      settings_model: $t(tab.settings.label) / Model
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
@@ -34,13 +270,162 @@ core:
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
+  progress:
+    please_wait: Izračunavam svijet mira
+  component:
+    textinput:
+      reset: Vrati ovu vrijednost
+    textinput_color:
+      store: Zapamti ovu boju
+      remove: Ukloni boju
+    textinput_code:
+      snippets: Primjeri formula
+      help: Upišite **@** za otvaranje popisa varijabli.
+    textinput_file:
+      browse: Pregledaj
+      browse_library: Pregledaj i kopiraj u biblioteku
+    textinput_size:
+      quantity: Kol.
+    three_viewer:
+      view: Pogled {{ view }}
+      view_isometric: Izometrija
+      view_top: Odozgo
+      view_bottom: Odozdo
+      view_front: Sprijeda
+      view_back: Straga
+      view_left: Lijevo
+      view_right: Desno
+      zoom: Mjerilo {{ zoom }}
+      explode_factor: Razmak rastavljenog prikaza
+      toggle_box_helper: Prikaži ili sakrij obuhvatni okvir
+      toggle_box_dimensions_helper: Prikaži ili sakrij dimenzije
+      toggle_axes_helper: Prikaži ili sakrij osi
+  docs:
+    error:
+      failed_to_load: |
+        Nije moguće otvoriti dokumentaciju.
+        Provjerite jeste li povezani s internetom.
+  solid:
+    error:
+      empty: Tijelo ne sadrži nikakvu geometriju
+      empty_named: »{{ name }}« ne sadrži nikakvu geometriju
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
+      non_manifold_edges: Tijelo sadrži {{ count }} ne-manifold brid
+      non_manifold_edges_plural: Tijelo sadrži {{ count }} ne-manifold bridova
+      non_manifold_edges_named: »{{ name }}« sadrži {{ count }} ne-manifold brid
+      non_manifold_edges_named_plural: »{{ name }}« sadrži {{ count }} ne-manifold bridova
+      open_edges: Tijelo sadrži {{ count }} otvoreni brid
+      open_edges_plural: Tijelo sadrži {{ count }} otvorenih bridova
+      open_edges_named: »{{ name }}« sadrži {{ count }} otvoreni brid
+      open_edges_named_plural: »{{ name }}« sadrži {{ count }} otvorenih bridova
+      locked_instances: "Operacija ne može mijenjati zaključanu instancu: {{ list }}"
+    rebuild:
+      error:
+        no_segment: U odabiru nema iskoristivih konstrukcijskih linija
+        no_face: Nije bilo moguće rekonstruirati nijednu zatvorenu koplanarnu petlju
+  library:
+    libraries: Biblioteke
+    user: Moja biblioteka
+    bundled: OCL biblioteka
+    family_modules: Moduli
 tab:
   cutlist:
+    label: Dijelovi
+    title: Popis dijelova
+    help: |
+      U sceni odaberite korijensku komponentu svog popisa dijelova. Zatim kliknite gumb **Generiraj**.
+      Ako nijedna komponenta nije odabrana, uzet će se u obzir sve vidljive komponente u sceni.
+    is_selection: Samo odabir
+    select_part: Odaberi dio
+    select_part_plural: Odaberi dijelove
+    material_undefined: Bez materijala
+    not_available_std_width: Nestandardna širina
+    not_available_std_thickness: Nestandardna debljina
+    not_available_std_section: Nestandardni presjek
+    highlight_part: Prikaži dio u modelu
+    highlight_parts: Prikaži dijelove u modelu
+    edit_part_properties: Uredi svojstva dijela
+    edit_part_axes_properties: Uredi svojstva (osi) dijela
+    edit_part_edges_properties: Uredi svojstva (rubovi) dijela
+    edit_part_faces_properties: Uredi svojstva (plohe) dijela
+    part_drawing_type_1: 2D pogled na lice
+    part_drawing_type_2: 2D pogled na naličje
+    part_drawing_type_3: 2D pogled slijeva
+    part_drawing_type_4: 2D pogled zdesna
+    part_drawing_type_5: 2D pogled sprijeda
+    part_drawing_type_6: 2D pogled straga
+    part_drawing_type_7: 3D
     tooltip:
+      show_hide_block: Prikaži / sakrij ovu grupu
+      show_hide_blocks: Prikaži / sakrij sve grupe
+      scroll_to_block: Pomakni se do grupe
+      not_available_std_width: Širina *{{ std_dimension_real }}* nije definirana među standardnim širinama materijala '{{ material_name }}'
+      not_available_std_thickness: Debljina *{{ std_dimension_real }}* nije definirana među standardnim debljinama materijala '{{ material_name }}'
+      not_available_std_section: Presjek *{{ std_dimension_real }}* nije definiran među standardnim presjecima materijala '{{ material_name }}'
+      add_std_width_to_material: |
+        Dodaj širinu *{{ std_dimension }}*
+        materijalu '{{ material_name }}'
+      add_std_thickness_to_material: |
+        Dodaj debljinu *{{ std_dimension }}*
+        materijalu '{{ material_name }}'
+      add_std_section_to_material: |
+        Dodaj presjek *{{ std_dimension }}*
+        materijalu '{{ material_name }}'
+      rounded_std_width: |
+        Širina *{{ std_dimension }}* zaokružena je prema preciznosti modela.
+        Stvarna širina: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        Debljina *{{ std_dimension }}* zaokružena je prema preciznosti modela.
+        Stvarna debljina: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        Presjek *{{ std_dimension }}* zaokružen je prema preciznosti modela.
+        Stvarni presjek: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
+      rounded_std_footer: Prilagodite preciznost u *Model Info* ili provjerite dimenzije dijelova u ovoj grupi.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: Uredi svojstva grupe dijelova
       edit_material: $t(tab.cutlist.menu.edit_material)
+      folding_part: Rasklopi / sklopi
+      material_origin_1: Materijal koji se uzima u obzir za ovaj dio definiran je na njegovim instancama
+      material_origin_2: Materijal koji se uzima u obzir za ovaj dio trenutno je naslijeđen od jednog od njegovih nadređenih elemenata
+      material_origin_3: Materijal koji se uzima u obzir za ovaj dio trenutno je preuzet iz njegovih podređenih elemenata
+      orientation_locked_on_axis: Orijentacija ovog dijela zaključana je na njegove osi
+      number_saved: Broj ovog dijela je spremljen
+      number_hidden: Broj '{{ number }}' spremljen na ovom dijelu ne može se koristiti jer je već dodijeljen
+      number_generated: Broj ovog dijela generira se automatski
+      resized: Ovaj dio je promijenjene veličine u odnosu na svoju definiciju
+      flipped: Ovaj dio je zrcaljen u odnosu na svoju definiciju
+      symmetrical: Prepoznavanje zrcaljenih dijelova isključeno je za ovaj dio
+      ignore_grain_direction: Smjer vlakana se zanemaruje za ovaj dio
+      follow_grain_direction: Prepoznavanje kontinuiteta vlakana uključeno je za ovaj dio
+      auto_oriented: Ovaj dio je automatski preorijentiran
+      oko_label_filter: Uključi / isključi ovu značku
+      add_label_filter: Filtriraj po '{{ label }}'
+      remove_label_filter: Ukloni filtar '{{ label }}'
+      add_edge_material_name_filter: Filtriraj po '{{ material_name }}'
+      remove_edge_material_name_filter: Ukloni filtar '{{ material_name }}'
+      add_veneer_material_name_filter: Filtriraj po '{{ material_name }}'
+      remove_veneer_material_name_filter: Ukloni filtar '{{ material_name }}'
+      not_aligned_on_axes: Pozor, ovaj dio možda nije ispravno poravnat sa svojim osima
+      instance_count_by_part: Ovaj dio broji se u paketima od **{{ count }}** komada.
+      unused_instance_count: Pozor, **{{ count }}** komad iz zadnjeg paketa neće biti iskorišten.
+      unused_instance_count_plural: Pozor, **{{ count }}** komada iz zadnjeg paketa neće biti iskorišteno.
+      used_instance_count: "**{{ count }}** / {{ total }} komad iskorišten"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} komada iskorišteno"
+      thickness_layer_count: Gotov dio sastoji se od **{{ count }}** slojeva po debljini
+      thickness_layered: Količina ovdje predstavlja broj dijelova koje treba izrezati kako bi se dobili svi slojevi.
+      thickness_layered_equation: "**{{ count }}** *dio* x **{{ layerCount }}** *slojeva* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *dijelova* x **{{ layerCount }}** *slojeva* = **{{ cuttingPartCount }}**"
+      multiple_content_layers: Pozor, ovaj dio sastoji se od poddijelova smještenih u {{ count }} različitih oznaka:<br>{{ layers }}
+      children_warnings: Pozor, u grupiranim dijelovima postoji {{ count }} upozorenje
     menu:
       highlight_parts: $t(tab.cutlist.highlight_parts)
     edit_part:
