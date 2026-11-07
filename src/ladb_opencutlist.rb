@@ -42,6 +42,8 @@ module Ladb
         ex.description = 'Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
       when 'he'
         ex.description = 'תוסף לחישוב תוכניות חיתוך לנגרים ועוד. קוד פתוח, מימון המונים וקל לשימוש ;)'
+      when 'hr'
+        ex.description = 'Generator popisa dijelova i planova krojenja ploča i letvi za stolare. Otvorenog koda, financiran od korisnika i jednostavan za korištenje ;)'
       when 'hu'
         ex.description = 'Faipari Szakembereknek Szabáslista és Szabásterv készítő program. Nyílt forráskódú, közösségi finanszírozású és könnyen használható ;)'
       when 'it'

@@ -184,7 +184,12 @@ class Box3HelperDashed extends THREE.LineSegments {
 
 const DPI = 96;
 
+const PINS_LENGTH_NONE = 0;
+const PINS_LENGTH_SHORT = 1;
+const PINS_LENGTH_MEDIUM = 2;
+const PINS_LENGTH_LONG = 3;
 const PINS_LENGTH_AUTO = 4;             // Pins laid out along the 4 sides of the frame
+
 const PINS_AUTO_MARGIN = 6;             // In pixels, between the frame and the pins
 const PINS_AUTO_GAP = 3;                // In pixels, between two pins of a side
 const PINS_AUTO_MAX_UNCROSS_PASSES = 20;
@@ -835,17 +840,17 @@ const fnCreateGroupPins = function (group, pinsColored, pinsRounded, pinsLength,
 
             let pinLengthFactor;
             switch (pinsLength) {
-                case 0:   // PINS_LENGTH_NONE
+                case PINS_LENGTH_NONE:
                 case PINS_LENGTH_AUTO:  // Positioned later by fnLayoutAutoPins
                     pinLengthFactor = 0
                     break;
-                case 2:   // PINS_LENGTH_MEDIUM
+                case PINS_LENGTH_MEDIUM:
                     pinLengthFactor = 0.2
                     break;
-                case 3:   // PINS_LENGTH_LONG
+                case PINS_LENGTH_LONG:
                     pinLengthFactor = 0.4
                     break;
-                case 1:   // PINS_LENGTH_SHORT
+                case PINS_LENGTH_SHORT:
                 default:
                     pinLengthFactor = 0.1
                     break;
