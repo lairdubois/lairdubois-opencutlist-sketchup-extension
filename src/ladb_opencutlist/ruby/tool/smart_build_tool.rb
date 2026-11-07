@@ -2831,7 +2831,6 @@ module Ladb::OpenCutList
       case state
       when STATE_PLACE, STATE_DISTRIBUTE
         return super +
-               (state == STATE_PLACE ? ' | ' + PLUGIN.get_i18n_string('default.constrain_key') + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_lock_status") + '.' : '') +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_measure_reversed_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_reduce_envelope_status') + '.'
       end
@@ -2993,7 +2992,7 @@ module Ladb::OpenCutList
             @tool.remove_root_tooltip
             @tool.pop_cursor(SmartCursorManager.cursor_select_error)
           else
-            @tool.set_root_tooltip(PLUGIN.get_i18n_string(@place_lock_out ? 'tool.smart_build.error.locked_divider_out_of_cavity' : 'tool.smart_build.error.invalid_divider_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
+            @tool.set_root_tooltip(PLUGIN.get_i18n_string('tool.smart_build.error.invalid_divider_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
             @tool.push_cursor(SmartCursorManager.cursor_select_error)
           end
         else
