@@ -16,9 +16,14 @@ module Ladb::OpenCutList
     def onPreSaveModel(model)
       # puts "onPreSaveModel: #{model}"
 
-      # Persists material's cached uuids
-      model.materials.each do |material|
-        MaterialAttributes.persist_cached_uuid_of(material)
+      # Persists material's cached uuids (transparent operation : merged into the previous one)
+      materials = model.materials.select { |material| MaterialAttributes.fetch_cached_uuid(material) }
+      unless materials.empty?
+        model.start_operation('OCL Persist Material UUIDs', true, false, true)
+        materials.each do |material|
+          MaterialAttributes.persist_cached_uuid_of(material)
+        end
+        model.commit_operation
       end
 
       # Force 'settings_model' preset to be stored in the model file if it contains default values
