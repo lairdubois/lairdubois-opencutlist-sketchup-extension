@@ -730,13 +730,34 @@ LadbAbstractDialog.prototype.init = function () {
             maximumFractionDigits: 0
         });
     });
+    // Remote HTML (OpenCollective, news) : every link opens outside the dialog
+    // DOMPurify is only bundled in the tabs dialog (the modal dialog never renders remote HTML)
+    const hasPurify = typeof DOMPurify !== 'undefined';
+    if (hasPurify) {
+        DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+            if (node.tagName === 'A' && node.hasAttribute('href')) {
+                node.setAttribute('target', '_blank');
+            }
+        });
+    }
     Twig.extendFilter('sanitize_links', function (value, options) {
-        // Remove OpenCollective redirections
+        if (value === null || value === undefined) {
+            return '';
+        }
+        value = String(value);  // '|raw' passes a Twig.Markup (String object), not a primitive string
+        if (!hasPurify) {
+            return $('<div>').text(value).html();   // No sanitizer : render as plain text
+        }
+        // Remove OpenCollective redirections (the decoded URL is checked by DOMPurify below)
         value = value.replace(/<a href="https:\/\/opencollective.com\/redirect\?url=([^"']+)">/gm, (match, urlEncoded) => {
             return '<a href="' + decodeURIComponent(urlEncoded) + '">';
         });
-        // Add _blank target
-        return value.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1>/gm, '<a href="$2" target="_blank">');
+        // Remote HTML is untrusted : keep the formatting, drop scripts, event handlers and non http(s)/mailto URLs
+        return DOMPurify.sanitize(value, {
+            ALLOWED_URI_REGEXP: /^(?:https?:|mailto:|#)/i,
+            ADD_ATTR: [ 'target' ],
+            FORBID_TAGS: [ 'style', 'form', 'input', 'button', 'textarea', 'select' ],
+        });
     });
     Twig.extendFilter('type_of', function (value) {
         return typeof value;

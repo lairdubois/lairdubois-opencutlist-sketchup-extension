@@ -80,6 +80,7 @@ var COMMON_JS_FILES = withBase(JS_BASE, [
     'lib/qrcode.min.js',
 ]);
 var TABS_JS_FILES = withBase(JS_BASE, [
+    'lib/purify.min.js',  // Only the tabs dialog renders remote HTML (forum, news)
     'plugins/components/jquery.ladb.bottombar.js',
     'plugins/components/jquery.ladb.leftbar.js',
     'plugins/components/jquery.ladb.abstract-textinput.js',
