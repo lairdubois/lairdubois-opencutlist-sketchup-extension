@@ -1783,6 +1783,29 @@ tab:
       raw_estimated_1: Hrubá spotřeba materiálu
       multiplier_coefficient: Koeficient
       multiplier_coefficient_help: Používá se k označení multiplikačního koeficientu použitého na hrubý objem.
+      machining_separated: Geometrie obrábění
+      machining_separated_help: |
+        Umožňuje určit, jak se geometrie obrábění tohoto materiálu exportují do 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Geometrie obrábění se odečtou od tvaru dílce a sloučí se do jeho vrstev hloubky, jako by byla objemová operace provedena v geometrii dílce.
+        *Přesahující geometrie obrábění se oříznou.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Dílec si zachová svůj původní tvar. Každá geometrie obrábění se exportuje tak, jak je, bez sloučení s ostatními, do vrstvy `MACHININGS` pro každou hloubku, pojmenované podle materiálu.
+      machining_separated_0: Vyhloubené do dílce
+      machining_separated_1: Oddělené do vlastních vrstev
+      machining_material_colored: Barvy při exportu
+      machining_material_colored_help: |
+        Umožňuje určit barvy oddělených obrábění ve 2D exportech (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Obrys obrábění přebírá barvu tohoto materiálu, bez výplně.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Obrábění přebírají barvy toho, co z dílce vyřezávají: barvy otvorů, pokud jsou průchozí, jinak barvy dutin. Užitečné pro stroje, které podle barev rozpoznávají typ řezu.
+      machining_material_colored_0: Automatické
+      machining_material_colored_1: Barva materiálu
       std_attributes_dim_placeholder: Vyberte velikost
       std_volumic_masses: Hustota
       std_volumic_masses_help: Umožňuje nastavit hustotu pro všechny velikosti i pro každou standardní velikost materiálu.
@@ -2136,6 +2159,7 @@ tab:
         option_hardware_material_name: Kování
         option_hardware_material_name_help: Materiál, který se použije na **kování**.
         option_hardware_layer_name: Kování
+        option_hardware_layer_name_help: Štítek, který se použije na kování.
         option_no_material_help: "*Ponechte toto pole prázdné, pokud nechcete použít žádný materiál*."
         option_default_material_help: "*Pokud je toto pole prázdné, bude vytvořen výchozí materiál*."
         option_no_layer_help: "*Ponechte toto pole prázdné, pokud nechcete použít žádný štítek*."
@@ -2545,10 +2569,12 @@ tool:
     action_option_options_ask_name: Pojmenování dílců
     action_option_options_ask_name_status: Ruční zadání názvů dílců
     action_option_options_layer_name: Štítek
+    action_option_options_layer_name_status: Název značky, na které jsou díly umístěny
     action_option_anchor_center_x_status: Vystředěno v X
     action_option_anchor_center_y_status: Vystředěno v Y
     action_option_anchor_center_z_status: Vystředěno v Z
     action_option_anchor_origin_status: Počátek komponenty
+    action_option_no_layer_help: "*Ponechte toto pole prázdné, pokud nechcete použít žádný štítek*."
     detecting_cavities: Zjišťování dutin...
     error:
       invalid_divider_seed: Tento typ dílu neumožňuje sestavení přepážky

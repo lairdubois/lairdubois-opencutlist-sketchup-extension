@@ -508,11 +508,11 @@ tab:
       cumulable_2: Cumuleerbaar over de breedte
       instance_count_by_part: Verpakking
       instance_count_by_part_help: |
-        Maakt het mogelijk onderdelen te tellen volgens het aantal benodigde *pakketten* in plaats van de in het model aanwezige eenheden.
-        Onderdelen die gegroepeerd zijn in een pack moeten dezelfde definitie hebben.
+        Hiermee kan het onderdeel worden beschouwd als een *partij* van één of meerdere *eenheden*.
+        De hoeveelheid die in het onderdelenlijst aan het onderdeel is gekoppeld, geeft dus het aantal volledige partijen weer dat nodig is om het aantal eenheden te bevatten dat daadwerkelijk in het model aanwezig is.
 
         *Voorbeeld: Bereken 1 deel voor een paar ladegeleiders:
-        Pack = 2 eenheden / deel*
+        Pack = 2 eenheden / onderdeel*
       instance_count_by_part_1: 1 eenheid per onderdeel
       instance_count_by_part_2: 2 stuks per onderdeel
       mass: Massa
@@ -602,7 +602,7 @@ tab:
       flipped_detection_help: |
         Als deze optie is geselecteerd, worden gespiegelde onderdelen gedetecteerd en weergegeven als een nieuw onderdeel.
       smart_material: "*Slimme* toekenning van materiaal"
-      smart_material_help: Als deze optie is geselecteerd, kunnen onderdelen zonder gedefinieerd materiaal worden toegewezen aan het materiaal dat is toegewezen aan een bovenliggend of ingesloten component.
+      smart_material_help: Als deze optie is ingeschakeld, kan aan onderdelen waarvoor geen materiaal is gedefinieerd het hoofdmateriaal van hun onderliggende elementen worden toegewezen, of het materiaal dat is overgenomen van hun bovenliggende elementen.
       dynamic_attributes_name: Gebruik het *Name* attribuut van dynamische componenten
       dynamic_attributes_name_help: |
         Als deze optie is geselecteerd, wordt de benaming van onderdelen geëxtraheerd uit het attribuut *Name*, indien gedefinieerd.
@@ -614,7 +614,7 @@ tab:
       part_number_sequence_by_group_help: Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte).
       part_folding: Groepeer identieke onderdelen
       part_folding_help: |
-        Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde afmetingen**, met **dezelfde badges** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn in het *onderdelenlijst*.
+        Als deze optie is ingeschakeld, worden de onderdelen van **massief hout, plaatmateriaal of staven** met **dezelfde afmetingen**, **dezelfde labels** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet is verborgen)* op één regel gegroepeerd in de *onderdelenlijst*.
 
         De onderdelen worden nog steeds als verschillend beschouwd voor labels en zaagschema.
       hide_entity_names: Verberg instantie namen
@@ -687,8 +687,8 @@ tab:
       name: Benaming
       count: Aant.
       cutting: Zaagmaat
-      bbox: Afgewerkt
-      final: Afgewerkt
+      bbox: Netto
+      final: Netto
       total_cutting: Σ Ruw
       total_final: Σ Afgewerkt
       length: Lengte
@@ -1087,7 +1087,7 @@ tab:
       option_scrap_bin_1d_edge_sizes: Kantenband overschotten
       option_scrap_bin_1d_sizes_placeholder: lengte x aantal ; ...
       option_scrap_bin_1d_sizes_help: |
-        Geef hier de lijst op van uw resterende staven of stroken die voor de zaagschema moeten worden meegenomen.
+        Geef hier de lijst op van uw resterende plank of kantenband die voor de zaagschema moeten worden meegenomen.
 
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       option_scrap_bin_1d_none: Geen enkele
@@ -1105,7 +1105,7 @@ tab:
       option_scrap_bin_2d_veneer_sizes: Fineerresten
       option_scrap_bin_2d_sizes_placeholder: lengte x breedte x aantal ; ...
       option_scrap_bin_2d_sizes_help: |
-        Geef hier de lijst met plaat- of fineerresten op die bij voorrang in het zaagschema moeten worden meegenomen.
+        Geef hier de lijst met plaat- of fineerresten op in het zaagschema moeten worden meegenomen.
 
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       option_scrap_bin_2d_none: Geen enkele
@@ -1774,15 +1774,38 @@ tab:
       raw_estimated_help: |
         Hiermee kunt u het volume definiëren dat wordt gebruikt om de massa en de totale kosten van de onderdelen van dit materiaal te schatten.
 
-        **Bruikbaar doorvoervolume**
+        **Nuttig volume**
         Het totale volume is de som van de doorvoervolumes van de onderdelen.
 
-        **Eerst materiaalvolume nodig**
-        Het totale volume is de som van de volumes van de panelen, platen, staven of strips van de onderdelen na zaagschema.
+        **Benodigd grondstofvolume**
+        Het totale volume is de som van de volumes van de panelen, platen, planken of kantenbanden van de onderdelen na zaagschema.
       raw_estimated_0: Nuttige volume
       raw_estimated_1: Benodigd grondstof volume
       multiplier_coefficient: Vermenigvuldigingsfactor
       multiplier_coefficient_help: Maakt het mogelijk de vermenigvuldigingsfactor aan te geven die wordt toegepast op het gemeten ruwe volume.
+      machining_separated: Bewerkingsgeometrieën
+      machining_separated_help: |
+        Hiermee bepaalt u hoe de bewerkingsgeometrieën van dit materiaal in 2D (DXF, SVG) worden geëxporteerd.
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        De bewerkingsgeometrieën worden van de vorm van het onderdeel afgetrokken en samengevoegd met de dieptelagen ervan, alsof de solide bewerking in de geometrie van het onderdeel werd uitgevoerd.
+        *Uitstekende bewerkingsgeometrieën worden afgekapt.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Het onderdeel behoudt zijn oorspronkelijke vorm. Elke bewerkingsgeometrie wordt ongewijzigd geëxporteerd, zonder samenvoeging met de andere, op de lagen `MACHININGS` (één per diepte), vernoemd naar het materiaal.
+      machining_separated_0: Uitgehold in het onderdeel
+      machining_separated_1: Gescheiden op eigen lagen
+      machining_material_colored: Kleuren bij export
+      machining_material_colored_help: |
+        Hiermee bepaalt u de kleuren van de gescheiden bewerkingen in 2D-exports (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        De contour van de bewerkingen krijgt de kleur van dit materiaal, zonder vulling.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        De bewerkingen krijgen de kleuren van wat ze uit het onderdeel snijden: die van de gaten als ze doorgaand zijn, anders die van de holtes. Handig voor machines die het type snede uit de kleuren afleiden.
+      machining_material_colored_0: Automatisch
+      machining_material_colored_1: Kleur van het materiaal
       std_attributes_dim_placeholder: Kies een afmeting
       std_volumic_masses: Dichtheid
       std_volumic_masses_help: Hiermee kunt u de dichtheid voor alle maten en voor elke standaardmaat van het materiaal definiëren.

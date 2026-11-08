@@ -405,7 +405,7 @@ tab:
       ignore_grain_direction: Orientarea fibrei este ignorată pentru această piesă
       follow_grain_direction: Detectarea continuității fibrei este activată pentru această piesă
       auto_oriented: Această piesă a fost reorientată automat
-      oko_label_filter: Include / Exclude această etichetă
+      oko_label_filter: Include / Exclude această badge
       add_label_filter: Filtrează după '{{ label }}'
       remove_label_filter: Elimină filtrarea după '{{ label }}'
       add_edge_material_name_filter: Filtrează după '{{ material_name }}'
@@ -422,7 +422,7 @@ tab:
       thickness_layered: Cantitatea de aici reprezintă numărul de bucăți ce trebuie tăiate pentru a obține toate straturile.
       thickness_layered_equation: "**{{ count }}** *piesă* x **{{ layerCount }}** *straturi* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *piese* x **{{ layerCount }}** *straturi* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: Atenție, această piesă este compusă din sub-piese prezente în {{ count }} etichete (tag-uri) diferite:<br>{{ layers }}
+      multiple_content_layers: Atenție, această piesă este compusă din sub-părți prezente în {{ count }} etichete (tag-uri) diferite:<br>{{ layers }}
       children_warnings: Atenție, există {{ count }} alertă în piesele grupate
       children_warnings_plural: Atenție, există {{ count }} alerte în piesele grupate
       children_size_increase: Această dimensiune este supradimensionată pentru {{ count }} piese grupate
@@ -538,12 +538,12 @@ tab:
       url: URL
       url_help: |
         *URL*-ul oferă un link personalizat către o pagină externă pe definiția fiecărei piese.
-      tags: Etichete (Badges)
+      tags: Badge-uri
       tags_help: |
-        *Etichetele* sunt cuvinte cheie personalizate care pot fi adăugate la definiția fiecărei piese.
-        Puteți adăuga câte etichete doriți.
-        Ulterior veți putea filtra piesele vizibile din Lista de Piese în funcție de aceste etichete.
-      tags_multiple_info: Doar etichetele comune sunt afișate
+        *Badge-uri* sunt cuvinte cheie personalizate care pot fi adăugate la definiția fiecărei piese.
+        Puteți adăuga câte badge-uri doriți.
+        Ulterior veți putea filtra piesele vizibile din Lista de Piese în funcție de aceste badge-uri.
+      tags_multiple_info: Doar badge-uri comune sunt afișate
       orientation: Orientare
       orientation_locked_on_axis: Blochează orientarea pe axe
       orientation_locked_on_axis_help: |
@@ -614,15 +614,15 @@ tab:
       part_number_sequence_by_group_help: Dacă această opțiune este selectată, enumerarea pieselor se resetează la 1 (sau A) pentru fiecare grup (listă de piese cu același tip de material și grosime).
       part_folding: Grupează piese similare
       part_folding_help: |
-        Dacă această opțiune este activată, piesele din **Lemn Masiv, Panouri sau Profile (Dimensional)**, având aceleași **dimensiuni brute**, aceleași **etichete** și aceeași **suprafață finită** *(dacă afișarea acestei suprafețe nu este ascunsă)* vor fi grupate pe același rând în *lista de piese*.
+        Dacă această opțiune este activată, piesele din **Lemn Masiv, Panouri sau Profile (Dimensional)**, având aceleași **dimensiuni brute**, aceleași **badge-uri** și aceeași **suprafață finită** *(dacă afișarea acestei suprafețe nu este ascunsă)* vor fi grupate pe același rând în *lista de piese*.
 
         Piesele vor fi în continuare considerate diferite în scopul etichetării și al diagramei de tăiere.
       hide_entity_names: Ascunde numele instanțelor
       hide_entity_names_help: Dacă această opțiune este selectată, **numele instanțelor** pieselor nu vor fi afișate.
       hide_descriptions: Ascunde descrierile
       hide_descriptions_help: Dacă această opțiune este selectată, **descrierile** plasate pe piese nu vor fi afișate.
-      hide_tags: Ascunde etichetele (badges)
-      hide_tags_help: Dacă această opțiune este selectată, **etichetele** pieselor nu vor fi afișate.
+      hide_tags: Ascunde badge-uri
+      hide_tags_help: Dacă această opțiune este selectată, **badge-uri** pieselor nu vor fi afișate.
       hide_cutting_dimensions: Ascunde dimensiunile brute
       hide_cutting_dimensions_help: Dacă această opțiune este selectată, dimensiunile **brute** ale pieselor nu vor fi afișate.
       hide_bbox_dimensions: Ascunde dimensiunile finite
@@ -660,11 +660,11 @@ tab:
       property_name: Denumire
       property_count: Cantitate
       property_edge_pattern: Număr de canturi aplicate
-      property_tags: Etichete (Badges)
+      property_tags: Badge-uri
       property_thickness_layer_count: Număr de straturi
-      tags: Etichete (Badges)
-      tags_help: Listă personalizată de etichete în fereastra de proprietăți a piesei.
-      tags_placeholder: Adaugă o etichetă
+      tags: Badge-uri
+      tags_help: Listă personalizată de badge-uri în fereastra de proprietăți a piesei.
+      tags_placeholder: Adaugă o badge
     list:
       filters: Filtre
       filters_warning_0: Acest filtru ascunde toate piesele!
@@ -673,8 +673,8 @@ tab:
       edge_material_names_filter: Filtrează după materialul cantului
       veneer_material_names_filter: Filtrează după materialul furnirului
       names_filter: Denumiri de filtrat
-      tags_filter: Filtrează după etichete
-      tags_filter_any: Toate etichetele (Badges)
+      tags_filter: Filtrează după badge-uri
+      tags_filter_any: Toate badge-uri
       dimensions_help: Dimensiuni explicate
       summary: Rezumat
       material_type: Tip
@@ -760,7 +760,7 @@ tab:
       entity_names: Nume instanțe
       description: Descriere
       url: URL
-      tags: Etichete (Badges)
+      tags: Badge-uri
       edge_ymin: Lungime Cant 1
       edge_ymax: Lungime Cant 2
       edge_xmin: Lățime Cant 1
@@ -1063,7 +1063,7 @@ tab:
         cutting_dimensions_increase_2d: "Aceste dimensiuni brute au fost configurate pe materialul '{{ material_name }}': supradimensiune lungime (**{{ length_increase }}**) și supradimensiune lățime (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimensiuni reduse cu grosimea aplicării de cant. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
-      title: Diagramă de Tăiere
+      title: Diagramă de tăiere
       option_problem_type: Tip
       option_problem_type_rectangle: Dreptunghi
       option_problem_type_rectangleguillotine: Ghilotină
@@ -1167,7 +1167,7 @@ tab:
       option_spacing_help: |
         Spațierea minimă între fiecare piesă.
         Această valoare poate corespunde lățimii pânzei sau frezei tăietoare.
-      option_trimming: Tivire (Curățare margini)
+      option_trimming: Margine de formatizare
       option_trimming_1d_help: Marginea de curățare la fiecare capăt al scândurii sau cantului care va fi tratată ca deșeu.
       option_trimming_2d_help: Marginea de curățare în jurul panoului brut sau foii de furnir care va fi tratată ca deșeu.
       option_items_formula: Formulă
@@ -1241,7 +1241,7 @@ tab:
       list:
         summary: Rezumat
         cached: Încărcat din memoria cache
-        trimming: Tivire
+        trimming: Margine de formatizare
         settings: Setări
         stats: Statistici
         time: Timp
@@ -1276,7 +1276,7 @@ tab:
         parts: Piesă
         parts_plural: Piese
         leftovers: Rest (Cădere)
-        leftovers_plural: Resturi
+        leftovers_plural: Căderi
         leftovers_to_keep: Rest de păstrat
         leftovers_to_keep_plural: Resturi de Păstrat
         cut: Tăietură
@@ -1314,7 +1314,7 @@ tab:
         option_texts: Identificatori
         option_texts_help: |
           Activează exportul textelor de identificare a pieselor și selecția culorilor.
-        option_leftovers: Resturi (Căderi)
+        option_leftovers: Căderi
         option_leftovers_help: |
           Activează exportul resturilor și selecția culorilor.
         option_cuts: Tăieturi
@@ -1410,7 +1410,7 @@ tab:
         part_length: Lungime
         part_width: Lățime
         part_thickness: Grosime
-        part_tags: Etichete (Badges)
+        part_tags: Badge-uri
         part_batch: Lot
         part_edge_ymin: Lungime cant 1
         part_edge_ymax: Lungime cant 2
@@ -1783,6 +1783,29 @@ tab:
       raw_estimated_1: Volum de materie primă necesar
       multiplier_coefficient: Coeficient
       multiplier_coefficient_help: Folosit pentru a indica coeficientul de multiplicare aplicat volumului brut.
+      machining_separated: Geometrii de prelucrare
+      machining_separated_help: |
+        Permite definirea modului în care geometriile de prelucrare ale acestui material sunt exportate în 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Geometriile de prelucrare sunt scăzute din forma piesei și îmbinate cu straturile ei de adâncime, ca și cum operația solidă ar fi realizată în geometria piesei.
+        *Geometriile de prelucrare care depășesc piesa sunt trunchiate.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Piesa își păstrează forma inițială. Fiecare geometrie de prelucrare este exportată ca atare, fără îmbinare cu celelalte, pe un strat `MACHININGS` pentru fiecare adâncime, denumit după material.
+      machining_separated_0: Scobite în piesă
+      machining_separated_1: Separate pe propriile straturi
+      machining_material_colored: Culori la export
+      machining_material_colored_help: |
+        Permite definirea culorilor prelucrărilor separate în exporturile 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Conturul prelucrărilor preia culoarea acestui material, fără umplere.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Prelucrările preiau culorile a ceea ce decupează din piesă: cele ale găurilor dacă sunt străpunse, altfel cele ale cavităților. Util pentru mașinile care deduc tipul de tăietură din culori.
+      machining_material_colored_0: Automate
+      machining_material_colored_1: Culoarea materialului
       std_attributes_dim_placeholder: Selectați o dimensiune
       std_volumic_masses: Densitate
       std_volumic_masses_help: Permite setarea densității pentru toate dimensiunile, precum și pentru fiecare dimensiune standard de material.
@@ -1841,7 +1864,7 @@ tab:
     obsolete_base: Pentru a rămâne sincronizat, trebuie să reîmprospătați lista de materiale.
   outliner:
     label: Structură
-    title: Structură Arbore
+    title: Structură
     list: Structura Arbore a Entităților
     nodes: Instanțe
     toggle_hidden: Instanțe ascunse
@@ -1874,7 +1897,7 @@ tab:
       definition_name: Definiție
       description: Descriere
       url: URL
-      tags: Etichete (Badges)
+      tags: Badge-uri
       layer_name: Etichetă (Tag)
       snapto: Atașează
       snapto_none: Niciuna
@@ -1916,8 +1939,8 @@ tab:
       show_hidden_instances_help: Dacă această opțiune este selectată, instanțele ascunse în model vor fi afișate în structura arborelui.
       hide_descriptions: Ascunde descrierile
       hide_descriptions_help: Dacă această opțiune este selectată, **descrierile** plasate pe piese nu vor fi afișate.
-      hide_tags: Ascunde etichetele
-      hide_tags_help: Dacă această opțiune este selectată, **etichetele** pieselor nu vor fi afișate.
+      hide_tags: Ascunde badge-uri
+      hide_tags_help: Dacă această opțiune este selectată, **badge-uri** pieselor nu vor fi afișate.
       minimize_on_set_active: Minimizează după '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: Dacă această opțiune este selectată, fereastra OpenCutList va fi minimizată când funcția *'$t(tab.outliner.tooltip.set_active_node)'* este utilizată.
     snippet:
@@ -2076,7 +2099,7 @@ tab:
         bbox_width: Lățime
         bbox_thickness: Grosime
         material: Material
-        tags: Etichete (Badges)
+        tags: Badge-uri
       tooltip:
         errors: Această piesă nu va fi importată deoarece a produs următoarele erori
         warnings: Această piesă va fi importată, dar a produs următoarele avertismente
@@ -2433,7 +2456,7 @@ tool:
     action_option_options_construction_status: Desenează ca linii de construcție
     action_option_options_rectangle_centered: Dreptunghi Centrat
     action_option_options_rectangle_centered_status: Centrează dreptunghiul pe primul punct
-    action_option_options_smoothing: Netezire
+    action_option_options_smoothing: Netezire (Smoothing)
     action_option_options_smoothing_status: Netezește curbele
     action_option_options_measure_from_vertex_status: Măsoară relativ la cel mai apropiat vârf
     action_option_options_measure_from_diameter: Măsoară
@@ -2500,6 +2523,7 @@ tool:
     action_option_group_axes: Axe
     action_option_group_measure_type: Măsurare
     action_option_group_measure_origin: Origine
+    action_option_group_anchor: Ancoră
     action_option_group_options: Opțiuni
     action_option_offset_front_panel_offset: Joc
     action_option_offset_front_panel_offset_status: Definește jocul lăsat pe fiecare margine a frontului
@@ -2545,6 +2569,7 @@ tool:
     action_option_options_ask_name: Denumirea pieselor
     action_option_options_ask_name_status: Introduceți manual numele pieselor
     action_option_options_layer_name: Etichetă (Tag)
+    action_option_options_layer_name_status: Numele etichetei (tag) pe care sunt plasate piesele
     action_option_anchor_center_x_status: Centrat pe X
     action_option_anchor_center_y_status: Centrat pe Y
     action_option_anchor_center_z_status: Centrat pe Z
@@ -2633,13 +2658,13 @@ tool:
     action_0: Întinde
     action_0_status: Întinde o piesă
     action_0_state_1_status: Faceți clic pe un mâner pentru a întinde
-    action_0_state_1a_status: Faceți clic pe un plan de secțiune pentru a-l muta
-    action_0_state_1b_status: Adaugă un plan de secțiune
-    action_0_state_1c_status: Șterge un plan de secțiune
+    action_0_state_1a_status: Faceți clic pe un plan de tăiere pentru a-l muta
+    action_0_state_1b_status: Adaugă un plan de tăiere
+    action_0_state_1c_status: Șterge un plan de tăiere
     action_0_state_1d_status: Faceți clic pentru a muta geometria situată între cele două planuri de secțiune
-    action_0_state_10_status: Trageți planul de secțiune pentru a-l muta
-    action_0_state_11_status: Faceți clic pentru a adăuga planul de secțiune
-    action_0_state_12_status: Faceți clic pe un plan de secțiune pentru a-l șterge
+    action_0_state_10_status: Trageți plan de tăiere pentru a-l muta
+    action_0_state_11_status: Faceți clic pentru a adăuga plan de tăiere
+    action_0_state_12_status: Faceți clic pe un plan de tăiere pentru a-l șterge
     action_0_state_2_status: Faceți clic pentru a confirma întinderea sau introduceți o distanță
     action_1: Creare panouri
     action_1_status: Creează o serie de piese pornind de la un solid închis sau de la un desen din linii de construcție
@@ -2717,7 +2742,7 @@ tool:
     action_4: Curăță
     action_4_status: Faceți clic pe o piesă pentru a elimina toate materialele din definiția sa și din toate instanțele sale
     action_option_group_instances: Număr de instanțe
-    action_option_group_edges: Număr de aplicări de cant
+    action_option_group_edges: Număr de canturi aplicate
     action_option_group_faces: Număr de fețe
     action_option_instances_0_status: Colorează doar instanța piesei țintă
     action_option_instances_1_status: Colorează toate instanțele piesei țintă

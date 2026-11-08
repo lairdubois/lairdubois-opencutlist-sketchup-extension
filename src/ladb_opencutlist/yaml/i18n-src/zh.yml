@@ -651,12 +651,12 @@ tab:
       dimension_column_order_strategy_help: |
         重新安排以下尺寸属性, 以定义列的显示顺序.
       property_material_type: 物料类别
-      property_material_name: 物料名称
+      property_material_name: 材质名称
       property_std_width: 标准阔度
       property_std_thickness: 标准厚度
       property_thickness: 厚度
-      property_length: 長度
-      property_width: 阔度
+      property_length: 长度
+      property_width: 宽度
       property_name: 名称
       property_count: 数量
       property_edge_pattern: 封边数量
@@ -691,7 +691,7 @@ tab:
       final: 实际
       total_cutting: Σ 粗略
       total_final: Σ 实际
-      length: 長度
+      length: 长度
       length_short: 长
       width: 宽度
       width_short: 宽
@@ -1251,7 +1251,7 @@ tab:
         total_cut_length: 切割长度
         efficiency: 效率
         count: 数量
-        length: 長度
+        length: 长度
         width: 宽度
         total_length: Σ 长度
         total_area: Σ 面积
@@ -1461,7 +1461,7 @@ tab:
       option_pins_colored_help: 选择标签的颜色.
       option_pins_formula: 公式
       option_pins_formula_help: 允许您编写 *Ruby* 代码来自定义标签文本.
-      option_pins_length: 長度
+      option_pins_length: 长度
       option_pins_length_0: 没有引线
       option_pins_length_1: 短
       option_pins_length_2: 中等
@@ -1629,7 +1629,7 @@ tab:
       error:
         no_part: 没有需要导出的部件
       warning:
-        is_group_selection: 部件列表中的 **隐藏组件** 内的部件将不会被导出.
+        is_group_selection: 部件列表中的 **隐藏群组** 内的部件将不会被导出.
         is_part_selection: 导出仅限于 **选定的部件**
     snippet:
       hello: Hello
@@ -2180,7 +2180,7 @@ tab:
       cabinet:
         list: 柜子列表
         description: 名称
-        width: 阔度
+        width: 宽度
         height: 高度
         depth: 深度
       article:
@@ -2383,7 +2383,7 @@ tool:
     end_point: 端点
     middle_point: 中点
     third_point: 三分点
-    vcb_length: 引线
+    vcb_length: 引线长度
     vcb_thickness: 厚度
     vcb_size: 尺寸
     vcb_radius: 半径
@@ -2523,7 +2523,7 @@ tool:
     action_option_group_axes: 坐标轴
     action_option_group_measure_type: 测量
     action_option_group_measure_origin: 原点
-    action_option_group_anchor: 锚定
+    action_option_group_anchor: 锚点
     action_option_group_options: 选项
     action_option_offset_front_panel_offset: 间隙
     action_option_offset_front_panel_offset_status: 定义门板每条边留出的间隙

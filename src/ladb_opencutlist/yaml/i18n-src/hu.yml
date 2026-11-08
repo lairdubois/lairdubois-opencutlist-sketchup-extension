@@ -614,7 +614,7 @@ tab:
       part_number_sequence_by_group_help: Ha ez az opció be van kapcsolva, az alkatrészek számozása 1-től (vagy A-tól) újrakezdődik minden csoportnál (azonos anyagtípusú és vastagságú alkatrészek listája).
       part_folding: Hasonló alkatrészek csoportosítása
       part_folding_help: |
-        Ha ez az opció be van kapcsolva, a **Tömör fából, Táblásanyagból vagy méretezett fűrészáru** anyagból készült, **azonos nyers mérettel**, **azonos címkékkel** és **azonos kész felülettel** rendelkező alkatrészek *(ha a felület megjelenítése nincs elrejtve)* egy sorban lesznek csoportosítva az *alkatrészlistában*
+        Ha ez az opció be van kapcsolva, a **Tömör fából, Táblásanyagból vagy méretezett fűrészáru** anyagból készült, **azonos nyers mérettel**, **azonos jelvények** és **azonos kész felülettel** rendelkező alkatrészek *(ha a felület megjelenítése nincs elrejtve)* egy sorban lesznek csoportosítva az *alkatrészlistában*
         .
         Az alkatrészek továbbra is különállónak számítanak a címkézés és a szabásterv szempontjából.
       hide_entity_names: Példány nevek elrejtése
@@ -1783,6 +1783,29 @@ tab:
       raw_estimated_1: Szükséges nyersanyag térfogata
       multiplier_coefficient: Szorzótényező
       multiplier_coefficient_help: Lehetővé teszi a nyers térfogatra alkalmazott szorzó tényező megadását.
+      machining_separated: Megmunkálási geometriák
+      machining_separated_help: |
+        Meghatározza, hogyan exportálódnak 2D-be (DXF, SVG) ennek az anyagnak a megmunkálási geometriái.
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        A megmunkálási geometriák kivonódnak az alkatrész alakjából, és egyesülnek a mélységi rétegeivel, mintha a testművelet az alkatrész geometriájában történt volna.
+        *A kilógó megmunkálási geometriák levágásra kerülnek.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Az alkatrész megtartja eredeti alakját. Minden megmunkálási geometria változatlanul, a többivel való egyesítés nélkül exportálódik egy mélységenkénti, az anyagról elnevezett `MACHININGS` rétegre.
+      machining_separated_0: Az alkatrészbe mélyítve
+      machining_separated_1: Külön, saját rétegeken
+      machining_material_colored: Színek exportáláskor
+      machining_material_colored_help: |
+        Meghatározza a különválasztott megmunkálások színeit a 2D exportokban (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        A megmunkálások körvonala ennek az anyagnak a színét kapja, kitöltés nélkül.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        A megmunkálások annak a színét kapják, amit az alkatrészből kivágnak: átmenő esetben a furatokét, egyébként az üregekét. Hasznos azoknál a gépeknél, amelyek a színekből határozzák meg a vágás típusát.
+      machining_material_colored_0: Automatikus
+      machining_material_colored_1: Az anyag színe
       std_attributes_dim_placeholder: Válasszon méretet
       std_volumic_masses: Sűrűség
       std_volumic_masses_help: Lehetővé teszi az anyag sűrűségének térfogattömegének beállítását minden mérethez, valamint minden egyes szabványos mérethez külön.
@@ -2500,6 +2523,7 @@ tool:
     action_option_group_axes: Tengelyek
     action_option_group_measure_type: Mérés
     action_option_group_measure_origin: Kiindulás
+    action_option_group_anchor: Referenciapontok
     action_option_group_options: Beállítások
     action_option_offset_front_panel_offset: Hézag
     action_option_offset_front_panel_offset_status: Meghatározza az előlap minden élén hagyott hézagot
@@ -2536,6 +2560,7 @@ tool:
     action_option_options_reuse_definition_status: Az azonos alakú és azonos környezetű meglévő alkatrész újrahasználata új létrehozása helyett
     action_option_options_mirror: Tükrözött elhelyezés
     action_option_options_mirror_status: Minden páros sorszámú előlap a szomszédja tükörképeként kerül elhelyezésre
+    action_option_options_pick_material: Színválasztó
     action_option_options_pick_material_status: A kurzor alatti alkatrész anyagának alkalmazása a létrehozott alkatrészekre
     action_option_options_face_camera: Kamera felé
     action_option_options_face_camera_status: A modul elejének automatikus elforgatása a kamera felé
@@ -2544,6 +2569,7 @@ tool:
     action_option_options_ask_name: Alkatrészek elnevezése
     action_option_options_ask_name_status: Az alkatrész nevének kézi megadása
     action_option_options_layer_name: Címke
+    action_option_options_layer_name_status: Annak a címkének a neve, amelyre az alkatrészek kerülnek
     action_option_anchor_center_x_status: X mentén középre
     action_option_anchor_center_y_status: Y mentén középre
     action_option_anchor_center_z_status: Z mentén középre
