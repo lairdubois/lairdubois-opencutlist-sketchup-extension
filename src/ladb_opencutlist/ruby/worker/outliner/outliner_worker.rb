@@ -121,10 +121,6 @@ module Ladb::OpenCutList
             node_def = node_def.parent
           end
 
-        else
-
-          puts 'active_node_def not found'
-
         end
         @outliner_def.active_node_def = active_node_def
 
