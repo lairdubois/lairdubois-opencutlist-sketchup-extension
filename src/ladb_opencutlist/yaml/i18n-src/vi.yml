@@ -1721,6 +1721,7 @@ tab:
       formats: Định dạng
       cut_options: Thông số cắt
       estimate_options: Tùy chọn Ước tính
+      export_options: Tùy chọn xuất
       attributes: Thuộc tính
       thickness: Độ dày
       thickness_help: |
@@ -1782,6 +1783,29 @@ tab:
       raw_estimated_1: Khối lượng nguyên vật liệu cần thiết
       multiplier_coefficient: Hệ số
       multiplier_coefficient_help: Được sử dụng để chỉ hệ số nhân được áp dụng cho tổng thể tích.
+      machining_separated: Hình học gia công
+      machining_separated_help: |
+        Cho phép xác định cách xuất hình học gia công của vật liệu này ở dạng 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Hình học gia công được trừ khỏi hình dạng của bộ phận và hợp nhất với các layer độ sâu của nó, như thể phép toán khối được thực hiện trong hình học của bộ phận.
+        *Hình học gia công vượt ra ngoài sẽ bị cắt bớt.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Bộ phận giữ nguyên hình dạng ban đầu. Mỗi hình học gia công được xuất nguyên trạng, không hợp nhất với các hình khác, trên một layer `MACHININGS` cho mỗi độ sâu, được đặt tên theo vật liệu.
+      machining_separated_0: Khoét vào bộ phận
+      machining_separated_1: Tách riêng trên các layer riêng
+      machining_material_colored: Màu khi xuất
+      machining_material_colored_help: |
+        Cho phép xác định màu của các gia công tách riêng trong các tệp xuất 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Đường viền của các gia công lấy màu của vật liệu này, không tô nền.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Các gia công lấy màu của phần mà chúng cắt trong bộ phận: màu của lỗ khoan nếu xuyên suốt, nếu không thì màu của khoang. Hữu ích cho các máy suy ra loại đường cắt từ màu sắc.
+      machining_material_colored_0: Tự động
+      machining_material_colored_1: Màu vật liệu
       std_attributes_dim_placeholder: Chọn kích thước
       std_volumic_masses: Tỉ trọng
       std_volumic_masses_help: Cho phép thiết lập mật độ cho mọi kích thước cũng như cho từng kích thước vật liệu tiêu chuẩn.

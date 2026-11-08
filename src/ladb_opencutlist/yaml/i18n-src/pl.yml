@@ -1572,7 +1572,7 @@ tab:
       option_faces_1: Użyj wszystkich powierzchni części
       option_faces_help: |
         Umożliwia wybranie, czy wyszukiwanie kształtu części ma być przeprowadzane na wszystkich jej powierzchniach, czy tylko na powierzchni docelowej.
-      option_anchor: Punkt kotwiczenia
+      option_anchor: Punkt zaczepienia
       option_anchor_0: Automatyczny
       option_anchor_1: Wyświetl pochodzenie części
       option_anchor_help: |
@@ -1783,6 +1783,29 @@ tab:
       raw_estimated_1: Objętość surowca
       multiplier_coefficient: Współczynnik mnożnika
       multiplier_coefficient_help: Umożliwia wskazanie współczynnika mnożnika zastosowanego do zmierzonej objętości brutto.
+      machining_separated: Geometrie obróbek
+      machining_separated_help: |
+        Pozwala określić, jak geometrie obróbek tego materiału są eksportowane do 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        Geometrie obróbek są odejmowane od kształtu części i scalane z jej warstwami głębokości, tak jakby operacja na bryle została wykonana w geometrii części.
+        *Wystające geometrie obróbek są przycinane.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        Część zachowuje swój pierwotny kształt. Każda geometria obróbki jest eksportowana bez zmian, bez scalania z innymi, na warstwę `MACHININGS` dla każdej głębokości, nazwaną według materiału.
+      machining_separated_0: Wydrążone w części
+      machining_separated_1: Oddzielone na własnych warstwach
+      machining_material_colored: Kolory przy eksporcie
+      machining_material_colored_help: |
+        Pozwala określić kolory oddzielonych obróbek w eksportach 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        Kontur obróbek przyjmuje kolor tego materiału, bez wypełnienia.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        Obróbki przyjmują kolory tego, co wycinają w części: kolory wierceń, jeśli są przelotowe, w przeciwnym razie kolory wnęk. Przydatne dla maszyn, które rozpoznają rodzaj cięcia po kolorach.
+      machining_material_colored_0: Automatyczne
+      machining_material_colored_1: Kolor materiału
       std_attributes_dim_placeholder: Wybierz rozmiar
       std_volumic_masses: Gęstość
       std_volumic_masses_help: Umożliwia zdefiniowanie gęstości objętościowej dla wszystkich rozmiarów oraz dla każdego standardowego rozmiaru materiału.
@@ -2453,7 +2476,7 @@ tool:
     action_option_options_ask_name: Nadawanie nazw częściom
     action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
     action_toggle_move_copy_status: Przełącz między kopiowaniem a przesuwaniem
-    action_change_move_anchor_status: Zmień punkt kotwiczenia
+    action_change_move_anchor_status: Zmień punkt zaczepienia
     success:
       part_created: "Utworzono nową część: {{ name }}"
       part_created_plural: "Utworzono nowe części ({{ count }}): {{ name }}"
@@ -2500,6 +2523,7 @@ tool:
     action_option_group_axes: Osie
     action_option_group_measure_type: Pomiary
     action_option_group_measure_origin: Początek
+    action_option_group_anchor: Zakotwiczenie
     action_option_group_options: Opcje
     action_option_offset_front_panel_offset: Luz
     action_option_offset_front_panel_offset_status: Określa luz pozostawiany na każdej krawędzi frontu
@@ -2545,6 +2569,7 @@ tool:
     action_option_options_ask_name: Nadawanie nazw częściom
     action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
     action_option_options_layer_name: Etykieta
+    action_option_options_layer_name_status: Nazwa tagu, do którego przypisywane są części
     action_option_anchor_center_x_status: Wyśrodkowane w X
     action_option_anchor_center_y_status: Wyśrodkowane w Y
     action_option_anchor_center_z_status: Wyśrodkowane w Z
