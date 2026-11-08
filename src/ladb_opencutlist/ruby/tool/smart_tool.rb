@@ -40,7 +40,7 @@ module Ladb::OpenCutList
 
     STATUS_VCB_VALUE_DELAY = 0.15  # Seconds without mouse move before a live VCB value is written
 
-    NOTIFICATION_MAX_COUNT = 4
+    NOTIFICATION_MAX_COUNT = 3
 
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
     COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51).freeze
