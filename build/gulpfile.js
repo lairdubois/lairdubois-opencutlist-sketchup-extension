@@ -525,6 +525,7 @@ gulp.task('version', function () {
     // Update version property in ladb_opencutlist.rb
     gulp.src('../src/ladb_opencutlist.rb')
         .pipe(replace(/ex.version     = "[0-9.]+(-[a-z]*)?"/g, 'ex.version     = "' + version + '"'))
+        .pipe(replace(/ex.copyright   = "2016-[0-9]{4} - /g, 'ex.copyright   = "2016-' + nowISO.slice(0, 4) + ' - '))
         .pipe(gulp.dest('../src'))
         .pipe(touch());
 

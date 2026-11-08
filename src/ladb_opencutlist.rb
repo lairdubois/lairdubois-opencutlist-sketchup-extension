@@ -3,7 +3,6 @@ module Ladb
 
     require 'sketchup.rb'
     require 'extensions.rb'
-    require 'date'
 
     unless file_loaded?(__FILE__)
 
@@ -21,7 +20,7 @@ module Ladb
       # Create extension
       ex = SketchupExtension.new('OpenCutList', File.join(PLUGIN_DIR, 'ruby', 'main'))
       ex.version     = "8.0.0-lab"  ## /!\ Auto-generated line, do not edit ##
-      ex.copyright   = "2016-#{Date.today.year} - GNU GPLv3"  ## /!\ Auto-generated line, do not edit ##
+      ex.copyright   = "2016-2026 - GNU GPLv3"  ## /!\ Auto-generated line, do not edit ##
       ex.creator     = 'L\'Air du Bois - www.lairdubois.fr'
 
       # Localize description
