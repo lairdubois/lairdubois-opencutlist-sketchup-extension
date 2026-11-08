@@ -14,11 +14,12 @@
 # update all installed gems (may not be necessary)
 # $ gem update `gem outdated | cut -d ' ' -f 1`
 #
-require: rubocop-sketchup
+plugins: rubocop-sketchup
 
 AllCops:
   Exclude:
     - 'build/**/*'
+    - 'cmake-build-*/**/*'
     - 'dist/**/*'
     - 'docs/**/*'
     - 'test/**/*'
