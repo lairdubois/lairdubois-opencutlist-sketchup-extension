@@ -410,7 +410,9 @@ module Ladb::OpenCutList
 
     def _close_quietly(client)
       client.close
-    rescue Exception
+    rescue IOError, SystemCallError
+      # The socket is already closed or reset by the peer : nothing left to release
+      nil
     end
 
   end
