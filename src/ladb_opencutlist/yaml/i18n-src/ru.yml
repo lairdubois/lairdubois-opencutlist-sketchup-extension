@@ -654,6 +654,7 @@ tab:
       number: N°
       path: Путь
       instance_name: Экземпляр
+      entity_persistent_id: Persistent ID экземпляра
       name: Определение
       total_cutting_length: Суммарная длина раскроя
       total_cutting_area: Суммарная площадь раскроя
@@ -690,6 +691,7 @@ tab:
       layers: Маяки
       batch: Деталей в раскрое
       bin: Грубый размер
+      source_material_size: Размер исходного материала
       component_definition: Описание компонента
       component_instance: Экземпляр компонента
       component_instances: Экземпляры компонентов
@@ -1290,7 +1292,9 @@ tab:
         part_description: Описание
         part_entity_named_path: Путь к объекту
         part_entity_name: Имя экземпляра
+        part_entity_persistent_id: Persistent ID экземпляра
         part_bin: Грубый размер
+        part_source_material_size: Размер исходного материала
         part_cutting_size: Размеры элемента
         part_cutting_length: Длина элемента
         part_cutting_width: Ширина элемента
