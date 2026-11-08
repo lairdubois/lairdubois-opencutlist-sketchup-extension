@@ -36,7 +36,7 @@ module Ladb::OpenCutList::Zip
                end
 
         if tbuf.nil? || tbuf.empty?
-          return nil if number_of_bytes&.positive?
+          return nil if number_of_bytes && number_of_bytes > 0
 
           return ''
         end
