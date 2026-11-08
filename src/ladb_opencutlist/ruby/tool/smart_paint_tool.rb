@@ -1349,7 +1349,7 @@ module Ladb::OpenCutList
               on_tick_click,
               entry.locked
             ),
-            entry.color.nil? ? Kuix::COLOR_WHITE : entry.color
+            entry.color.nil? ? SmartDropup::SWATCH_NONE_MATERIAL : entry.color
           )
         },
         nil,
@@ -1463,8 +1463,21 @@ module Ladb::OpenCutList
     # -----
 
     def onToolActionOptionStored(tool, action, option_group, option)
+      if fetch_state == STATE_SELECT_TREE
+        _preview_tree_item(*@tree_hovered_item) unless @tree_hovered_item.nil?
+        return
+      end
       super
       _warn_if_instances_all if option_group == SmartPaintTool::ACTION_OPTION_INSTANCES && fetch_state == STATE_SELECT_FILTER
+    end
+
+    def onToolCurrentMaterialChanged(tool)
+      if fetch_state == STATE_SELECT_TREE
+        _refresh_tree_swatches
+        _preview_tree_item(*@tree_hovered_item) unless @tree_hovered_item.nil?
+        return
+      end
+      super
     end
 
     def onSelected
@@ -1506,6 +1519,115 @@ module Ladb::OpenCutList
       true
     end
 
+    def _allows_tree_selection?
+      true
+    end
+
+    # -- Tree --
+
+    # A parent picked in the tree is painted itself - as the instances option
+    # says : its parts without material inherit it
+    def _select_tree_item(path, part, depth)
+      return super if depth == path.size - 1
+      Sketchup.active_model.selection.clear
+      _paint_instances(_get_option_instances(path[depth]))
+      _restart
+    end
+
+    # Draws what a click on the item would paint : the part itself, or the
+    # parts inheriting the material of the parent - the parent outlined
+    def _preview_tree_item(path, part, depth)
+      @tree_hovered_item = [ path, part, depth ]  # Previewed again if the material changes
+      @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
+      @tool.hide_message
+      if depth == path.size - 1
+        @tree_preview_part_paths = nil
+        _preview_instances(_get_option_instances(path.last), true)
+      else
+
+        parent = path[depth]
+        selection = Sketchup.active_model.selection
+        selection.clear
+        selection.add(parent)
+
+        # The parts reached by no material between the parent and them, as
+        # paths relative to the parent
+        relative_part_paths = _get_instance_parts(parent, path[0...depth]).map { |_group, part_path| part_path[(depth + 1)..-1] }.uniq
+        relative_part_paths = relative_part_paths.select { |relative_path| relative_path.all? { |entity| entity.material.nil? } }
+
+        @tree_preview_part_paths = []
+        material = _get_preview_material
+        _get_option_instance_paths(parent, path[0..depth]).each do |parent_path|
+          # Without material, the parts inherit from above the parent
+          color = material ? material.color : MaterialUtils::get_color_from_path(parent_path[0...-1])
+          color.alpha = 255
+          relative_part_paths.each do |relative_path|
+            part_path = parent_path + relative_path
+            @tree_preview_part_paths << part_path
+            triangles = @triangles_by_definition[part_path.last.definition] ||= _compute_children_faces_triangles(part_path.last.definition.entities)
+            k_mesh = Kuix::Mesh.new
+            k_mesh.add_triangles(triangles)
+            k_mesh.background_color = color
+            k_mesh.transformation = PathUtils::get_transformation(part_path)
+            @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+          end
+        end
+
+        _show_shared_definition_warning(parent.definition) if _fetch_option_instances_all
+
+      end
+    end
+
+    # The own material of each level - not the inherited one : what a click changes
+    def _get_tree_item_swatch_color(path, depth)
+      _get_swatch_color(path[depth].material)
+    end
+
+    # Hovered, the material a click would apply
+    def _get_tree_item_swatch_hover_color(path, depth)
+      _get_swatch_color(_get_preview_material)
+    end
+
+    def _get_swatch_color(material)
+      return SmartDropup::SWATCH_NONE_MATERIAL if material.nil?
+      color = material.color
+      color.alpha = 255
+      color
+    end
+
+    def _clear_tree_item_preview
+      @tree_hovered_item = nil
+      @tree_preview_part_paths = nil
+      Sketchup.active_model.selection.clear
+      @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
+      @tool.hide_message
+    end
+
+    # The paths of the instances the given instance stands for, as the
+    # instances option says - groups included, the active context ones only
+    def _get_option_instance_paths(instance, instance_path)
+      return [ instance_path ] unless _fetch_option_instances_all
+      model = Sketchup.active_model
+      instances = _get_option_instances(instance).to_set
+      paths = []
+      fn_walk = lambda { |entities, path|
+        entities.each do |entity|
+          next unless entity.respond_to?(:definition) && entity.visible? && entity.layer.visible?
+          path.push(entity)
+          if instances.include?(entity)
+            paths << path.dup
+          else
+            fn_walk.call(entity.definition.entities, path)
+          end
+          path.pop
+        end
+      }
+      fn_walk.call(model.active_entities, model.active_path.to_a)
+      paths
+    end
+
+    # -----
+
     def _paint_instances(instances)
       material = @tool.get_current_material
       _paint('OCL Paint Parts') do
@@ -1514,8 +1636,12 @@ module Ladb::OpenCutList
     end
 
     def _get_instances
-      active_instance = get_active_part_entity_path.last
-      _fetch_option_instances_all ? active_instance.definition.instances : [ active_instance ]
+      _get_option_instances(get_active_part_entity_path.last)
+    end
+
+    # The instances the given instance stands for, as the instances option says
+    def _get_option_instances(instance)
+      _fetch_option_instances_all ? instance.definition.instances : [ instance ]
     end
 
     # -----
@@ -1886,24 +2012,7 @@ module Ladb::OpenCutList
   end
 
   class NoneButton < Kuix::Button
-
-    def paint_background(graphics)
-      super
-
-      width = @bounds.width - @margin.left - @border.left - @margin.right - @border.right
-      height = @bounds.height - @margin.top - @border.top - @margin.bottom - @border.bottom
-
-      graphics.draw_triangle(
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: height,
-        x3: width,
-        y3: height,
-        fill_color: @background_color.blend(Sketchup::Color.new(0, 0, 0), 0.9)
-      )
-    end
-
+    include SmartNoneMaterialBackground
   end
 
 end

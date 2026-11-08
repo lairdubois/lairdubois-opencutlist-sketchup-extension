@@ -3796,6 +3796,8 @@ module Ladb::OpenCutList
 
       if old_state == STATE_SELECT_TREE
         @tool.clear_2d(LAYER_2D_FLOATING_TOOLS) # Close the dropup
+        @tree_dropup = nil
+        @tree_path = nil
       end
 
       if has_active_selection?
@@ -3828,29 +3830,9 @@ module Ladb::OpenCutList
             @tool,
             path.each_with_index.map { |entity, depth|
 
-              on_click = lambda { |k_btn|
-                Sketchup.active_model.selection.clear
-                _reset_active_part
-                if entity == path.last
-                  _set_active_part(path, part)
-                else
-                  _set_active_selection(path[0...depth - path.size], [entity])
-                end
-                onSelected
-              }
-              on_enter = lambda { |k_btn|
-                if entity == path.last
-                  _preview_part(path, part)
-                else
-                  tool.clear_3d(LAYER_3D_PART_PREVIEW)
-                  Sketchup.active_model.selection.clear
-                  Sketchup.active_model.selection.add(entity)
-                end
-              }
-              on_leave = lambda { |k_btn|
-                tool.clear_3d(LAYER_3D_PART_PREVIEW)
-                Sketchup.active_model.selection.clear
-              }
+              on_click = lambda { |k_btn| _select_tree_item(path, part, depth) }
+              on_enter = lambda { |k_btn| _preview_tree_item(path, part, depth) }
+              on_leave = lambda { |k_btn| _clear_tree_item_preview }
 
               indent = depth
               disabled = depth < active_path_depth
@@ -3877,11 +3859,16 @@ module Ladb::OpenCutList
                 on_enter,
                 on_leave,
                 indent,
-                disabled
+                disabled,
+                nil,
+                _get_tree_item_swatch_color(path, depth),
+                _get_tree_item_swatch_hover_color(path, depth)
               )
             }
           )
           @tool.append_2d(k_dropup, LAYER_2D_FLOATING_TOOLS)
+          @tree_dropup = k_dropup
+          @tree_path = path
 
         end
 
@@ -3947,6 +3934,57 @@ module Ladb::OpenCutList
 
     def _clear_selection_on_start?
       false
+    end
+
+    # -- Tree --
+
+    # Selects the tree dropup item at 'depth' of the part 'path' : the part
+    # itself at the last depth, one of its parents otherwise
+    def _select_tree_item(path, part, depth)
+      Sketchup.active_model.selection.clear
+      _reset_active_part
+      if depth == path.size - 1
+        _set_active_part(path, part)
+      else
+        _set_active_selection(path[0...depth], [ path[depth] ])
+      end
+      onSelected
+    end
+
+    # Previews the tree dropup item at 'depth' of the part 'path' : the part
+    # itself at the last depth, one of its parents otherwise
+    def _preview_tree_item(path, part, depth)
+      if depth == path.size - 1
+        _preview_part(path, part)
+      else
+        @tool.clear_3d(LAYER_3D_PART_PREVIEW)
+        Sketchup.active_model.selection.clear
+        Sketchup.active_model.selection.add(path[depth])
+      end
+    end
+
+    def _clear_tree_item_preview
+      @tool.clear_3d(LAYER_3D_PART_PREVIEW)
+      Sketchup.active_model.selection.clear
+    end
+
+    # The swatch_color of the tree dropup item at 'depth' of the part 'path' -
+    # nil for no swatch
+    def _get_tree_item_swatch_color(path, depth)
+      nil
+    end
+
+    # The swatch_color of the tree dropup item while hovered - nil for no change
+    def _get_tree_item_swatch_hover_color(path, depth)
+      nil
+    end
+
+    # Asks the swatch colors again - what they show changed
+    def _refresh_tree_swatches
+      return if @tree_dropup.nil?
+      @tree_dropup.swatches.each_with_index do |k_swatch, depth|
+        k_swatch.set_colors(_get_tree_item_swatch_color(@tree_path, depth), _get_tree_item_swatch_hover_color(@tree_path, depth)) unless k_swatch.nil?
+      end
     end
 
     # -----
@@ -4300,6 +4338,63 @@ module Ladb::OpenCutList
 
   # -----
 
+  # Paints the "no material" background : the background color, its lower
+  # left half darkened - the Smart Paint "no material" button look
+  module SmartNoneMaterialBackground
+
+    def paint_background(graphics)
+      super
+      return unless none_material?
+
+      width = @bounds.width - @margin.left - @border.left - @margin.right - @border.right
+      height = @bounds.height - @margin.top - @border.top - @margin.bottom - @border.bottom
+
+      graphics.draw_triangle(
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: height,
+        x3: width,
+        y3: height,
+        fill_color: @background_color.blend(Sketchup::Color.new(0, 0, 0), 0.9)
+      )
+    end
+
+    # Is "no material" drawn, in the current state ?
+    def none_material?
+      true
+    end
+
+  end
+
+  # The swatch of a SmartDropup row : a color or SmartDropup::SWATCH_NONE_MATERIAL
+  # - another one while the row is hovered, if 'hover_color' isn't nil
+  class SmartDropupSwatch < Kuix::Panel
+
+    include SmartNoneMaterialBackground
+
+    def initialize(color, hover_color = nil)
+      super()
+      set_colors(color, hover_color)
+    end
+
+    def set_colors(color, hover_color = nil)
+      hover_color = color if hover_color.nil?
+      @color_none_material = color == SmartDropup::SWATCH_NONE_MATERIAL
+      @hover_color_none_material = hover_color == SmartDropup::SWATCH_NONE_MATERIAL
+      set_style_attribute(:background_color, @color_none_material ? Kuix::COLOR_WHITE : color)
+      set_style_attribute(:background_color, @hover_color_none_material ? Kuix::COLOR_WHITE : hover_color, :hover)
+    end
+
+    # The row hover reaches the swatch : a button passes its pseudo classes on
+    def none_material?
+      has_pseudo_class?(:hover) ? @hover_color_none_material : @color_none_material
+    end
+
+  end
+
+  # -----
+
   # A floating list of buttons, anchored at the mouse - by its bottom right
   # corner by default : it drops up and left.
   #  - title : an optional first row, not clickable - the handle to drag the
@@ -4310,9 +4405,14 @@ module Ladb::OpenCutList
   #    validation buttons ones.
   # Beyond MAX_ROWS buttons, the list scrolls - by the wheel or by the up
   # and down bars around it.
+  # A row swatch_color is a color, or SWATCH_NONE_MATERIAL - its
+  # swatch_hover_color too, shown while the row is hovered.
   class SmartDropup < Kuix::Panel
 
     MAX_ROWS = 10
+
+    # A swatch_color drawing "no material" : white, its lower left half grey
+    SWATCH_NONE_MATERIAL = :none_material
 
     MOTIF_CANCEL_PATH = 'M0,0L1,1 M0,1L1,0'.freeze
     MOTIF_VALIDATE_PATH = 'M0,0.5L0.375,1L1,0'.freeze
@@ -4322,8 +4422,14 @@ module Ladb::OpenCutList
     # [ { :button => Kuix::Button, :label => Kuix::Label - nil for a motif } ] in footer_btn_defs order
     attr_reader :footer_btns
 
+    # [ SmartDropupSwatch - nil for a row without ] in btn_defs order : the
+    # owner updates their colors
+    attr_reader :swatches
+
     def initialize(tool, btn_defs, id = nil, anchor: Kuix::Anchor::BOTTOM_RIGHT, title: nil, footer_btn_defs: nil)
       super(id)
+
+      @swatches = []
 
       unit = tool.get_unit
 
@@ -4410,18 +4516,19 @@ module Ladb::OpenCutList
             # The swatch is a full height bar on the left edge : the vertical
             # padding moves to the labels and the tick
             swatch = !btn_def.swatch_color.nil?
+            k_swatch = nil
             if swatch
 
               k_btn.padding.set!(0, unit, 0, 0)
 
-              k_swatch = Kuix::Panel.new
+              k_swatch = SmartDropupSwatch.new(btn_def.swatch_color, btn_def.swatch_hover_color)
               k_swatch.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
               k_swatch.min_size.width = unit * 2
               k_swatch.hittable = false
-              k_swatch.set_style_attribute(:background_color, btn_def.swatch_color)
               k_btn.append(k_swatch)
 
             end
+            @swatches << k_swatch
 
             k_labels = Kuix::Panel.new
             k_labels.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
@@ -4573,7 +4680,8 @@ module Ladb::OpenCutList
       :indent,
       :disabled,
       :tick_def,
-      :swatch_color
+      :swatch_color,
+      :swatch_hover_color
     ) do
       def initialize(
         text_defs = [],
@@ -4583,7 +4691,8 @@ module Ladb::OpenCutList
         indent = 0,
         disabled = false,
         tick_def = nil,
-        swatch_color = nil
+        swatch_color = nil,
+        swatch_hover_color = nil
       )
         super
       end
