@@ -2043,6 +2043,7 @@ tab:
       *OpenCutList* се разработва от [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Вижте всички [сътрудници](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Преводи
     credits_translators: |
+      - Erhan Kutslev (*български*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*английски*, *немски*)
       - Gildas Boureau (документация на *френски*)
       - Vladimir Badulya (*руски*)
@@ -2408,8 +2409,10 @@ tool:
     action_option_options_keep_b_status: Запазване на екземплярите B след операцията
     action_option_options_remove_unused_definitions_status: Изтриване на дефинициите на компоненти, които вече не се използват след операцията
     action_option_options_reuse_definition: Повторно използване на детайли
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Обща дефиниция на компонент за плоскостите с еднаква форма
     action_option_options_reuse_definition_mirrored: Огледално разположение
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Огледално разположение за срещуположните плоскости с еднаква форма
     notify:
       validate_a: Потвърдете, за да преминете към избора на B

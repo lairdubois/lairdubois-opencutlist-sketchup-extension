@@ -1957,85 +1957,6 @@ tab:
         Ваша модель наразі не має жодного екземпляру для відображення тут.
         Екземпляр - це **група** або **компонент**, розміщений на сцені.
     obsolete_base: Щоб залишатися синхронізованим, вам потрібно повторно згенерувати структуру.
-  # @no-translate
-  importer:
-    label: Імпорт
-    title: Імпорт деталей
-    help: |
-      Ця функція дозволяє вам імпортувати деталі (паралелепіпедної форми) у вашу модель із файлу [CSV](https://uk.wikipedia.org/wiki/CSV).
-      Таким чином, ви зможете використовувати функціоеальність *OpenCutList*, генеруючи свої деталі за допомогою стороннього програмного забезпечення, відмінного від *SketchUp*.
-      Щоб розпочати, натисніть кнопку **Відкрити файл CSV**.
-    open_csv: Відкрити файл CSV
-    import_to_model: Імпорт в модель
-    load:
-      title: Завантажити файл CSV
-      info_0: |
-        Виберіть параметри, необхідні для правильного читання файлу:
-        **{{ filename }}**.
-      info_1: |
-        *Одиниця виміру, налаштована в шаблоні: **{{ unit }}**.
-        Ця одиниця буде використана для розмірів, одиниця яких не вказана*.
-      options: Параметри завантаження
-      option_col_sep: Роздільник
-      option_col_sep_tab: Табулятор
-      option_col_sep_comma: Кома
-      option_col_sep_semicolon: Крапка з комою
-      option_first_line_headers: Заголовок рядка
-      option_first_line_headers_0: Дані
-      option_first_line_headers_1: Заголовки стовпців
-    import:
-      title: Імпорт деталей у модель
-      info_0: |
-        Ви збираєтеся імпортувати **{{ count }} деталь** у модель.
-        Цю деталь буде розміщено на головній сцені.
-      info_0_plural: |
-        Ви збираєтеся імпортувати **{{ count }} деталей** у модель.
-        Ці деталі будуть розміщені на головній сцені.
-      info_1: Натисніть **Імпорт** для підтвердження дії.
-      options: |
-        Модель вже містить *деталі*, *визначення* або *матеріали*.
-        Виберіть параметри імпорту, які відповідають вашим потребам.
-      option_remove_all_?: Що робити?
-      option_remove_all_false: Додати деталі до існуючих
-      option_remove_all_true: Відмінити все!
-      option_keep_definitions_settings: Зберегти налаштування визначень
-      option_keep_materials_settings: Зберегти налаштування матеріалів
-    column:
-      unused: Невикористаний
-      mandatory: Обов'язкові поля
-      optional: Необов'язкові поля
-      name: Позначення
-      count: Кількість
-      bbox_length: Довжина - фактична
-      bbox_width: Ширина - фактична
-      bbox_thickness: Товщина - фактична
-      material: Матеріал
-      tags: Мітки
-    tooltip:
-      errors: Ця деталь не буде імпортована, оскільки містить помилки
-      warnings: Ця деталь буде імпортована, але вона містить наступні попередження
-    error:
-      no_model: Жодна модель не відкрита. Неможливо завантажити деталі в порожнечу ;)
-      file_not_found: "Файл не знайдено: **{{ filename }}**"
-      bad_extension: Файл *{{ filename }}* не має розширення **.CSV** або **.TSV**.
-      failed_to_load_csv_file: |
-        Не вдається завантажити файл CSV: **{{ error }}**
-        *Перевірте, чи вибрали ви правильний роздільник даних.*
-      empty_file: Файл, здається, порожній або його неможливо прочитати правильно.
-      no_importable_part: Жодні деталі не можна імпортувати. Призначте обов'язкові поля у відповідних стовпцях.
-      invalid_name: Недійсне позначення
-      invalid_length: Недійсна довжина
-      invalid_width: Недійсна ширина
-      invalid_thickness: Недійсна товщина
-      failed_to_import: Помилка імпорту.
-    warning:
-      invalid_count: Недійсна кількість
-      invalid_material: Недійсний матеріал
-    success:
-      imported_title: Імпорт завершено
-      imported_body: "{{ count }} деталь успішно імпортовано!"
-      imported_body_plural: "{{ count }} деталей успішно імпортовано!"
-    obsolete_base: Щоб зберегти синхронізацію, ви повинні перезавантажити файл CSV.
   importers:
     default:
       open_file: Відкрити файл {{ extension }}
@@ -2711,8 +2632,10 @@ tool:
     action_option_options_keep_b_status: Зберігає екземпляри B після операції
     action_option_options_remove_unused_definitions_status: Очистити визначення компонентів, які більше не використовуються після роботи
     action_option_options_reuse_definition: Повторне використання деталей
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Спільне визначення компонентів між панелями однакової форми
     action_option_options_reuse_definition_mirrored: Встановити дзеркально
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Дзеркальна установка для панелей однакової форми один навпроти одного
     notify:
       validate_a: Перевірте, щоб перейти до вибору B

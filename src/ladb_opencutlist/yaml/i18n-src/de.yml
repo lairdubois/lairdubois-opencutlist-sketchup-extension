@@ -2178,85 +2178,6 @@ tab:
         Ihr Modell enthält keine Instanzen zum Anzeigen.
         Eine Instanz ist eine **Gruppe** oder eine **Komponente** in der Szene.
     obsolete_base: Um synchron zu bleiben, muss die Struktur neu generiert werden.
-  # @no-translate
-  importer:
-    label: Importieren
-    title: Teile importieren
-    help: |
-      An dieser Stelle können Sie Teile, als rechteckige Volumen (quaderförmig), aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
-      Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
-      Klicken Sie auf **CSV-Datei öffnen** zum Starten.
-    open_csv: CSV-Datei öffnen
-    import_to_model: Ins Modell importieren
-    load:
-      title: Laden einer CSV-Datei
-      info_0: |
-        Wählen Sie die Optionen aus, die zum korrekten Lesen der Datei erforderlich sind:
-        **{{ filename }}**.
-      info_1: |
-        *Die Einheit des Modells ist: **{{ unit }}**.
-        Diese Einheit wird für Dimensionen verwendet, bei denen die Einheit nicht angegeben ist*.
-      options: Optionen zum Laden
-      option_col_sep: Trennzeichen
-      option_col_sep_tab: Tabulator
-      option_col_sep_comma: Komma
-      option_col_sep_semicolon: Semikolon
-      option_first_line_headers: Erste Zeile
-      option_first_line_headers_0: Daten
-      option_first_line_headers_1: Spaltenüberschriften
-    import:
-      title: Teile ins Modell importieren
-      info_0: |
-        Sie sind dabei **{{ count }} Teil** in das Modell zu importieren.
-        Dieses Teil wird in einer Gruppe im Ursprung der Hauptszene platziert.
-      info_0_plural: |
-        Sie sind dabei **{{ count }} Teile** in das Modell zu importieren.
-        Diese Teile werden in einer Gruppe ab dem Ursprung der Hauptszene gestapelt.
-      info_1: Klicken Sie auf **Importieren**, um den Vorgang zu bestätigen.
-      options: |
-        Das Modell enthält schon *Teile*, *Definitionen* oder *Materialien*.
-        Wählen Sie aus den Importoptionen.
-      option_remove_all_?: Was tun?
-      option_remove_all_false: Teile zu bestehenden hinzufügen
-      option_remove_all_true: Alles löschen!
-      option_keep_definitions_settings: Einstellungen zu Definitionen beibehalten
-      option_keep_materials_settings: Materialparameter beibehalten
-    column:
-      unused: Nicht verwendet
-      mandatory: Pflichtspalten
-      optional: Optionale Spalten
-      name: Bezeichnung
-      count: Anzahl
-      bbox_length: Länge
-      bbox_width: Breite
-      bbox_thickness: Dicke
-      material: Material
-      tags: Badges
-    tooltip:
-      errors: Dieses Teil wird nicht importiert, weil es folgende Fehler enthält
-      warnings: Dieses Teil wird importiert, aber es enthält folgende Warnungen
-    error:
-      no_model: Kein Modell ist offen. Teile können nicht ins Leere importiert werden ;)
-      file_not_found: "Datei nicht gefunden: **{{ filename }}**"
-      bad_extension: Die Datei *{{ filename }}* hat nicht eine **.CSV** oder **.TSV** Endung.
-      failed_to_load_csv_file: |
-        Die CSV-Datei kann nicht geladen werden : **{{ error }}**
-        *Prüfen Sie, ob Sie das korrekte Datentrennzeichen gewählt haben.*
-      empty_file: Die Datei scheint leer zu sein oder konnte nicht richtig gelesen werden.
-      no_importable_part: Es können keine Teile importiert werden. Ordnen Sie die Pflichtfelder den entsprechenden Spalten zu.
-      invalid_name: Ungültige Bezeichnung
-      invalid_length: Ungültige Länge
-      invalid_width: Ungültige Breite
-      invalid_thickness: Ungültige Dicke
-      failed_to_import: Der Import ist fehlgeschlagen.
-    warning:
-      invalid_count: Ungültige Stückzahl
-      invalid_material: Ungültiges Material
-    success:
-      imported_title: Importieren abgeschlossen
-      imported_body: "{{ count }} Teil erfolgreich importiert!"
-      imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
-    obsolete_base: Um synchron zu bleiben, müssen Sie die CSV-Datei neu laden.
   importers:
     default:
       open_file: Datei mit Erweiterung {{ extension }} öffnen
@@ -2968,8 +2889,10 @@ tool:
     action_option_options_keep_b_status: Die Instanzen B nach der Operation beibehalten
     action_option_options_remove_unused_definitions_status: Nach dem Vorgang nicht mehr verwendete Komponentendefinitionen löschen
     action_option_options_reuse_definition: Teile wiederverwenden
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Gleiche Komponentendefinition für Platten mit identischer Form verwenden
     action_option_options_reuse_definition_mirrored: Spiegelbildliche Anordnung
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Spiegelbildliche Anordnung bei gegenüberliegenden Platten gleicher Form
     notify:
       validate_a: Bestätigen Sie, um zur Auswahl von B zu gelangen

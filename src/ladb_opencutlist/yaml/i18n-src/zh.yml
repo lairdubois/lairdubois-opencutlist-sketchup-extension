@@ -1957,85 +1957,6 @@ tab:
         您的模型不包含任何在此显示的实例。
         实例是场景中的一个**组**或一个**组件**
     obsolete_base: 刷新以保持同步
-  # @no-translate
-  importer:
-    label: 导入
-    title: 导入部件
-    help: |
-      此页面允许您从[CSV](https://zh.wikipedia.org/wiki/%E9%80%97%E5%8F%B7%E5%88%86%E9%9A%94%E5%80%BC)文件中导入部件（由矩形边界框定义）到您的模型中.
-      然后, 您可以使用 *OpenCutList* 的功能处理由除 *SketchUp* 之外的软件生成的部件.
-      点击 **打开 CSV 文件** 按钮开始.
-    open_csv: 打开 CSV 文件
-    import_to_model: 导入到模型中
-    load:
-      title: 加载 CSV 文件
-      info_0: |
-        选择正确读取文件所需的选项:
-        **{{ filename }}**.
-      info_1: |
-        *模型中设置的单位为: **{{ unit }}**.
-        这个单位将用于未指定单位的尺寸*.
-      options: 加载选项
-      option_col_sep: 分隔符
-      option_col_sep_tab: 制表符
-      option_col_sep_comma: 逗号
-      option_col_sep_semicolon: 分号
-      option_first_line_headers: 标题行
-      option_first_line_headers_0: 数据
-      option_first_line_headers_1: 列标题
-    import:
-      title: 导入部件到模型中
-      info_0: |
-        您即将导入 **{{ count }} 部件** 到模型中.
-        这个部件将放置在主场景原点的一个组中.
-      info_0_plural: |
-        您即将导入 **{{ count }} 个部件** 到模型中.
-        这些部件将堆叠在一个组中, 从主场景的原点开始.
-      info_1: 点击 **导入** 以确认操作.
-      options: |
-        模型已包含 *部件*, *定义* 或 *材质*.
-        请选择您需要的导入选项.
-      option_remove_all_?: 下一步怎么办?
-      option_remove_all_false: 添加到现有的部件
-      option_remove_all_true: 删除现有的!
-      option_keep_definitions_settings: 保留定义设置
-      option_keep_materials_settings: 保留材料设置
-    column:
-      unused: 未使用
-      mandatory: 必填字段
-      optional: 可选字段
-      name: 名称
-      count: 数量
-      bbox_length: 长度
-      bbox_width: 宽度
-      bbox_thickness: 厚度
-      material: 材质
-      tags: 标签
-    tooltip:
-      errors: 此部件将不会被导入, 因为它产生了以下错误
-      warnings: 此部件将被导入, 但产生了以下警告
-    error:
-      no_model: 没有打开的模型. 无法将部件导入虚空中 ;)
-      file_not_found: "文件未找到 : **{{ filename }}**"
-      bad_extension: 文件 *{{ filename }}* 没有扩展名 **.CSV** 或 **.TSV**.
-      failed_to_load_csv_file: |
-        无法加载 CSV 文件: **{{ error }}**
-        *请验证您是否已选择了适当的字段分隔符.*
-      empty_file: 文件似乎为空或无法解释.
-      no_importable_part: 无法导入任何部件, 请将必填字段分配给相应的列.
-      invalid_name: 无效的名称
-      invalid_length: 长度无效
-      invalid_width: 宽度无效
-      invalid_thickness: 厚度无效
-      failed_to_import: 导入失败.
-    warning:
-      invalid_count: 计数无效
-      invalid_material: 材质无效
-    success:
-      imported_title: 导入完成
-      imported_body: "{{ count }} 部件已成功导入!"
-      imported_body_plural: "{{ count }} 部件已成功导入!"
-    obsolete_base: 要保持同步, 您必须重新加载 CSV 文件.
   importers:
     default:
       open_file: 打开 {{ extension }} 文件
@@ -2711,8 +2632,10 @@ tool:
     action_option_options_keep_b_status: 操作后保留 B 实例
     action_option_options_remove_unused_definitions_status: 删除操作后不再使用的组件定义
     action_option_options_reuse_definition: 重用部件
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: 在形状相同的板材之间共享同一组件定义
     action_option_options_reuse_definition_mirrored: 镜像安装
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: 对相对的同形状板材进行镜像安装
     notify:
       validate_a: 确认以进入 B 的选择

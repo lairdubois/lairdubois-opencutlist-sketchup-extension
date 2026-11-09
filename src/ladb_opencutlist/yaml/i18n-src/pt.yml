@@ -1957,85 +1957,6 @@ tab:
         Seu modelo não possui atualmente nenhuma instância para exibir aqui.
         Uma instância é um **grupo** ou um **componente** colocado na cena.
     obsolete_base: Para permanecer sincronizado, você deve regenerar a estrutura.
-  # @no-translate
-  importer:
-    label: Importar
-    title: Importar peças
-    help: |
-      Esta página permite importar uma série de peças compatíveis (definidas por uma caixa de delimitação retangular) para seu modelo a partir de um arquivo [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
-      Você poderá então usar o poder da Lista de Peças do *OpenCutList* gerando plano de corte com um software diferente de *SketchUp*.
-      Clique no botão **Abrir arquivo CSV** para carregar.
-    open_csv: Abrir arquivo CSV
-    import_to_model: Importar para o modelo
-    load:
-      title: Carregando arquivo CSV
-      info_0: |
-        Escolha as opções necessárias para a leitura correta do arquivo:
-        **{{ filename }}**.
-      info_1: |
-        *A unidade configurada no modelo é: **{{ unit }}**.
-        Esta unidade será usada para dimensões para as quais a unidade não está especificada*.
-      options: Opções de carregamento
-      option_col_sep: Separador
-      option_col_sep_tab: Tabulador
-      option_col_sep_comma: Vírgula
-      option_col_sep_semicolon: Ponto e vírgula
-      option_first_line_headers: Linha de Cabeçalho
-      option_first_line_headers_0: Dados
-      option_first_line_headers_1: Títulos de Coluna
-    import:
-      title: Importar peças para o modelo
-      info_0: |
-        ocê está prestes a importar **{{ count }} peça** para o modelo.
-        Esta parte será colocada na origem da cena principal.
-      info_0_plural: |
-        You are about to import **{{ count }} peças** para o model.
-        Estas peças serão empilhadas a partir da origem da cena principal.
-      info_1: Clique em **Importar** para confirmar a ação.
-      options: |
-        O modelo já contém *peças*, *definições* ou *materiais*.
-        Selecione as opções de importação que você precisa.
-      option_remove_all_?: O que vem a seguir?
-      option_remove_all_false: Adicionar peças a peças existentes
-      option_remove_all_true: Remover existente!
-      option_keep_definitions_settings: Manter configurações de definição
-      option_keep_materials_settings: Manter configurações de material
-    column:
-      unused: Não utilizado
-      mandatory: Campos obrigatórios
-      optional: Campos opcionais
-      name: Designação
-      count: Quantidade
-      bbox_length: Comprimento
-      bbox_width: Largura
-      bbox_thickness: Espessura
-      material: Material
-      tags: Identificação
-    tooltip:
-      errors: Esta parte não será importada porque produziu os seguintes erros
-      warnings: Esta parte será importada, mas produziu os seguintes avisos
-    error:
-      no_model: Nenhum modelo está aberto. Não é possível importar partes para o vazio;)
-      file_not_found: "Arquivo não encontrado : **{{ filename }}**"
-      bad_extension: O arquivo *{{ filename }}* não possui a extensão **.CSV** ou **.TSV**.
-      failed_to_load_csv_file: |
-        Incapaz de carregar o arquivo CSV: **{{ error }}**
-        *Verifique se você selecionou o separador de campo correto.*
-      empty_file: O arquivo parece vazio ou não pode ser interpretado.
-      no_importable_part: Nenhuma peça pode ser importada. Atribua os campos obrigatórios às colunas correspondentes.
-      invalid_name: Designação inválida
-      invalid_length: Comprimento inválido
-      invalid_width: Largura inválida
-      invalid_thickness: Espessura inválida
-      failed_to_import: O processo de importação falhou.
-    warning:
-      invalid_count: Contagem inválida
-      invalid_material: Material inválido
-    success:
-      imported_title: Importação concluída
-      imported_body: "{{ count }} peça foi importada com sucesso!"
-      imported_body_plural: "{{ count }} peças foram importadas com sucesso!"
-    obsolete_base: Para permanecer sincronizado, você deve recarregar o arquivo CSV.
   importers:
     default:
       open_file: Abrir um arquivo {{ extension }}
@@ -2711,8 +2632,10 @@ tool:
     action_option_options_keep_b_status: Manter as instâncias B após a operação
     action_option_options_remove_unused_definitions_status: Eliminar as definições de componentes que já não são utilizadas após a operação
     action_option_options_reuse_definition: Reutilizar as peças
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Compartilhar a mesma definição de componente entre as chapas de forma idêntica
     action_option_options_reuse_definition_mirrored: Posicionamento espelhado
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Posicionamento espelhado para as chapas de forma idêntica em oposição
     notify:
       validate_a: Confirme para avançar para a seleção de B
