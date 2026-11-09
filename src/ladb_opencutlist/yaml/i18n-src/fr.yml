@@ -2180,85 +2180,6 @@ tab:
         Votre modèle ne dispose pour le moment d'aucune instance à afficher ici.
         Une instance est un **groupe** ou un **composant** placé dans la scène.
     obsolete_base: Pour rester synchronisé, vous devez rafraîchir la structure.
-  # @no-translate
-  importer:
-    label: Importer
-    title: Importer des pièces
-    help: |
-      Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-      Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *SketchUp*.
-      Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
-    open_csv: Ouvrir un fichier CSV
-    import_to_model: Importer dans le modèle
-    load:
-      title: Chargement d'un fichier CSV
-      info_0: |
-        Choisissez les options nécessaires à la bonne lecture du fichier :
-        **{{ filename }}**.
-      info_1: |
-        *L'unité configurée dans le modèle est : **{{ unit }}**.
-        Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
-      options: Options de chargement
-      option_col_sep: Séparateur
-      option_col_sep_tab: Tabulation
-      option_col_sep_comma: Virgule
-      option_col_sep_semicolon: Point virgule
-      option_first_line_headers: Première ligne
-      option_first_line_headers_0: Données
-      option_first_line_headers_1: Titres de colonne
-    import:
-      title: Importation des pièces dans le modèle
-      info_0: |
-        Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
-        Cette pièce va être placée sur la scène principale, à l'origine.
-      info_0_plural: |
-        Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
-        Ces pièces vont être empilées sur la scène principale depuis l'origine.
-      info_1: Cliquez sur **Importer** pour confirmer l'action.
-      options: |
-        Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
-        Choisissez les options d'importation qui correspondent à votre besoin.
-      option_remove_all_?: Que faire ?
-      option_remove_all_false: Ajouter les pièces à l'existant
-      option_remove_all_true: Effacer tout !
-      option_keep_definitions_settings: Conserver les paramètres sur les définitions
-      option_keep_materials_settings: Conserver les paramètres sur les matières
-    column:
-      unused: Non utilisé
-      mandatory: Champs obligatoires
-      optional: Champs facultatifs
-      name: Désignation
-      count: Quantité
-      bbox_length: Longueur capable
-      bbox_width: Largeur capable
-      bbox_thickness: Épaisseur capable
-      material: Matière
-      tags: Badges
-    tooltip:
-      errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
-      warnings: Cette pièce sera importée mais elle contient les avertissements suivants
-    error:
-      no_model: Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
-      file_not_found: "Fichier introuvable : **{{ filename }}**"
-      bad_extension: Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
-      failed_to_load_csv_file: |
-        Impossible de charger le fichier CSV : **{{ error }}**
-        *Vérifiez que vous avez choisi le bon séparateur de données.*
-      empty_file: Le fichier semble vide ou ne peut pas être correctement lu.
-      no_importable_part: Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
-      invalid_name: Pas de désignation valide
-      invalid_length: Pas de longueur valide
-      invalid_width: Pas de largeur valide
-      invalid_thickness: Pas d'épaisseur valide
-      failed_to_import: L'importation a échoué.
-    warning:
-      invalid_count: Pas de quantité valide
-      invalid_material: Pas de matière valide
-    success:
-      imported_title: Importation terminée
-      imported_body: "{{ count }} pièce importée avec succès !"
-      imported_body_plural: "{{ count }} pièces importées avec succès !"
-    obsolete_base: Pour rester synchronisé, vous devez recharger le fichier CSV.
   importers:
     default:
       open_file: Ouvrir un fichier {{ extension }}
@@ -2970,8 +2891,10 @@ tool:
     action_option_options_keep_b_status: Conserver les instances B après l'opération
     action_option_options_remove_unused_definitions_status: Effacer les définitions de composant qui ne sont plus utilisées après l'opération
     action_option_options_reuse_definition: Réutiliser les pièces
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Partager la même définition de composant entre les panneaux de forme identique
     action_option_options_reuse_definition_mirrored: Pose en miroir
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Pose en miroir pour les panneaux de forme identique en vis-à-vis
     notify:
       validate_a: Validez pour passer à la sélection de B

@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
   require_relative '../helper/face_matcher_helper'
+  require_relative '../helper/solid_matcher_helper'
   require_relative '../utils/lock_utils'
   require_relative '../utils/component_utils'
   require_relative '../worker/common/common_drawing_decomposition_worker'
@@ -100,7 +101,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_SLICE_MODE => [ ACTION_OPTION_SLICE_MODE_SLICE, ACTION_OPTION_SLICE_MODE_CUT ],
           ACTION_OPTION_SLICE_REFERENCE => [ ACTION_OPTION_SLICE_REFERENCE_FACE, ACTION_OPTION_SLICE_REFERENCE_POINTS ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION ]
         }
       },
       {
@@ -303,6 +304,9 @@ module Ladb::OpenCutList
 
       when ACTION_OPTION_OPTIONS
         case option
+        when ACTION_OPTION_OPTIONS_REUSE_DEFINITION
+          # Cut mode keeps a single piece per part : nothing to share
+          return fetch_action_option_boolean(action, ACTION_OPTION_SLICE_MODE, ACTION_OPTION_SLICE_MODE_CUT) if action == ACTION_SLICE
         when ACTION_OPTION_OPTIONS_REUSE_DEFINITION_MIRRORED
           return !fetch_action_option_boolean(action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
         end
@@ -2825,6 +2829,8 @@ module Ladb::OpenCutList
 
     include UserTextHelper
     include SmartActionHandlerSolidBooleanHelper
+    include FaceMatcherHelper
+    include SolidMatcherHelper
 
     STATE_SLICE_REFERENCE = 1
     STATE_SLICE = 2
@@ -2841,6 +2847,7 @@ module Ladb::OpenCutList
     COLOR_SLICED_EDGE = Kuix::COLOR_BLACK
 
     SlicePartDef = Struct.new(:path, :points, :triangles, :edges)  # WORLD coordinates, edges lazily read
+    PieceShapeDef = Struct.new(:definition, :points, :signature, :faces, :children, :reference_manipulator)  # LOCAL coordinates
 
     @@last_cut_distance = 0  # The distance of the last cut, SHIFT locks the next one on it
 
@@ -3501,6 +3508,10 @@ module Ladb::OpenCutList
 
     def _fetch_option_options_make_unique?
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
+    end
+
+    def _fetch_option_options_reuse_definition?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
     end
 
     # -- Steps --
@@ -4427,7 +4438,8 @@ module Ladb::OpenCutList
       model.start_operation('OCL Slice Parts', true)
       begin
 
-        errors = _slice_parts(part_defs.map(&:path), plane, frame, extents, margin, slabs, path_slabs, _fetch_option_options_make_unique?, removed_paths, kept_paths)
+        errors = _slice_parts(part_defs.map(&:path), plane, frame, extents, margin, slabs, path_slabs, _fetch_option_options_make_unique?, removed_paths, kept_paths,
+                              reuse_definition: side.nil? && _fetch_option_options_reuse_definition?)
         if errors.empty?
           model.commit_operation
         else
@@ -4468,7 +4480,11 @@ module Ladb::OpenCutList
     # The +kept_paths+ parts, selected but not crossed, keep their shape : in
     # make_unique: false mode, the last twin group of their definition moves
     # too - with the unselected instances.
-    def _slice_parts(paths, plane, frame, extents, margin, slabs, path_slabs, make_unique, removed_paths = [], kept_paths = [])
+    #
+    # With +reuse_definition+, the pieces of a same source definition that
+    # turn out congruent end up sharing one definition (see
+    # #_reuse_piece_definitions).
+    def _slice_parts(paths, plane, frame, extents, margin, slabs, path_slabs, make_unique, removed_paths = [], kept_paths = [], reuse_definition: false)
       model = Sketchup.active_model
 
       # Separate the assemblies holding the parts, so the pieces are laid in
@@ -4491,6 +4507,7 @@ module Ladb::OpenCutList
 
       # Read before any make_unique renames them
       base_names = twin_groups.flatten.map { |index| paths[index].last.definition.name }
+      source_definitions = twin_groups.flatten.map { |index| paths[index].last.definition }
 
       unless make_unique
 
@@ -4575,6 +4592,9 @@ module Ladb::OpenCutList
 
       removed_paths.map(&:last).select(&:valid?).group_by(&:parent).each { |parent, instances| parent.entities.erase_entities(instances) }
 
+      # Before the naming : only the definitions left are numbered
+      _reuse_piece_definitions(piece_paths, source_definitions) if reuse_definition && slabs.length > 1
+
       # Each piece named after its part
       if slabs.length > 1
         renamed = {}
@@ -4588,6 +4608,137 @@ module Ladb::OpenCutList
       end
 
       []
+    end
+
+    # Makes the congruent pieces share a definition : each piece definition
+    # congruent to an earlier one of the same source definition is dropped,
+    # its instances moved onto the earlier one - their transformation composed
+    # with the alignment, so nothing moves on screen.
+    #
+    # +piece_paths+ holds, for each sliced path, its piece paths ;
+    # +source_definitions+, in the same order, the definition the part had
+    # before the slice. Only pieces of one source definition are compared :
+    # they bear its attributes, so sharing links nothing the user meant apart.
+    #
+    # Congruent means superposable by a PROPER motion (no mirror), faces and
+    # their materials included, and holding the same children - same
+    # definition, material and tag, at the same place. A child group made
+    # unique by the slice (an untyped wrapper) has a definition of its own,
+    # so its piece is never shared : conservative, never wrong.
+    def _reuse_piece_definitions(piece_paths, source_definitions)
+      buckets = {}
+      piece_paths.each_with_index do |pieces, index|
+        definitions = pieces.map(&:last).select(&:valid?).map(&:definition)
+        (buckets[source_definitions[index]] ||= []).concat(definitions)
+      end
+
+      dropped_definitions = []
+      buckets.each_value do |definitions|
+        shape_defs = []
+        definitions.uniq.each do |definition|
+          next if (shape_def = _get_piece_shape_def(definition)).nil?
+
+          alignment = nil
+          target = shape_defs.find { |candidate| !(alignment = _get_piece_alignment(shape_def, candidate)).nil? }
+          if target.nil?
+            shape_defs << shape_def
+            next
+          end
+
+          definition.instances.each do |instance|
+            transformation = instance.transformation
+            instance.definition = target.definition
+            instance.transformation = transformation * alignment
+          end
+          dropped_definitions << definition
+        end
+      end
+
+      model_definitions = Sketchup.active_model.definitions
+      return unless model_definitions.respond_to?(:remove)  # SketchUp 2018+
+      dropped_definitions.each do |definition|
+        model_definitions.remove(definition) if definition.valid? && definition.count_used_instances.zero?
+      end
+    end
+
+    # The piece definition's shape, read in its own space - nil when it has
+    # no face.
+    def _get_piece_shape_def(definition)
+      faces = definition.entities.grep(Sketchup::Face)
+      return nil if faces.empty?
+
+      points = faces.flat_map(&:vertices).uniq.map(&:position)
+      face_keys = faces.map { |face|
+        loop_points = face.outer_loop.vertices.map(&:position)
+        centroid = Geom::Point3d.new(
+          loop_points.inject(0.0) { |sum, point| sum + point.x.to_f } / loop_points.length,
+          loop_points.inject(0.0) { |sum, point| sum + point.y.to_f } / loop_points.length,
+          loop_points.inject(0.0) { |sum, point| sum + point.z.to_f } / loop_points.length
+        )
+        [ centroid, face.normal, face.material, face.back_material ]
+      }
+      children = definition.entities.select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }
+                                    .map { |entity| [ entity.definition, entity.transformation, entity.material, entity.layer ] }
+      reference_manipulator = FaceManipulator.new(faces.max_by(&:area))
+
+      PieceShapeDef.new(definition, points, _points_signature(points), face_keys, children, reference_manipulator)
+    end
+
+    # The transformation that lays +candidate+ (a PieceShapeDef) onto
+    # +shape_def+, both read in their own space - the one closest to the
+    # identity - or nil when they are not congruent.
+    def _get_piece_alignment(shape_def, candidate)
+      return nil unless shape_def.points.length == candidate.points.length
+      return nil unless shape_def.faces.length == candidate.faces.length
+      return nil unless shape_def.children.length == candidate.children.length
+      return nil unless _points_signatures_match?(shape_def.signature, candidate.signature)
+
+      best = nil  # [ transformation, trace ]
+      candidate.definition.entities.grep(Sketchup::Face).each do |face|
+
+        # Every alignment, not just the first : a symmetric face superposes
+        # several ways, only some of them superposing the solid. The flipped
+        # over ones are proper motions too (see FaceMatcherHelper).
+        _face_manipulators_alignment_transformations(shape_def.reference_manipulator, FaceManipulator.new(face)).each do |t|
+          next unless _points_sets_superpose?(shape_def.points, candidate.points, t)
+          next unless _piece_faces_superpose?(shape_def.faces, candidate.faces, t)
+          next unless _piece_children_superpose?(shape_def.children, candidate.children, t)
+          trace = _transformation_trace(t)
+          best = [ t, trace ] if best.nil? || trace > best.last
+        end
+
+      end
+
+      best.nil? ? nil : best.first
+    end
+
+    def _piece_faces_superpose?(faces, other_faces, t)
+      remaining = faces.dup
+      other_faces.all? { |centroid, normal, material, back_material|
+        transformed_centroid = centroid.transform(t)
+        transformed_normal = normal.transform(t)
+        index = remaining.index { |c, n, m, bm| m == material && bm == back_material && c == transformed_centroid && n.samedirection?(transformed_normal) }
+        next false if index.nil?
+        remaining.delete_at(index)
+        true
+      }
+    end
+
+    def _piece_children_superpose?(children, other_children, t)
+      remaining = children.dup
+      other_children.all? { |definition, transformation, material, layer|
+        transformed = t * transformation
+        index = remaining.index { |d, tr, m, l| d == definition && m == material && l == layer && _same_transformation?(tr, transformed) }
+        next false if index.nil?
+        remaining.delete_at(index)
+        true
+      }
+    end
+
+    def _same_transformation?(transformation, other_transformation)
+      [ ORIGIN, Geom::Point3d.new(1, 0, 0), Geom::Point3d.new(0, 1, 0), Geom::Point3d.new(0, 0, 1) ].all? { |point|
+        point.transform(transformation) == point.transform(other_transformation)
+      }
     end
 
     # Names the given piece definitions "Name #1", "Name #2"... numbered from
@@ -4784,6 +4935,7 @@ module Ladb::OpenCutList
 
     include UserTextHelper
     include FaceMatcherHelper
+    include SolidMatcherHelper
 
     STATE_SELECT = 0
     STATE_PANELING = 1
@@ -5890,7 +6042,7 @@ module Ladb::OpenCutList
       best = nil # [ definition, instance transformation, score ]
 
       panel_defs.each do |definition, transformation, face_manipulators, candidate_points, candidate_signature, candidate_front_centroid|
-        next unless _panel_points_signatures_match?(signature, candidate_signature)
+        next unless _points_signatures_match?(signature, candidate_signature)
 
         # #_face_manipulators_alignment_transformations only ever answers
         # PROPER motions - see FaceMatcherHelper. The mirrored placements are
@@ -5955,46 +6107,6 @@ module Ladb::OpenCutList
         candidate_front_centroid.transform(t) == front_centroid ? 1 : 0,
         _transformation_trace(t)
       ]
-    end
-
-    def _transformation_trace(transformation)
-      a = transformation.to_a
-      w = a[15]
-      w = 1.0 if w.nil? || w == 0
-      (a[0] + a[5] + a[10]) / w
-    end
-
-    # Fingerprint invariant by rotation AND translation : the sorted distances
-    # from the point cloud's centroid. Cheap pre-filter that spares the
-    # alignment search on all but the genuinely congruent candidates.
-    #
-    # Kept as raw lengths and compared with a tolerance rather than quantized
-    # into a hashable key : two congruent panels are computed independently,
-    # each through its own plane intersections, so they carry their own
-    # floating point noise - and any quantization boundary they happened to
-    # straddle would silently cost the reuse.
-    def _panel_points_signature(points)
-      centroid = Geometrix::PointFinder.find_centroid(points)
-      points.map { |point| centroid.distance(point).to_f }.sort
-    end
-
-    def _panel_points_signatures_match?(signature, other_signature)
-      return false unless signature.length == other_signature.length
-      signature.each_with_index.all? { |distance, index| (distance - other_signature[index]).abs <= SolidMeshDef::TOLERANCE }
-    end
-
-    # True when +other_points+, once transformed, is exactly +points+ - each
-    # point matched one to one, within SketchUp's tolerance.
-    def _points_sets_superpose?(points, other_points, t)
-      return false unless points.length == other_points.length
-      remaining = points.dup
-      other_points.all? { |point|
-        transformed_point = point.transform(t)
-        index = remaining.index { |other_point| other_point == transformed_point }
-        next false if index.nil?
-        remaining.delete_at(index)
-        true
-      }
     end
 
     def _purge_definitions
@@ -6101,7 +6213,7 @@ module Ladb::OpenCutList
         # 2. Reuse the definition of an identical panel, or keep this one
 
         points = gd_points + up_points
-        signature = _panel_points_signature(points)
+        signature = _points_signature(points)
         front_centroid = Geometrix::PointFinder.find_centroid(outward ? up_points : gd_points)
 
         if (panel_def = _find_reusable_panel_def(entities, points, signature, front_centroid, panel_defs)).nil?

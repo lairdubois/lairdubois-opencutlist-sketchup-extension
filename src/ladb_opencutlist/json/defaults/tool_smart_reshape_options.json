@@ -37,6 +37,7 @@
     "slice_mode": "slice",
     "slice_reference": "face",
     "axes": "entity",
-    "make_unique": true
+    "make_unique": true,
+    "reuse_definition": true
   }
 }

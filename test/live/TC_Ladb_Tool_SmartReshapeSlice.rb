@@ -27,6 +27,9 @@
 #     places in it - side by side or through two occurrences of an assembly -
 #     each get their own pieces, the unselected instances following one of
 #     them ;
+#   - reuse_definition : the congruent pieces of a part share one
+#     definition - never a piece holding an untyped wrapper group the slice
+#     made unique ;
 #   - the 3 points reference : a compound angle plane, its normal following
 #     the mouse, ESC removing the last point, the axis lock, ↓ back to the
 #     picked plane (face or 3 points) from an axis, then to its step.
@@ -63,7 +66,9 @@ module SliceRegression
   # board in an assembly, its instances [ dy, dz ] all selected : the pieces
   # are then read inside them. With pieces_alternatives, the pieces may be any
   # of those. With errors, the error keys expected to be notified - any other
-  # message failing the case. Steps :
+  # message failing the case. With reuse_definition: true, the reuse
+  # definition option on (off otherwise) ; with definitions, the number of
+  # distinct piece definitions expected. Steps :
   #   [ :hover, x(, y, z) ] the mouse over that fixture point (default : on the board top)
   #   [ :click ] / [ :esc ] / [ :key, VK ] / [ :shift_add ] / [ :text, 'vcb' ]
   #   [ :option, group, option ]
@@ -219,6 +224,47 @@ module SliceRegression
       steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :text, '1000;' ], [ :expect, HANDLER::STATE_SLICE_DISTRIBUTE, 1 ], [ :click ] ],
       pieces: [ [ 0, 1000, 0, 200 ] ],  # Not sliced
       errors: [ 'tool.smart_reshape.error.slice_number_overflow' ],
+    },
+    'reuse_divide' => {
+      reuse_definition: true,
+      steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :text, '/4' ], [ :click ] ],
+      pieces: [ [ 0, 250, 0, 200 ], [ 250, 500, 0, 200 ], [ 500, 750, 0, 200 ], [ 750, 1000, 0, 200 ] ],
+      definitions: 1,
+    },
+    'reuse_divide_off' => {
+      steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :text, '/4' ], [ :click ] ],
+      pieces: [ [ 0, 250, 0, 200 ], [ 250, 500, 0, 200 ], [ 500, 750, 0, 200 ], [ 750, 1000, 0, 200 ] ],
+      definitions: 4,
+    },
+    'reuse_spacings_both_ends' => {
+      # 300 + 400 + 300 : the two ends alike
+      reuse_definition: true,
+      steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :text, '300;;300' ], [ :expect, HANDLER::STATE_SLICE_DISTRIBUTE, 2 ], [ :click ] ],
+      pieces: [ [ 0, 300, 0, 200 ], [ 300, 700, 0, 200 ], [ 700, 1000, 0, 200 ] ],
+      definitions: 2,
+    },
+    'reuse_unequal' => {
+      reuse_definition: true,
+      steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :text, '200' ] ],
+      pieces: [ [ 0, 200, 0, 200 ], [ 200, 1000, 0, 200 ] ],
+      definitions: 2,
+    },
+    'reuse_wrapped_hardware_not_shared' => {
+      # Same relative fittings, but each piece has its own wrapper group
+      reuse_definition: true,
+      fittings: true,
+      steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :text, '/2' ], [ :click ] ],
+      pieces: [ [ 0, 500, 0, 200 ], [ 500, 1000, 0, 200 ] ],
+      fittings_expected: [ [ [ 'hardware', 100 ], [ 'machining', 200 ] ], [ [ 'hardware', 600 ], [ 'machining', 700 ] ] ],
+      definitions: 2,
+    },
+    'reuse_shared_assembly_same_place' => {
+      reuse_definition: true,
+      make_unique: false,
+      assemblies: [ [ 0, 0 ], [ 50, 0 ] ],
+      steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :text, '/2' ], [ :click ] ],
+      pieces: [ [ 0, 500, 0, 200 ], [ 500, 1000, 0, 200 ], [ 0, 500, 0, 200 ], [ 500, 1000, 0, 200 ] ],
+      definitions: 1,
     },
     'number_without_reference_no_overflow' => {
       # The axis read again on entering STATE_SLICE_DISTRIBUTE : no error, the planes from the end the closest to the mouse
@@ -378,6 +424,14 @@ module SliceRegression
     }.sort
   end
 
+  # The number of distinct definitions among the slice instances, read as #pieces does.
+  def self.piece_definitions_count(model, kept)
+    (model.entities.grep(Sketchup::ComponentInstance) - kept).flat_map { |instance|
+      next [ instance.definition ] unless instance.definition.name.start_with?('Slice assembly')
+      instance.definition.entities.grep(Sketchup::ComponentInstance).map(&:definition)
+    }.uniq.length
+  end
+
   def self.piece_instances(model, kept)
     (model.entities.grep(Sketchup::ComponentInstance) - kept).sort_by { |instance| piece_bounds(instance) }
   end
@@ -411,8 +465,9 @@ module SliceRegression
     end
     pieces = pieces(model, existing)
     fittings = spec[:fittings] ? piece_instances(model, existing).map { |instance| fittings(instance) } : nil
+    definitions = piece_definitions_count(model, existing)
     model.entities.erase_entities((model.entities.grep(Sketchup::ComponentInstance) - existing) + reference.all_connected)
-    [ pieces, fittings ]
+    [ pieces, fittings, definitions ]
   end
 
   def self.results(names = CASES.keys)
@@ -427,6 +482,7 @@ module SliceRegression
     options_tool = RT.new(current_action: ACTION)
     saved_options = [ RT::ACTION_OPTION_SLICE_MODE, RT::ACTION_OPTION_SLICE_REFERENCE, RT::ACTION_OPTION_AXES ].map { |group| [ group, options_tool.fetch_action_option_value(ACTION, group) ] }
     saved_make_unique = options_tool.fetch_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
+    saved_reuse_definition = options_tool.fetch_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
 
     results = {}
     model.start_operation('Slice fixture', true)
@@ -444,8 +500,9 @@ module SliceRegression
         options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_SLICE_REFERENCE, RT::ACTION_OPTION_SLICE_REFERENCE_FACE)
         options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_AXES, RT::ACTION_OPTION_AXES_ACTIVE)
         options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, spec.fetch(:make_unique, true))
+        options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_REUSE_DEFINITION, spec.fetch(:reuse_definition, false))
         messages = []
-        pieces, fittings = run_case(model, spec, messages)
+        pieces, fittings, definitions = run_case(model, spec, messages)
         (spec[:errors] || []).each do |key|
           found = messages.select { |message| message.start_with?('["notify_errors"') && message.include?(key) }
           messages << "#{key} not notified" if found.empty?
@@ -454,6 +511,7 @@ module SliceRegression
         expected = spec[:pieces_alternatives] ? spec[:pieces_alternatives].find { |alternative| same_pieces?(pieces, alternative) } || spec[:pieces_alternatives].first : spec[:pieces]
         results[name] = { 'expected' => expected, 'pieces' => pieces, 'messages' => messages }
         results[name].merge!('fittings_expected' => spec[:fittings_expected], 'fittings' => fittings) if spec[:fittings]
+        results[name].merge!('definitions_expected' => spec[:definitions], 'definitions' => definitions) if spec[:definitions]
       end
     ensure
       model.select_tool(nil)
@@ -462,6 +520,7 @@ module SliceRegression
       view.camera = saved_camera
       saved_options.each { |group, option| options_tool.store_action_option_value(ACTION, group, option) }
       options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, saved_make_unique)
+      options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_REUSE_DEFINITION, saved_reuse_definition)
     end
     results
   end
@@ -469,6 +528,7 @@ module SliceRegression
   def self.failure(result)
     return "pieces #{result['pieces'].inspect} expected #{result['expected'].inspect}" unless same_pieces?(result['pieces'], result['expected'])
     return "fittings #{result['fittings'].inspect} expected #{result['fittings_expected'].inspect}" if result.key?('fittings') && !same_fittings?(result['fittings'], result['fittings_expected'])
+    return "definitions #{result['definitions']} expected #{result['definitions_expected']}" if result.key?('definitions') && result['definitions'] != result['definitions_expected']
     return "messages #{result['messages'].inspect}" unless result['messages'].empty?
     nil
   end
