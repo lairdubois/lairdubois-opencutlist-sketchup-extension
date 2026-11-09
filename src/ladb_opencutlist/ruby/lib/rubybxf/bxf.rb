@@ -648,7 +648,7 @@ module Ladb::OpenCutList
         when 'xs:boolean'
           self.value = value_elm.text == 'true'
         else
-          puts "Unsupported parameter value type: #{type}"
+          puts "Unsupported parameter value type: #{type}" if Plugin::IS_LAB
           self.value = value_elm.text
         end if value_elm
 

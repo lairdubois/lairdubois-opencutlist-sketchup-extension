@@ -478,7 +478,7 @@ module Ladb::OpenCutList
           end
         end
 
-        puts "Failed to load docs page (page=#{page}, status=#{response.status_code})"
+        puts "Failed to load docs page (page=#{page}, status=#{response.status_code})" if IS_LAB
       end
 
     end
@@ -1014,7 +1014,7 @@ module Ladb::OpenCutList
       if IS_RBZ
         updater = Updater.new(PLUGIN_DIR, log_file: upgrade_log_file)
         updater.discard_backup
-        puts updater.log.map { |line| "Upgrade : #{line}" }.join("\n") unless updater.log.empty?
+        puts updater.log.map { |line| "Upgrade : #{line}" }.join("\n") if IS_LAB && !updater.log.empty?
       end
 
       fn_get_selected_component_entity = lambda do
