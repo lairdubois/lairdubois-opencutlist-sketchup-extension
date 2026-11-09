@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Een onderdeel maken uit de doorsnede van meerdere onderdelen
     action_4_state_0_status: Selecteer onderdeel A
     action_4_state_1_status: Selecteer onderdeel B
+    action_5: Doorsnijden
+    action_5_status: Een of meer onderdelen doorsnijden met een vlak
+    action_5_state_1_status: Klik op het referentievlak, ergens in het model
+    action_5_state_1_arrows_status: Doorsnijden loodrecht op een as vanaf het uiteinde van de selectie
+    action_5_state_1b_status: Klik om punt {{ index }} van 3 van het referentievlak te plaatsen, ergens in het model
+    action_5_state_1b_arrows_status: Vergrendelen op een as
+    action_5_state_1c_status: Klik om het referentievlak te bevestigen of druk op Esc om het laatste punt te verwijderen
+    action_5_state_2_status: Klik om de onderdelen door te snijden of voer een afstand in
+    action_5_state_2a_status: Klik om het doorsnedevlak te plaatsen of voer een afstand in
+    action_5_state_2_arrows_status: Van as wisselen
+    action_5_state_3_status: Klik aan de kant van het deel dat behouden moet blijven
+    action_5_state_4_status: Klik om de onderdelen in {{ number }} delen te snijden of voer tussenafstanden in
     action_option_group_thickness: Dikte
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
     action_option_group_paneling_joint_type: Verbinding
     action_option_group_paneling_direction: Richting
     action_option_group_csg_operation: Bewerking
+    action_option_group_slice_mode: Modus
+    action_option_group_slice_reference: Referentie
     action_option_group_options: Opties
     action_option_thickness_thickness: Dikte
     action_option_thickness_thickness_status: Bepaalt de dikte van de panelen
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Verstekzaagsnede
     action_option_paneling_direction_inward_status: Binnen
     action_option_paneling_direction_outward_status: Buiten
+    action_option_slice_mode_slice_status: De onderdelen doorsnijden en alle delen behouden
+    action_option_slice_mode_cut_status: De onderdelen afsnijden en slechts één deel behouden
+    action_option_slice_reference_face_status: Referentievlak overgenomen van een vlak
+    action_option_slice_reference_points_status: Referentievlak door 3 punten
     action_option_options_centered_status: Centraal plaatsen op gestrekte elementen
     action_option_options_make_unique_status: Gewijzigde onderdelen uniek maken
     action_option_options_keep_a: A behouden
@@ -2632,11 +2650,9 @@ tool:
     action_option_options_keep_b_status: Instanties B na de bewerking behouden
     action_option_options_remove_unused_definitions_status: Componentdefinities verwijderen die na de bewerking niet meer worden gebruikt
     action_option_options_reuse_definition: Onderdelen hergebruiken
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Dezelfde componentdefinitie gebruiken voor panelen met dezelfde vorm
+    action_option_options_reuse_definition_status: Dezelfde componentdefinitie gebruiken voor onderdelen met dezelfde vorm
     action_option_options_reuse_definition_mirrored: Spiegelplaatsing
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Spiegelplaatsing voor tegenover elkaar liggende panelen met dezelfde vorm
+    action_option_options_reuse_definition_mirrored_status: Spiegelplaatsing voor tegenover elkaar liggende onderdelen met dezelfde vorm
     notify:
       validate_a: Bevestig om verder te gaan naar de selectie van B
       validate_b: Bevestig om de bewerking toe te passen

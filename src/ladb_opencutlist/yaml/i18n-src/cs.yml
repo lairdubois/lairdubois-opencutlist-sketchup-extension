@@ -422,7 +422,7 @@ tab:
       thickness_layered: Množství zde představuje počet kusů, které se mají nařezat, abychom získaly všechny hladiny.
       thickness_layered_equation: "**{{ count }}** *část-í* x **{{ layerCount }}** *hladin* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *část-í* x **{{ layerCount }}** *hladin* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: Pozor, tato část se skládá z dílčích částí přítomných v {{ count }} různých vrstvách:<br>{{ layers }}
+      multiple_content_layers: Pozor, tento díl se skládá z podčástí, které mají různé značky ({{ count }}):<br>{{ layers }}
       children_warnings: Pozor, v seskupených částech je upozornění {{ count }}
       children_warnings_plural: Upozornění, v seskupených částech jsou výstrahy {{ count }}
       children_size_increase: Tento rozměr je zvětšen o nadmíru pro {{ count }} seskupené dílce
@@ -2080,10 +2080,10 @@ tab:
         option_hardware_material_name: Kování
         option_hardware_material_name_help: Materiál, který se použije na **kování**.
         option_hardware_layer_name: Kování
-        option_hardware_layer_name_help: Štítek, který se použije na kování.
+        option_hardware_layer_name_help: Značka, který se použije na kování.
         option_no_material_help: "*Ponechte toto pole prázdné, pokud nechcete použít žádný materiál*."
         option_default_material_help: "*Pokud je toto pole prázdné, bude vytvořen výchozí materiál*."
-        option_no_layer_help: "*Ponechte toto pole prázdné, pokud nechcete použít žádný štítek*."
+        option_no_layer_help: "*Ponechte toto pole prázdné, pokud nechcete použít žádný značka*."
         option_subtract_machinings: Vyfrézovat obrábění do dílů
         option_subtract_machinings_help: "**Drážky**, **polodrážky** a **zkosení** dílů, včetně těch, které souvisejí s kováním, se odečtou z jejich objemu, místo aby byly nakresleny. Vrtání zůstávají nakreslena."
         warning:
@@ -2489,13 +2489,13 @@ tool:
     action_option_options_top_up_status: Automaticky natočit horní stranu modulu co nejvíce nahoru (Z+)
     action_option_options_ask_name: Pojmenování dílců
     action_option_options_ask_name_status: Ruční zadání názvů dílců
-    action_option_options_layer_name: Štítek
+    action_option_options_layer_name: Značka
     action_option_options_layer_name_status: Název značky, na které jsou díly umístěny
     action_option_anchor_center_x_status: Vystředěno v X
     action_option_anchor_center_y_status: Vystředěno v Y
     action_option_anchor_center_z_status: Vystředěno v Z
     action_option_anchor_origin_status: Počátek komponenty
-    action_option_no_layer_help: "*Ponechte toto pole prázdné, pokud nechcete použít žádný štítek*."
+    action_option_no_layer_help: "*Ponechte toto pole prázdné, pokud nechcete použít žádný značka*."
     detecting_cavities: Zjišťování dutin...
     error:
       invalid_divider_seed: Tento typ dílu neumožňuje sestavení přepážky
@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Vytvořit díl odpovídající průniku několika dílů
     action_4_state_0_status: Vyberte díl A
     action_4_state_1_status: Vyberte díl B
+    action_5: Rozříznout
+    action_5_status: Rozříznout jeden nebo více dílů rovinou
+    action_5_state_1_status: Klikněte na referenční plochu kdekoli v modelu
+    action_5_state_1_arrows_status: Rozříznout kolmo k ose od konce výběru
+    action_5_state_1b_status: Kliknutím umístěte bod {{ index }} ze 3 referenční roviny kdekoli v modelu
+    action_5_state_1b_arrows_status: Zamknout na osu
+    action_5_state_1c_status: Kliknutím potvrďte referenční rovinu nebo stiskněte Esc pro odebrání posledního bodu
+    action_5_state_2_status: Kliknutím rozřízněte díly nebo zadejte vzdálenost
+    action_5_state_2a_status: Kliknutím umístěte dělicí rovinu nebo zadejte vzdálenost
+    action_5_state_2_arrows_status: Změnit osu
+    action_5_state_3_status: Klikněte na stranu kusu, který chcete zachovat
+    action_5_state_4_status: Kliknutím rozřízněte díly na {{ number }} kusů nebo zadejte rozestupy
     action_option_group_thickness: Tloušťka
     action_option_group_stretch_measure_type: Měření
     action_option_group_axes: Osy
     action_option_group_paneling_joint_type: Spoj
     action_option_group_paneling_direction: Směr
     action_option_group_csg_operation: Operace
+    action_option_group_slice_mode: Režim
+    action_option_group_slice_reference: Reference
     action_option_group_options: Nastavení
     action_option_thickness_thickness: Tloušťka
     action_option_thickness_thickness_status: Určuje tloušťku desek
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Pokosový spoj
     action_option_paneling_direction_inward_status: Směr dovnitř
     action_option_paneling_direction_outward_status: Směr ven
+    action_option_slice_mode_slice_status: Rozříznout díly a zachovat všechny kusy
+    action_option_slice_mode_cut_status: Oříznout díly a zachovat pouze jeden kus
+    action_option_slice_reference_face_status: Referenční rovina převzatá z plochy
+    action_option_slice_reference_points_status: Referenční rovina procházející 3 body
     action_option_options_centered_status: Vycentrovat na protáhlé prvky
     action_option_options_make_unique_status: Učinit předělané prvky jedinečnými
     action_option_options_keep_a: Zachovat A
@@ -2632,11 +2650,9 @@ tool:
     action_option_options_keep_b_status: Zachovat instance B po operaci
     action_option_options_remove_unused_definitions_status: Smazat definice komponent, které se po operaci již nepoužívají
     action_option_options_reuse_definition: Znovu použít díly
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Sdílet stejnou definici komponenty mezi deskami stejného tvaru
+    action_option_options_reuse_definition_status: Sdílet stejnou definici komponenty mezi díly stejného tvaru
     action_option_options_reuse_definition_mirrored: Zrcadlové osazení
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Zrcadlové osazení protilehlých desek stejného tvaru
+    action_option_options_reuse_definition_mirrored_status: Zrcadlové osazení pro díly stejného tvaru umístěné proti sobě
     notify:
       validate_a: Potvrďte pro přechod k výběru B
       validate_b: Potvrďte pro provedení operace

@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Több alkatrész metszetének megfelelő alkatrész létrehozása
     action_4_state_0_status: Válassza ki az A alkatrészt
     action_4_state_1_status: Válassza ki a B alkatrészt
+    action_5: Darabolás
+    action_5_status: Egy vagy több alkatrész darabolása síkkal
+    action_5_state_1_status: Kattintson a referenciafelületre, bárhol a modellben
+    action_5_state_1_arrows_status: Darabolás egy tengelyre merőlegesen a kijelölés végétől
+    action_5_state_1b_status: Kattintson a referenciasík {{ index }}/3. pontjának elhelyezéséhez, bárhol a modellben
+    action_5_state_1b_arrows_status: Rögzítés egy tengelyre
+    action_5_state_1c_status: Kattintson a referenciasík véglegesítéséhez, vagy nyomja meg az Esc billentyűt az utolsó pont eltávolításához
+    action_5_state_2_status: Kattintson az alkatrészek feldarabolásához, vagy írjon be egy távolságot
+    action_5_state_2a_status: Kattintson a metszősík elhelyezéséhez, vagy írjon be egy távolságot
+    action_5_state_2_arrows_status: Tengelyváltás
+    action_5_state_3_status: Kattintson a megtartandó rész oldalára
+    action_5_state_4_status: Kattintson az alkatrészek {{ number }} részre darabolásához, vagy írjon be távközöket
     action_option_group_thickness: Vastagság
     action_option_group_stretch_measure_type: Mérés
     action_option_group_axes: Tengelyek
     action_option_group_paneling_joint_type: Illesztés
     action_option_group_paneling_direction: Irány
     action_option_group_csg_operation: Művelet
+    action_option_group_slice_mode: Mód
+    action_option_group_slice_reference: Referencia
     action_option_group_options: Beállítások
     action_option_thickness_thickness: Vastagság
     action_option_thickness_thickness_status: Meghatározza a táblák vastagságát
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Gérvágás
     action_option_paneling_direction_inward_status: Befelé
     action_option_paneling_direction_outward_status: Kifelé
+    action_option_slice_mode_slice_status: Az alkatrészek feldarabolása és az összes rész megtartása
+    action_option_slice_mode_cut_status: Az alkatrészek elvágása és csak egy rész megtartása
+    action_option_slice_reference_face_status: Felületről vett referenciasík
+    action_option_slice_reference_points_status: 3 ponton átmenő referenciasík
     action_option_options_centered_status: Középre igazítás a nyújtott elemekre
     action_option_options_make_unique_status: Az átformált elemek egyedivé tétele
     action_option_options_keep_a: A megtartása
@@ -2632,11 +2650,9 @@ tool:
     action_option_options_keep_b_status: A B példányok megtartása a művelet után
     action_option_options_remove_unused_definitions_status: A művelet után már nem használt komponensdefiníciók törlése
     action_option_options_reuse_definition: Alkatrészek újrahasználata
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Azonos komponensdefiníció használata az azonos alakú táblák között
+    action_option_options_reuse_definition_status: Azonos komponensdefiníció használata az azonos alakú alkatrészek között
     action_option_options_reuse_definition_mirrored: Tükrözött elhelyezés
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Az egymással szemben lévő azonos alakú táblák tükrözött elhelyezése
+    action_option_options_reuse_definition_mirrored_status: Tükrözött elhelyezés az egymással szemben lévő, azonos alakú alkatrészekhez
     notify:
       validate_a: Hagyja jóvá a B kijelöléséhez
       validate_b: Hagyja jóvá a művelet végrehajtásához

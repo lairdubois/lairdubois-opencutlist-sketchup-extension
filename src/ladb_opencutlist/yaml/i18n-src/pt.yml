@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Criar uma peça correspondente à interseção de várias peças
     action_4_state_0_status: Selecione a peça A
     action_4_state_1_status: Selecione a peça B
+    action_5: Dividir
+    action_5_status: Dividir uma ou mais peças com um plano
+    action_5_state_1_status: Clique na face de referência, em qualquer lugar do modelo
+    action_5_state_1_arrows_status: Dividir perpendicularmente a um eixo a partir da extremidade da seleção
+    action_5_state_1b_status: Clique para posicionar o ponto {{ index }} de 3 do plano de referência, em qualquer lugar do modelo
+    action_5_state_1b_arrows_status: Bloquear num eixo
+    action_5_state_1c_status: Clique para confirmar o plano de referência ou pressione Esc para remover o último ponto
+    action_5_state_2_status: Clique para dividir as peças ou insira uma distância
+    action_5_state_2a_status: Clique para posicionar o plano de divisão ou insira uma distância
+    action_5_state_2_arrows_status: Mudar de eixo
+    action_5_state_3_status: Clique no lado da parte a manter
+    action_5_state_4_status: Clique para dividir as peças em {{ number }} partes ou insira espaçamentos
     action_option_group_thickness: Espessura
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Eixos
     action_option_group_paneling_joint_type: Montagem
     action_option_group_paneling_direction: Direção
     action_option_group_csg_operation: Operação
+    action_option_group_slice_mode: Modo
+    action_option_group_slice_reference: Referência
     action_option_group_options: Opções
     action_option_thickness_thickness: Espessura
     action_option_thickness_thickness_status: Define a espessura das chapas
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Corte em meia-esquadria
     action_option_paneling_direction_inward_status: Interna
     action_option_paneling_direction_outward_status: Externa
+    action_option_slice_mode_slice_status: Dividir as peças e manter todas as partes
+    action_option_slice_mode_cut_status: Cortar as peças e manter apenas uma parte
+    action_option_slice_reference_face_status: Plano de referência tomado de uma face
+    action_option_slice_reference_points_status: Plano de referência passando por 3 pontos
     action_option_options_centered_status: Centralizar em elementos esticados
     action_option_options_make_unique_status: Tornar únicos os elementos remodelados
     action_option_options_keep_a: Manter A
@@ -2632,11 +2650,9 @@ tool:
     action_option_options_keep_b_status: Manter as instâncias B após a operação
     action_option_options_remove_unused_definitions_status: Eliminar as definições de componentes que já não são utilizadas após a operação
     action_option_options_reuse_definition: Reutilizar as peças
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Compartilhar a mesma definição de componente entre as chapas de forma idêntica
+    action_option_options_reuse_definition_status: Compartilhar a mesma definição de componente entre as peças de forma idêntica
     action_option_options_reuse_definition_mirrored: Posicionamento espelhado
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Posicionamento espelhado para as chapas de forma idêntica em oposição
+    action_option_options_reuse_definition_mirrored_status: Posicionamento espelhado para as peças de forma idêntica frente a frente
     notify:
       validate_a: Confirme para avançar para a seleção de B
       validate_b: Confirme para aplicar a operação

@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Створіть деталь, що відповідає перетину кількох деталей
     action_4_state_0_status: Виберіть деталь А
     action_4_state_1_status: Виберіть деталь B
+    action_5: Розрізати
+    action_5_status: Розрізати одну або кілька деталей площиною
+    action_5_state_1_status: Натисніть на опорну грань у будь-якому місці моделі
+    action_5_state_1_arrows_status: Розрізати перпендикулярно до осі від кінця виділення
+    action_5_state_1b_status: Натисніть, щоб розмістити точку {{ index }} з 3 опорної площини в будь-якому місці моделі
+    action_5_state_1b_arrows_status: Фіксація на осі
+    action_5_state_1c_status: Натисніть, щоб підтвердити опорну площину, або Esc, щоб видалити останню точку
+    action_5_state_2_status: Натисніть, щоб розрізати деталі, або введіть відстань
+    action_5_state_2a_status: Натисніть, щоб розмістити січну площину, або введіть відстань
+    action_5_state_2_arrows_status: Змінити вісь
+    action_5_state_3_status: Натисніть з боку частини, яку потрібно зберегти
+    action_5_state_4_status: Натисніть, щоб розрізати деталі на {{ number }} частин, або введіть інтервали
     action_option_group_thickness: Товщина
     action_option_group_stretch_measure_type: Вимірювання
     action_option_group_axes: Осі
     action_option_group_paneling_joint_type: Збірка
     action_option_group_paneling_direction: Напрямок
     action_option_group_csg_operation: Операція
+    action_option_group_slice_mode: Режим
+    action_option_group_slice_reference: Опора
     action_option_group_options: Опції
     action_option_thickness_thickness: Товщина
     action_option_thickness_thickness_status: Визначає товщину панелей
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Косий зріз
     action_option_paneling_direction_inward_status: В середині
     action_option_paneling_direction_outward_status: Ззовні
+    action_option_slice_mode_slice_status: Розрізати деталі та зберегти всі частини
+    action_option_slice_mode_cut_status: Обрізати деталі та зберегти лише одну частину
+    action_option_slice_reference_face_status: Опорна площина за гранню
+    action_option_slice_reference_points_status: Опорна площина через 3 точки
     action_option_options_centered_status: Центрувати на розтягнутих елементах
     action_option_options_make_unique_status: Зробіть оновлені елементи унікальними
     action_option_options_keep_a: Консерватор А
@@ -2632,10 +2650,8 @@ tool:
     action_option_options_keep_b_status: Зберігає екземпляри B після операції
     action_option_options_remove_unused_definitions_status: Очистити визначення компонентів, які більше не використовуються після роботи
     action_option_options_reuse_definition: Повторне використання деталей
-    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Спільне визначення компонентів між панелями однакової форми
     action_option_options_reuse_definition_mirrored: Встановити дзеркально
-    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Дзеркальна установка для панелей однакової форми один навпроти одного
     notify:
       validate_a: Перевірте, щоб перейти до вибору B

@@ -2409,11 +2409,9 @@ tool:
     action_option_options_keep_b_status: Запазване на екземплярите B след операцията
     action_option_options_remove_unused_definitions_status: Изтриване на дефинициите на компоненти, които вече не се използват след операцията
     action_option_options_reuse_definition: Повторно използване на детайли
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Обща дефиниция на компонент за плоскостите с еднаква форма
+    action_option_options_reuse_definition_status: Обща дефиниция на компонент за детайлите с еднаква форма
     action_option_options_reuse_definition_mirrored: Огледално разположение
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Огледално разположение за срещуположните плоскости с еднаква форма
+    action_option_options_reuse_definition_mirrored_status: Огледално разположение за детайлите с еднаква форма един срещу друг
     notify:
       validate_a: Потвърдете, за да преминете към избора на B
       validate_b: Потвърдете, за да приложите операцията
