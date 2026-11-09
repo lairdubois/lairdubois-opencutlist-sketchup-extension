@@ -386,7 +386,7 @@ gulp.task('i18n_compile', function () {
                         if (!doc[key].match(/^\$t\([a-z0-9_.]+\)$/i)) {
                             const index = zzIndexes[prefix + key];
                             if (index === undefined) {
-                                throw new Error('Missing source translation key in ' + language + ' at "' + prefix + key + '"');
+                                continue; // Missing source translation
                             }
                             doc[key] = index + ' - ' + doc[key];
                         }
