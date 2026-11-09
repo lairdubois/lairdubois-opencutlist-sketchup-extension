@@ -892,7 +892,7 @@ tab:
       filters_warning: Dieser Filter zeigt nur **{{ count }}** Teil von insgesamt {{ total }} Teilen an.
       filters_warning_plural: Dieser Filter zeigt nur **{{ count }}** Teile von insgesamt {{ total }} Teilen an.
       edge_material_names_filter: Zu filternde Kantenmaterialien
-      veneer_material_names_filter: Zu filternde Furniere
+      veneer_material_names_filter: Zu filternde Furniermaterialien
       names_filter: Zu filternde Bezeichnungen
       tags_filter: Zu filternde Badges
       tags_filter_any: Alle Badges
@@ -1522,7 +1522,7 @@ tab:
           Ermöglicht den Export von Stangen zu aktivieren und deren Farbe anzugeben.
         option_bin_edge: Kantenband
         option_bin_edge_help: |
-          Ermöglicht den Export von Kanten zu aktivieren und deren Farbe anzugeben.
+          Ermöglicht den Export von Kantenbändern zu aktivieren und deren Farbe anzugeben.
         option_parts: Teile
         option_parts_help: |
           Ermöglicht den Export von Teilen zu aktivieren und deren Farbe anzugeben.
@@ -1675,7 +1675,7 @@ tab:
       option_pins_hidden: Anzeige
       option_pins_hidden_0: Mit Hinweistexten
       option_pins_hidden_1: Ohne Hinweistext
-      option_pins_hidden_help: Ein- oder Ausblenden des Hinweistexte mit Nummer oder Bezeichnung.
+      option_pins_hidden_help: Ein- oder Ausblenden der Hinweistexte, die auf die Teile zeigen, um deren Nummer oder Bezeichnung anzuzeigen.
       option_pins_colored: Farbe
       option_pins_colored_0: Ohne Farbe
       option_pins_colored_1: Farbe des Teils
@@ -1999,7 +1999,7 @@ tab:
         Das Gesamtvolumen ist die Summe der Volumen der Teile.
 
         **Volumen des benötigten Rohmaterials**
-        Das Gesamtvolumen ist die Summe der Volumen der Platten, Furnierblätter, Stangen oder Bänder der Teile nach dem Zuschnitt.
+        Das Gesamtvolumen ist die Summe der Volumen der Platten, Furnierblätter, Stangen oder Kantenbänder der Teile nach der Berechnung des Schnittplans.
       raw_estimated_0: Nutzvolumen der Teile
       raw_estimated_1: Volumen des benötigten Rohmaterials
       multiplier_coefficient: Faktor
@@ -2114,7 +2114,7 @@ tab:
       instance_name: Instanz
       material: Material
       is_grain_group: Als **Fortlaufende Maserungsgruppe** definieren
-      is_grain_group_help: Wenn diese Option aktiviert ist, kann diese Instanz für die darin enthaltenen Elemente, bei denen die Option *Faserverlauf* aktiviert ist, als **Fortlaufende Maserungsgruppe** betrachtet werden.
+      is_grain_group_help: Wenn diese Option aktiviert ist, kann diese Instanz für die darin enthaltenen Teile, bei denen die Option *Faserverlauf* aktiviert ist, als **Fortlaufende Maserungsgruppe** betrachtet werden.
       definition_name: Definition
       description: Beschreibung
       url: URL
@@ -2305,7 +2305,7 @@ tab:
         option_no_material_help: "*Lassen Sie dieses Feld leer, wenn Sie kein Material auftragen möchten*."
         option_default_material_help: "*Wenn dieses Feld leer ist, wird ein Standardmaterial erstellt*."
         option_no_layer_help: "*Lassen Sie dieses Feld leer, wenn Sie kein Tag einfügen möchten*."
-        option_subtract_machinings: Bearbeitungen in die Werkstücke einarbeiten
+        option_subtract_machinings: Bearbeitungen in die Teile einarbeiten
         option_subtract_machinings_help: Die **Nuten**, **Falze** und **Fasen** der Teile, einschließlich derjenigen, die mit Zubehörteilen zusammenhängen, werden aus ihrem Volumen abgezogen, anstatt gezeichnet zu werden. Die Bohrungen bleiben gezeichnet.
         warning:
           subtract_machinings_failed: "Die Bearbeitungsstellen konnten in diese Teile nicht eingearbeitet werden, sie sind stattdessen eingezeichnet: {{ names }}"
@@ -2827,29 +2827,17 @@ tool:
     action_4_status: Ein Teil erstellen, das der Schnittmenge mehrerer Teile entspricht
     action_4_state_0_status: Wählen Sie Teil A aus
     action_4_state_1_status: Wählen Sie Teil B aus
-    # @no-translate
     action_5: Trennen
-    # @no-translate
     action_5_status: Ein oder mehrere Teile durch eine Ebene trennen
-    # @no-translate
     action_5_state_1_status: Klicken Sie auf die Referenzfläche, an beliebiger Stelle im Modell
-    # @no-translate
     action_5_state_1_arrows_status: Senkrecht zu einer Achse vom Ende der Auswahl aus trennen
-    # @no-translate
     action_5_state_1b_status: Klicken Sie, um Punkt {{ index }} von 3 der Referenzebene zu setzen, an beliebiger Stelle im Modell
-    # @no-translate
     action_5_state_1b_arrows_status: Auf eine Achse fixieren
-    # @no-translate
     action_5_state_1c_status: Klicken Sie, um die Referenzebene zu bestätigen, oder drücken Sie Esc, um den letzten Punkt zu entfernen
-    # @no-translate
     action_5_state_2_status: Klicken Sie, um die Teile zu trennen, oder geben Sie eine Distanz ein
-    # @no-translate
     action_5_state_2a_status: Klicken Sie, um die Trennebene zu platzieren, oder geben Sie eine Distanz ein
-    # @no-translate
     action_5_state_2_arrows_status: Achse wechseln
-    # @no-translate
     action_5_state_3_status: Klicken Sie auf die Seite des Stücks, das erhalten bleiben soll
-    # @no-translate
     action_5_state_4_status: Klicken Sie, um die Teile in {{ number }} Stücke zu trennen, oder geben Sie Abstände ein
     action_option_group_thickness: Dicke
     action_option_group_stretch_measure_type: Maß
@@ -2857,9 +2845,7 @@ tool:
     action_option_group_paneling_joint_type: Verbindung
     action_option_group_paneling_direction: Ausrichtung
     action_option_group_csg_operation: Operation
-    # @no-translate
     action_option_group_slice_mode: Modus
-    # @no-translate
     action_option_group_slice_reference: Referenz
     action_option_group_options: Optionen
     action_option_thickness_thickness: Dicke
@@ -2873,13 +2859,9 @@ tool:
     action_option_paneling_joint_type_miter_status: Gehrungsverbindung
     action_option_paneling_direction_inward_status: Nach innen
     action_option_paneling_direction_outward_status: Nach außen
-    # @no-translate
     action_option_slice_mode_slice_status: Teile trennen und alle Stücke behalten
-    # @no-translate
     action_option_slice_mode_cut_status: Teile abschneiden und nur ein Stück behalten
-    # @no-translate
     action_option_slice_reference_face_status: Referenzebene von einer Fläche übernommen
-    # @no-translate
     action_option_slice_reference_points_status: Referenzebene durch 3 Punkte
     action_option_options_centered_status: Auf die gestreckten Elemente zentrieren
     action_option_options_make_unique_status: Umgestaltete Elemente eindeutig machen
@@ -2889,11 +2871,9 @@ tool:
     action_option_options_keep_b_status: Die Instanzen B nach der Operation beibehalten
     action_option_options_remove_unused_definitions_status: Nach dem Vorgang nicht mehr verwendete Komponentendefinitionen löschen
     action_option_options_reuse_definition: Teile wiederverwenden
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Gleiche Komponentendefinition für Platten mit identischer Form verwenden
+    action_option_options_reuse_definition_status: Gleiche Komponentendefinition für Teile mit identischer Form verwenden
     action_option_options_reuse_definition_mirrored: Spiegelbildliche Anordnung
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Spiegelbildliche Anordnung bei gegenüberliegenden Platten gleicher Form
+    action_option_options_reuse_definition_mirrored_status: Spiegelbildliche Anordnung bei gegenüberliegenden Teilen gleicher Form
     notify:
       validate_a: Bestätigen Sie, um zur Auswahl von B zu gelangen
       validate_b: Bestätigen Sie, um den Vorgang auszuführen

@@ -2606,12 +2606,26 @@ tool:
     action_4_status: 创建与多个部件相交部分对应的部件
     action_4_state_0_status: 选择部件 A
     action_4_state_1_status: 选择部件 B
+    action_5: 切分
+    action_5_status: 用平面切分一个或多个部件
+    action_5_state_1_status: 点击参考面，可在模型中任意位置
+    action_5_state_1_arrows_status: 从选择的末端垂直于轴切分
+    action_5_state_1b_status: 点击以放置参考平面的第 {{ index }} 个点（共 3 个），可在模型中任意位置
+    action_5_state_1b_arrows_status: 锁定到轴
+    action_5_state_1c_status: 点击以确认参考平面，或按 Esc 移除最后一个点
+    action_5_state_2_status: 点击以切分部件，或输入距离
+    action_5_state_2a_status: 点击以放置剖切面，或输入距离
+    action_5_state_2_arrows_status: 切换轴
+    action_5_state_3_status: 点击要保留的部分所在的一侧
+    action_5_state_4_status: 点击以将部件切分为 {{ number }} 段，或输入间距
     action_option_group_thickness: 厚度
     action_option_group_stretch_measure_type: 测量
     action_option_group_axes: 坐标轴
     action_option_group_paneling_joint_type: 接合
     action_option_group_paneling_direction: 方向
     action_option_group_csg_operation: 操作
+    action_option_group_slice_mode: 模式
+    action_option_group_slice_reference: 参考
     action_option_group_options: 选项
     action_option_thickness_thickness: 厚度
     action_option_thickness_thickness_status: 定义板材的厚度
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: 斜接
     action_option_paneling_direction_inward_status: 向内
     action_option_paneling_direction_outward_status: 向外
+    action_option_slice_mode_slice_status: 切分部件并保留所有部分
+    action_option_slice_mode_cut_status: 裁切部件并仅保留一部分
+    action_option_slice_reference_face_status: 取自某个面的参考平面
+    action_option_slice_reference_points_status: 经过 3 个点的参考平面
     action_option_options_centered_status: 以拉伸的元素为中心
     action_option_options_make_unique_status: 将重塑的元素设定为唯一
     action_option_options_keep_a: 保留 A
@@ -2632,11 +2650,9 @@ tool:
     action_option_options_keep_b_status: 操作后保留 B 实例
     action_option_options_remove_unused_definitions_status: 删除操作后不再使用的组件定义
     action_option_options_reuse_definition: 重用部件
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: 在形状相同的板材之间共享同一组件定义
+    action_option_options_reuse_definition_status: 在形状相同的部件之间共享同一组件定义
     action_option_options_reuse_definition_mirrored: 镜像安装
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: 对相对的同形状板材进行镜像安装
+    action_option_options_reuse_definition_mirrored_status: 对形状相同且相对放置的部件进行镜像安装
     notify:
       validate_a: 确认以进入 B 的选择
       validate_b: 确认以执行操作

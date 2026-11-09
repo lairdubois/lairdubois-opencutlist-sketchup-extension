@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Crear una pieza correspondiente a la intersección de varias piezas
     action_4_state_0_status: Seleccione la pieza A
     action_4_state_1_status: Seleccione la pieza B
+    action_5: Dividir
+    action_5_status: Dividir una o varias piezas con un plano
+    action_5_state_1_status: Haga clic en la cara de referencia, en cualquier lugar del modelo
+    action_5_state_1_arrows_status: Dividir perpendicularmente a un eje desde el extremo de la selección
+    action_5_state_1b_status: Haga clic para colocar el punto {{ index }} de 3 del plano de referencia, en cualquier lugar del modelo
+    action_5_state_1b_arrows_status: Bloquear en un eje
+    action_5_state_1c_status: Haga clic para validar el plano de referencia o pulse Esc para quitar el último punto
+    action_5_state_2_status: Haga clic para dividir las piezas o introduzca una distancia
+    action_5_state_2a_status: Haga clic para colocar el plano de corte o introduzca una distancia
+    action_5_state_2_arrows_status: Cambiar de eje
+    action_5_state_3_status: Haga clic en el lado de la parte que desea conservar
+    action_5_state_4_status: Haga clic para dividir las piezas en {{ number }} partes o introduzca separaciones
     action_option_group_thickness: Espesor
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Ejes
     action_option_group_paneling_joint_type: Unión
     action_option_group_paneling_direction: Dirección
     action_option_group_csg_operation: Operación
+    action_option_group_slice_mode: Modo
+    action_option_group_slice_reference: Referencia
     action_option_group_options: Opciones
     action_option_thickness_thickness: Espesor
     action_option_thickness_thickness_status: Define el espesor de los tableros
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Corte a inglete
     action_option_paneling_direction_inward_status: Interior
     action_option_paneling_direction_outward_status: Exterior
+    action_option_slice_mode_slice_status: Dividir las piezas y conservar todas las partes
+    action_option_slice_mode_cut_status: Cortar las piezas y conservar solo una parte
+    action_option_slice_reference_face_status: Plano de referencia tomado de una cara
+    action_option_slice_reference_points_status: Plano de referencia que pasa por 3 puntos
     action_option_options_centered_status: Centrar en los elementos estirados
     action_option_options_make_unique_status: Hacer únicos los elementos remodelados
     action_option_options_keep_a: Conservar A
@@ -2632,11 +2650,9 @@ tool:
     action_option_options_keep_b_status: Conservar las instancias B tras la operación
     action_option_options_remove_unused_definitions_status: Borrar las definiciones de componente que ya no se usan tras la operación
     action_option_options_reuse_definition: Reutilizar las piezas
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Compartir la misma definición de componente entre los tableros de forma idéntica
+    action_option_options_reuse_definition_status: Compartir la misma definición de componente entre las piezas de forma idéntica
     action_option_options_reuse_definition_mirrored: Montaje en espejo
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Montaje en espejo para los tableros de forma idéntica enfrentados
+    action_option_options_reuse_definition_mirrored_status: Montaje en espejo para las piezas de forma idéntica enfrentados
     notify:
       validate_a: Valide para pasar a la selección de B
       validate_b: Valide para aplicar la operación

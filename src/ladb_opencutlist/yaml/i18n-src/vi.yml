@@ -2632,10 +2632,8 @@ tool:
     action_option_options_keep_b_status: Giữ các đối tượng B sau thao tác
     action_option_options_remove_unused_definitions_status: Xóa các định nghĩa component không còn được dùng sau thao tác
     action_option_options_reuse_definition: Dùng lại bộ phận
-    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Dùng chung một định nghĩa component cho các tấm có hình dạng giống nhau
     action_option_options_reuse_definition_mirrored: Lắp đối xứng
-    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Lắp đối xứng cho các tấm cùng hình dạng đối diện nhau
     notify:
       validate_a: Xác nhận để chuyển sang chọn B

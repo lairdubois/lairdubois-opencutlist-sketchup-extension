@@ -422,7 +422,7 @@ tab:
       thickness_layered: Podana tutaj ilość oznacza liczbę elementów, które należy wyciąć, aby uzyskać wszystkie warstwy.
       thickness_layered_equation: "**{{ count }}** *część* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *części* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach lub znacznikach:<br> {{ layers }}
+      multiple_content_layers: Uwaga, ta część składa się z podczęści, które mają różne tagi ({{ count }}):<br>{{ layers }}
       children_warnings: Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }}
       children_warnings_plural: Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach
       children_size_increase: Wymiar ten jest powiększony o naddatek dla {{ count }} zgrupowanych części
@@ -1621,7 +1621,7 @@ tab:
       option_parts_holes: Wiercenia
       option_parts_holes_help: |
         Wybierz kolor wierceń.
-      option_parts_paths: Plan
+      option_parts_paths: Ścieżki
       option_parts_paths_help: |
         Umożliwia wybór kolorystyki ścieżek.
 
@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Utwórz część odpowiadającą części wspólnej kilku części
     action_4_state_0_status: Wybierz część A
     action_4_state_1_status: Wybierz część B
+    action_5: Przetnij
+    action_5_status: Przetnij jedną lub więcej części płaszczyzną
+    action_5_state_1_status: Kliknij ścianę odniesienia w dowolnym miejscu modelu
+    action_5_state_1_arrows_status: Przetnij prostopadle do osi od końca zaznaczenia
+    action_5_state_1b_status: Kliknij, aby umieścić punkt {{ index }} z 3 płaszczyzny odniesienia w dowolnym miejscu modelu
+    action_5_state_1b_arrows_status: Zablokuj na osi
+    action_5_state_1c_status: Kliknij, aby zatwierdzić płaszczyznę odniesienia, lub naciśnij Esc, aby usunąć ostatni punkt
+    action_5_state_2_status: Kliknij, aby przeciąć części, lub wpisz odległość
+    action_5_state_2a_status: Kliknij, aby umieścić płaszczyznę cięcia, lub wpisz odległość
+    action_5_state_2_arrows_status: Zmień oś
+    action_5_state_3_status: Kliknij po stronie fragmentu do zachowania
+    action_5_state_4_status: Kliknij, aby przeciąć części na {{ number }} fragmentów, lub wpisz odstępy
     action_option_group_thickness: Grubość
     action_option_group_stretch_measure_type: Pomiary
     action_option_group_axes: Osie
     action_option_group_paneling_joint_type: Połączenie
     action_option_group_paneling_direction: Kierunek
     action_option_group_csg_operation: Operacja
+    action_option_group_slice_mode: Tryb
+    action_option_group_slice_reference: Odniesienie
     action_option_group_options: Opcje
     action_option_thickness_thickness: Grubość
     action_option_thickness_thickness_status: Określa grubość płyt
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Cięcie pod kątem (na ucios)
     action_option_paneling_direction_inward_status: Do wewnątrz
     action_option_paneling_direction_outward_status: Na zewnątrz
+    action_option_slice_mode_slice_status: Przetnij części i zachowaj wszystkie fragmenty
+    action_option_slice_mode_cut_status: Odetnij części i zachowaj tylko jeden fragment
+    action_option_slice_reference_face_status: Płaszczyzna odniesienia pobrana ze ściany
+    action_option_slice_reference_points_status: Płaszczyzna odniesienia przechodząca przez 3 punkty
     action_option_options_centered_status: Wyśrodkuj na rozciągniętych elementach
     action_option_options_make_unique_status: Ustaw przebudowane elementy jako unikalne
     action_option_options_keep_a: Zachowaj A
@@ -2632,10 +2650,8 @@ tool:
     action_option_options_keep_b_status: Zachowaj instancje B po operacji
     action_option_options_remove_unused_definitions_status: Usuń definicje komponentów, które po operacji nie są już używane
     action_option_options_reuse_definition: Użyj ponownie części
-    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Współdziel tę samą definicję komponentu między płytami o identycznym kształcie
     action_option_options_reuse_definition_mirrored: Montaż lustrzany
-    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Montaż lustrzany dla przeciwległych płyt o identycznym kształcie
     notify:
       validate_a: Zatwierdź, aby przejść do wyboru B

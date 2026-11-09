@@ -2632,10 +2632,8 @@ tool:
     action_option_options_keep_b_status: Сохранять экземпляры B после операции
     action_option_options_remove_unused_definitions_status: После выполнения операции удалять детали, которые опционально не выбраны для сохранения
     action_option_options_reuse_definition: Использовать детали повторно
-    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Назначить общее определение компонента для одинаковых панелей
     action_option_options_reuse_definition_mirrored: Зеркальное отображение
-    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Зеркальный раскрой для противоположных одинаковых панелей
     notify:
       validate_a: Подтвердите, чтобы перейти к выбору B

@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Creează o piesă corespunzătoare intersecției mai multor piese
     action_4_state_0_status: Selectați piesa A
     action_4_state_1_status: Selectați piesa B
+    action_5: Divizare
+    action_5_status: Divizarea uneia sau mai multor piese cu un plan
+    action_5_state_1_status: Faceți clic pe fața de referință, oriunde în model
+    action_5_state_1_arrows_status: Divizare perpendiculară pe o axă de la capătul selecției
+    action_5_state_1b_status: Faceți clic pentru a plasa punctul {{ index }} din 3 al planului de referință, oriunde în model
+    action_5_state_1b_arrows_status: Blocare pe o axă
+    action_5_state_1c_status: Faceți clic pentru a confirma planul de referință sau apăsați Esc pentru a elimina ultimul punct
+    action_5_state_2_status: Faceți clic pentru a diviza piesele sau introduceți o distanță
+    action_5_state_2a_status: Faceți clic pentru a plasa planul de tăiere sau introduceți o distanță
+    action_5_state_2_arrows_status: Schimbare axă
+    action_5_state_3_status: Faceți clic de partea bucății care trebuie păstrată
+    action_5_state_4_status: Faceți clic pentru a diviza piesele în {{ number }} bucăți sau introduceți spațieri
     action_option_group_thickness: Grosime
     action_option_group_stretch_measure_type: Măsurare
     action_option_group_axes: Axe
     action_option_group_paneling_joint_type: Îmbinare
     action_option_group_paneling_direction: Orientare
     action_option_group_csg_operation: Operațiune
+    action_option_group_slice_mode: Mod
+    action_option_group_slice_reference: Referință
     action_option_group_options: Opțiuni
     action_option_thickness_thickness: Grosime
     action_option_thickness_thickness_status: Definește grosimea panourilor
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Îmbinare la unghi (45°)
     action_option_paneling_direction_inward_status: Direcție spre interior
     action_option_paneling_direction_outward_status: Direcție spre exterior
+    action_option_slice_mode_slice_status: Divizarea pieselor și păstrarea tuturor bucăților
+    action_option_slice_mode_cut_status: Tăierea pieselor și păstrarea unei singure bucăți
+    action_option_slice_reference_face_status: Plan de referință preluat de pe o față
+    action_option_slice_reference_points_status: Plan de referință care trece prin 3 puncte
     action_option_options_centered_status: Centrează pe elementele întinse
     action_option_options_make_unique_status: Fă unice elementele remodelate
     action_option_options_keep_a: Păstrează A
@@ -2632,11 +2650,9 @@ tool:
     action_option_options_keep_b_status: Păstrează instanțele B după operațiune
     action_option_options_remove_unused_definitions_status: Șterge definițiile de componentă care nu mai sunt folosite după operațiune
     action_option_options_reuse_definition: Reutilizează piesele
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Partajează aceeași definiție de componentă între panourile cu formă identică
+    action_option_options_reuse_definition_status: Partajează aceeași definiție de componentă între piesele cu formă identică
     action_option_options_reuse_definition_mirrored: Montaj în oglindă
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Montaj în oglindă pentru panourile cu formă identică aflate față în față
+    action_option_options_reuse_definition_mirrored_status: Montaj în oglindă pentru piesele cu formă identică așezate față în față
     notify:
       validate_a: Confirmați pentru a trece la selecția lui B
       validate_b: Confirmați pentru a aplica operațiunea

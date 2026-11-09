@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Crea un elemento corrispondente all'intersezione di più elementi
     action_4_state_0_status: Seleziona l'elemento A
     action_4_state_1_status: Seleziona l'elemento B
+    action_5: Dividi
+    action_5_status: Dividi una o più parti con un piano
+    action_5_state_1_status: Clicca sulla faccia di riferimento, in qualsiasi punto del modello
+    action_5_state_1_arrows_status: Dividi perpendicolarmente a un asse dall'estremità della selezione
+    action_5_state_1b_status: Clicca per posizionare il punto {{ index }} di 3 del piano di riferimento, in qualsiasi punto del modello
+    action_5_state_1b_arrows_status: Blocca su un asse
+    action_5_state_1c_status: Clicca per confermare il piano di riferimento o premi Esc per rimuovere l'ultimo punto
+    action_5_state_2_status: Clicca per dividere le parti o inserisci una distanza
+    action_5_state_2a_status: Clicca per posizionare il piano di taglio o inserisci una distanza
+    action_5_state_2_arrows_status: Cambia asse
+    action_5_state_3_status: Clicca sul lato della porzione da conservare
+    action_5_state_4_status: Clicca per dividere le parti in {{ number }} porzioni o inserisci le spaziature
     action_option_group_thickness: Spessore
     action_option_group_stretch_measure_type: Misura
     action_option_group_axes: Assi
     action_option_group_paneling_joint_type: Giunzione
     action_option_group_paneling_direction: Direzione
     action_option_group_csg_operation: Operazione
+    action_option_group_slice_mode: Modalità
+    action_option_group_slice_reference: Riferimento
     action_option_group_options: Opzioni
     action_option_thickness_thickness: Spessore
     action_option_thickness_thickness_status: Definisce lo spessore dei pannelli
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Giunzione a quartabono
     action_option_paneling_direction_inward_status: Verso l'interno
     action_option_paneling_direction_outward_status: Verso l'esterno
+    action_option_slice_mode_slice_status: Dividi le parti e conserva tutte le porzioni
+    action_option_slice_mode_cut_status: Taglia le parti e conserva solo una porzione
+    action_option_slice_reference_face_status: Piano di riferimento preso da una faccia
+    action_option_slice_reference_points_status: Piano di riferimento passante per 3 punti
     action_option_options_centered_status: Centrare sugli elementi allungati
     action_option_options_make_unique_status: Rendi unici gli elementi rimodellati
     action_option_options_keep_a: Mantieni A
@@ -2632,11 +2650,9 @@ tool:
     action_option_options_keep_b_status: Mantieni le istanze B dopo l'operazione
     action_option_options_remove_unused_definitions_status: Elimina le definizioni di componente non più utilizzate dopo l'operazione
     action_option_options_reuse_definition: Riutilizza le parti
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_status: Condividi la stessa definizione di componente tra i pannelli di forma identica
+    action_option_options_reuse_definition_status: Condividi la stessa definizione di componente tra le parti di forma identica
     action_option_options_reuse_definition_mirrored: Montaggio a specchio
-    # TODO change 'panneaux' to 'pièce'
-    action_option_options_reuse_definition_mirrored_status: Montaggio a specchio per i pannelli di forma identica posti uno di fronte all'altro
+    action_option_options_reuse_definition_mirrored_status: Montaggio a specchio per le parti di forma identica posti uno di fronte all'altro
     notify:
       validate_a: Conferma per passare alla selezione di B
       validate_b: Conferma per applicare l'operazione
