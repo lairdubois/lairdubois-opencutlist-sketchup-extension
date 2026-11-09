@@ -1957,85 +1957,6 @@ tab:
         El modelo no dispone de momento de ninguna instancia que listar aquí.
         Una instancia es un **grupo** o un **componente** situado en la escena.
     obsolete_base: Para permanecer sincronizado, debe regenerar la estructura.
-  # @no-translate
-  importer:
-    label: Importar
-    title: Importar partes
-    help: |
-      Esta sección le ayudará a importar partes (definidas por un cuadro delimitador rectangular) desde un archivo [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas) a un modelo.
-      A continuación, puede utilizar las posibilidades de *OpenCutList* para piezas que hayan sido generadas por un software que no sea *SketchUp*.
-      Haga clic en el botón **Abrir archivo CSV** para cargar.
-    open_csv: Abrir archivo CSV
-    import_to_model: Importar al modelo
-    load:
-      title: Cargando archivo CSV
-      info_0: |
-        Elija las opciones necesarias para leer correctamente el archivo:
-        **{{ filename }}**.
-      info_1: |
-        *La unidad configurada en la plantilla es: **{{ unit }}**.
-        Esta unidad se utilizará para dimensiones para las que no se especifica la unidad*.
-      options: Opciones de carga
-      option_col_sep: Separador
-      option_col_sep_tab: Tabulador
-      option_col_sep_comma: Coma
-      option_col_sep_semicolon: Punto y coma
-      option_first_line_headers: Línea de cabecera
-      option_first_line_headers_0: Datos
-      option_first_line_headers_1: Títulos de columna
-    import:
-      title: Importar piezas al modelo
-      info_0: |
-        Estás a punto de importar **{{ count }} partes** en el modelo.
-        Esta parte se colocará en el origen de la escena principal.
-      info_0_plural: |
-        Estás a punto de importar **{{ count }} partes** en el modelo.
-        Estas partes se apilarán comenzando en el origen de la escena principal.
-      info_1: Haga clic en **Importar** para confirmar la acción.
-      options: |
-        El modelo ya contiene *partes*, *definiciones* o *materiales*.
-        Seleccione las opciones de importación que necesite.
-      option_remove_all_?: ¿Qué sigue?
-      option_remove_all_false: Agregue partes al existente
-      option_remove_all_true: ¡Eliminar existente!
-      option_keep_definitions_settings: Mantener la configuración de definición
-      option_keep_materials_settings: Mantener la configuración del material
-    column:
-      unused: No usado
-      mandatory: Campos obligatorios
-      optional: Campos opcionales
-      name: Designación
-      count: Cantidad
-      bbox_length: Longitud
-      bbox_width: Anchura
-      bbox_thickness: Espesor
-      material: Material
-      tags: Etiquetas
-    tooltip:
-      errors: Esta pieza no se importará porque produjo los siguientes errores
-      warnings: Esta parte se importará pero produjo las siguientes advertencias
-    error:
-      no_model: Ningún modelo está abierto. No es posible importar piezas al vacío ;)
-      file_not_found: "Fichero no encontrado: **{{ filename }}**"
-      bad_extension: El fichero *{{ filename }}* no tiene la extensión **.CSV** o **.TSV**.
-      failed_to_load_csv_file: |
-        No se puede cargar el archivo CSV: **{{ error }}**
-        *Verifique que haya seleccionado el separador de campo correcto.*
-      empty_file: El fichero parece vacío o no se pudo interpretar.
-      no_importable_part: No se puede importar ninguna pieza. Asigne los campos obligatorios a las columnas correspondientes.
-      invalid_name: Designación inválida
-      invalid_length: Longitud inválida
-      invalid_width: Ancho inválido
-      invalid_thickness: Espesor no válido
-      failed_to_import: Falló el proceso de importación.
-    warning:
-      invalid_count: Recuento inválido
-      invalid_material: Material inválido
-    success:
-      imported_title: Importación realizada
-      imported_body: "{{ count }} La pieza se importo correctamente!"
-      imported_body_plural: "{{ count }} ¡Las piezas se importaron con éxito!"
-    obsolete_base: Para permanecer sincronizado, debe volver a cargar el fichero CSV.
   importers:
     default:
       open_file: Abrir un archivo {{ extension }}
@@ -2711,8 +2632,10 @@ tool:
     action_option_options_keep_b_status: Conservar las instancias B tras la operación
     action_option_options_remove_unused_definitions_status: Borrar las definiciones de componente que ya no se usan tras la operación
     action_option_options_reuse_definition: Reutilizar las piezas
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Compartir la misma definición de componente entre los tableros de forma idéntica
     action_option_options_reuse_definition_mirrored: Montaje en espejo
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Montaje en espejo para los tableros de forma idéntica enfrentados
     notify:
       validate_a: Valide para pasar a la selección de B

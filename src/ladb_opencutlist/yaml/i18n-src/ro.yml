@@ -1957,85 +1957,6 @@ tab:
         Modelul dvs. nu conține nicio instanță care să fie afișată aici.
         O instanță este un **grup** sau o **componentă** din scenă.
     obsolete_base: Pentru a rămâne sincronizat, trebuie să reîmprospătați structura.
-  # @no-translate
-  importer:
-    label: Import
-    title: Importă Piese
-    help: |
-      Această pagină vă permite să importați piese (definite de o casetă dreptunghiulară de încadrare) în modelul dvs. dintr-un fișier [CSV](https://en.wikipedia.org/wiki/Comma-separated_values).
-      Apoi, veți putea utiliza funcțiile *OpenCutList* pentru piesele care au fost generate de un alt software decât *SketchUp*.
-      Faceți clic pe butonul **Deschide fișier CSV** pentru a începe.
-    open_csv: Deschide fișier CSV
-    import_to_model: Importă în model
-    load:
-      title: Încărcare Fișier CSV
-      info_0: |
-        Selectați opțiunile necesare pentru a citi fișierul:
-        **{{ filename }}**.
-      info_1: |
-        *Unitatea configurată în model este: **{{ unit }}**.
-        Această unitate va fi folosită pentru dimensiunile fără o unitate specificată*.
-      options: Opțiuni de Încărcare
-      option_col_sep: Separator
-      option_col_sep_tab: Tabulator
-      option_col_sep_comma: Virgulă
-      option_col_sep_semicolon: Punct și virgulă
-      option_first_line_headers: Rând de Antet
-      option_first_line_headers_0: Date
-      option_first_line_headers_1: Titluri de Coloane
-    import:
-      title: Importă Piese în Model
-      info_0: |
-        Sunteți pe cale să importați **{{ count }} piesă** în model.
-        Această piesă va fi plasată într-un grup la originea scenei principale.
-      info_0_plural: |
-        Sunteți pe cale să importați **{{ count }} piese** în model.
-        Aceste piese vor fi stivuite într-un grup pornind de la originea scenei principale.
-      info_1: Faceți clic pe **Importă** pentru a confirma acțiunea.
-      options: |
-        Modelul conține deja *piese*, *definiții* sau *materiale*.
-        Selectați opțiunile de import dorite.
-      option_remove_all_?: "Selectați pasul următor:"
-      option_remove_all_false: Adaugă piesele la cele existente
-      option_remove_all_true: Înlocuiește elementele existente
-      option_keep_definitions_settings: Păstrează setările definițiilor
-      option_keep_materials_settings: Păstrează setările materialelor
-    column:
-      unused: Nefolosit
-      mandatory: Câmpuri obligatorii
-      optional: Câmpuri opționale
-      name: Denumire
-      count: Cantitate
-      bbox_length: Lungime
-      bbox_width: Lățime
-      bbox_thickness: Grosime
-      material: Material
-      tags: Etichete
-    tooltip:
-      errors: Această piesă nu va fi importată deoarece a produs următoarele erori
-      warnings: Această piesă va fi importată, dar a produs următoarele avertismente
-    error:
-      no_model: Niciun model nu este deschis. Este imposibil să importați piese în gol ;)
-      file_not_found: "Fișier negăsit : **{{ filename }}**"
-      bad_extension: Fișierul *{{ filename }}* nu are extensia **.CSV** sau **.TSV**.
-      failed_to_load_csv_file: |
-        Nu s-a putut încărca fișierul CSV: **{{ error }}**
-        *Verificați dacă ați selectat separatorul de câmp corespunzător.*
-      empty_file: Fișierul pare gol sau nu poate fi citit corect.
-      no_importable_part: Nicio piesă nu poate fi importată. Atribuiți câmpurile obligatorii coloanelor corespunzătoare.
-      invalid_name: Denumire invalidă
-      invalid_length: Lungime invalidă
-      invalid_width: Lățime invalidă
-      invalid_thickness: Grosime invalidă
-      failed_to_import: Importul a eșuat.
-    warning:
-      invalid_count: Cantitate invalidă
-      invalid_material: Material invalid
-    success:
-      imported_title: Import finalizat
-      imported_body: "{{ count }} piesă importată cu succes!"
-      imported_body_plural: "{{ count }} piese importate cu succes!"
-    obsolete_base: Pentru a rămâne sincronizat, trebuie să reîncărcați fișierul CSV.
   importers:
     default:
       open_file: Deschide un fișier {{ extension }}
@@ -2711,8 +2632,10 @@ tool:
     action_option_options_keep_b_status: Păstrează instanțele B după operațiune
     action_option_options_remove_unused_definitions_status: Șterge definițiile de componentă care nu mai sunt folosite după operațiune
     action_option_options_reuse_definition: Reutilizează piesele
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Partajează aceeași definiție de componentă între panourile cu formă identică
     action_option_options_reuse_definition_mirrored: Montaj în oglindă
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Montaj în oglindă pentru panourile cu formă identică aflate față în față
     notify:
       validate_a: Confirmați pentru a trece la selecția lui B

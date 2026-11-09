@@ -1957,85 +1957,6 @@ tab:
         Váš model neobsahuje žádnou instanci k zobrazení.
         Instance je **skupina** nebo **komponenta** ve scéně.
     obsolete_base: Chcete-li zůstat v synchronizaci, musíte obnovit strukturu.
-  # @no-translate
-  importer:
-    label: Import
-    title: Importovat dílce
-    help: |
-      Tato stránka umožňuje importovat dílce (definované obdélníkovým ohraničovacím rámečkem) do vašeho modelu ze souboru [CSV](https://cs.wikipedia.org/wiki/CSV).
-      Potom můžete použít funkce *OpenCutList* pro dílce, které byly generovány jiným softwarem než *SketchUp*.
-      Začněte kliknutím na tlačítko **Otevřít soubor CSV**.
-    open_csv: Otevřete soubor CSV
-    import_to_model: Import do modelu
-    load:
-      title: Načítání souboru CSV
-      info_0: |
-        Vyberte možnosti nezbytné pro správné načtení souboru:
-        **{{ filename }}**.
-      info_1: |
-        *Jednotky konfigurované v modelu: **{{ unit }}**.
-        Tyto jednotky budou použity pro rozměry, kde nejsou nastavené*.
-      options: Možnosti načítání
-      option_col_sep: Oddělovač
-      option_col_sep_tab: Tabulátor
-      option_col_sep_comma: Čárka
-      option_col_sep_semicolon: Středník
-      option_first_line_headers: Záhlaví
-      option_first_line_headers_0: Data
-      option_first_line_headers_1: Názvy sloupců
-    import:
-      title: Importujte součásti do modelu
-      info_0: |
-        Chystáte se importovat **{{ count }} dílce** do modelu.
-        Tyto dílce budou umístěny na počátek hlavní scény.
-      info_0_plural: |
-        Chystáte se importovat **{{ count }} součást** do modelu.
-        Tato součást budou umístěna na počátek hlavní scény.
-      info_1: Kliknutím na **Importovat** akci potvrďte.
-      options: |
-        Model již obsahuje *dílce*, *definice* nebo *materiály*.
-        Vyberte požadované možnosti importu.
-      option_remove_all_?: Co dál?
-      option_remove_all_false: Přidejte součásti k existujícím
-      option_remove_all_true: Odebrat existující!
-      option_keep_definitions_settings: Ponechat definované nastavení
-      option_keep_materials_settings: Ponechat nastavení materiálu
-    column:
-      unused: Nepoužitý
-      mandatory: Povinná pole
-      optional: Nepovinná pole
-      name: Označení
-      count: Počet
-      bbox_length: Délka
-      bbox_width: Šířka
-      bbox_thickness: Tloušťka
-      material: Materiál
-      tags: Znaky
-    tooltip:
-      errors: Tato část nebude importována, protože způsobila následující chyby
-      warnings: Tato část bude importována, ale pouze s tímto varováním
-    error:
-      no_model: Model není otevřený, proto není možné importovat dílce :)
-      file_not_found: "Soubor nebyl nalezen: **{{ filename }}**"
-      bad_extension: Soubor *{{ filename }}* nemá příponu **.CSV** nebo **.TSV**.
-      failed_to_load_csv_file: |
-        Nelze načíst soubor CSV: **{{ error }}**
-        *Ověřte, že jste vybrali správný oddělovač polí.*
-      empty_file: Soubor se zdá být prázdný nebo jej nelze interpretovat.
-      no_importable_part: Nelze importovat žádnou část. Přiřaďte povinná pole k odpovídajícím sloupcům.
-      invalid_name: Neplatné označení
-      invalid_length: Neplatná délka
-      invalid_width: Neplatná šířka
-      invalid_thickness: Neplatná tloušťka
-      failed_to_import: Import se nezdařil.
-    warning:
-      invalid_count: Neplatné množství
-      invalid_material: Neplatný materiál
-    success:
-      imported_title: Import hotový
-      imported_body: Část {{ count }} byla úspěšně importována!
-      imported_body_plural: "{{ count }} dílů bylo úspěšně importováno!"
-    obsolete_base: Chcete-li zůstat v synchronizaci, musíte znovu načíst soubor CSV.
   importers:
     default:
       open_file: Otevřít soubor {{ extension }}
@@ -2711,8 +2632,10 @@ tool:
     action_option_options_keep_b_status: Zachovat instance B po operaci
     action_option_options_remove_unused_definitions_status: Smazat definice komponent, které se po operaci již nepoužívají
     action_option_options_reuse_definition: Znovu použít díly
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Sdílet stejnou definici komponenty mezi deskami stejného tvaru
     action_option_options_reuse_definition_mirrored: Zrcadlové osazení
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Zrcadlové osazení protilehlých desek stejného tvaru
     notify:
       validate_a: Potvrďte pro přechod k výběru B

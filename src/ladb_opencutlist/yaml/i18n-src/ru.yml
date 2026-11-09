@@ -1957,85 +1957,6 @@ tab:
         В настоящее время у модели нет экземпляров для отображения.
         Экземпляр - это **группа** или **компонент**, помещенная в сцену.
     obsolete_base: Чтобы синхронизировать изменения, вам необходимо заново создать структуру.
-  # @no-translate
-  importer:
-    label: Импорт
-    title: Импорт деталей
-    help: |
-      Эта страница позволяет импортировать в вашу модель набор заготовок (в форме параллелепипеда) из файла [CSV](https://ru.wikipedia.org/wiki/CSV).
-      Таким образом, вы сможете использовать возможности карты раскроя *OpenCutList*, создавая детали в программе, отличной от *SketchUp*.
-      Нажмите кнопку **Открыть CSV-файл**, чтобы начать.
-    open_csv: Открыть CSV файл
-    import_to_model: Импорт в модель
-    load:
-      title: Загрузить CSV файл
-      info_0: |
-        Выберите опции, необходимые для хорошего чтения файла:
-        **{{ filename }}**.
-      info_1: |
-        *Единицей измерения, заданной в шаблоне, является: **{{ unit }}**.
-        Данная единица будет применена для размеров, в которых единица измерения не указана*.
-      options: Опции загрузки
-      option_col_sep: Разделитель
-      option_col_sep_tab: Табулятор
-      option_col_sep_comma: Запятая
-      option_col_sep_semicolon: Точка с запятой
-      option_first_line_headers: Заголовок строки
-      option_first_line_headers_0: Дата
-      option_first_line_headers_1: Столбец заголовков
-    import:
-      title: Импорт деталей в модель
-      info_0: |
-        Вы собираетесь импортировать **{{ count }} деталь** в модель.
-        Эта часть будет помещена в начало основной сцены.
-      info_0_plural: |
-        Вы собираетесь импортировать **{{ count }} деталей** в модель.
-        Эти части будут загружены в пакет, начиная с начала основной сцены.
-      info_1: Нажмите на **Импорт**, чтобы подтвердить действие.
-      options: |
-        Модель уже содержит *детали*, *определения* или *материалы*.
-        Выберите необходимые опции импорта.
-      option_remove_all_?: Что дальше?
-      option_remove_all_false: Добавить детали к существующим
-      option_remove_all_true: Удалить существующий!
-      option_keep_definitions_settings: Сохранить настройки определения
-      option_keep_materials_settings: Сохранять настройки материалов
-    column:
-      unused: Неиспользуемый
-      mandatory: Обязательные поля
-      optional: Дополнительные поля
-      name: Определение
-      count: Количество
-      bbox_length: Пильная длина
-      bbox_width: Ширина
-      bbox_thickness: Толщина
-      material: Материал
-      tags: Маркеры
-    tooltip:
-      errors: Эта часть не будет импортирована, так как она привела к следующим ошибкам
-      warnings: Эта часть будет импортирована, но она выдает следующие предупреждения
-    error:
-      no_model: Ни один проект модели не открыт. Импорт частей из пустоты невозможен ;)
-      file_not_found: "Файл не найден : **{{ filename }}**"
-      bad_extension: Файл *{{ filename }}* не имеет расширения **.CSV** или **.TSV**.
-      failed_to_load_csv_file: |
-        Невозможно загрузить CSV файл : **{{ error }}**
-        *Убедитесь, что вы выбрали правильный разделитель полей.*
-      empty_file: Файл возможно пустой или имеет не читаемый формат.
-      no_importable_part: Ни одна из деталей не может быть импортирована. Назначьте обязательные поля соответствующим столбцам.
-      invalid_name: Неверное описание
-      invalid_length: Недопустимая длина
-      invalid_width: Недопустимая ширина
-      invalid_thickness: Недопустимая толщина
-      failed_to_import: Процесс импорта не удался.
-    warning:
-      invalid_count: Неверный подсчёт
-      invalid_material: Недопустимый материал
-    success:
-      imported_title: Импорт завершен
-      imported_body: "{{ count }} деталь была успешно импортирована!"
-      imported_body_plural: "{{ count }} деталей успешно импортированы!"
-    obsolete_base: Чтобы сохранить синхронизацию, вы должны перезагрузить CSV файл.
   importers:
     default:
       open_file: Открыть файл {{ extension }}
@@ -2711,8 +2632,10 @@ tool:
     action_option_options_keep_b_status: Сохранять экземпляры B после операции
     action_option_options_remove_unused_definitions_status: После выполнения операции удалять детали, которые опционально не выбраны для сохранения
     action_option_options_reuse_definition: Использовать детали повторно
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Назначить общее определение компонента для одинаковых панелей
     action_option_options_reuse_definition_mirrored: Зеркальное отображение
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Зеркальный раскрой для противоположных одинаковых панелей
     notify:
       validate_a: Подтвердите, чтобы перейти к выбору B

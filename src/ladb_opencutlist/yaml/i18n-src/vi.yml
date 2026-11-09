@@ -1957,85 +1957,6 @@ tab:
         Mô hình của bạn không chứa đối tượng nào được hiển thị ở đây.
         Một đối tượng là **group** hoặc là **component** trong Scene.
     obsolete_base: Để luôn đồng bộ, bạn cần làm mới cấu trúc.
-  # @no-translate
-  importer:
-    label: Nhập
-    title: Nhập các bộ phận
-    help: |
-      Trang này cho phép bạn nhập các bộ phận (được xác định bởi hộp giới hạn hình chữ nhật) vào mô hình của bạn từ tệp [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
-      Sau đó, bạn có thể sử dụng các tính năng của *OpenCutList* cho các bộ phận đã được tạo bởi một phần mềm khác với *SketchUp*.
-      Nhấp vào nút **Mở tệp CSV** để bắt đầu.
-    open_csv: Mở tệp CSV
-    import_to_model: Nhập vào mô hình
-    load:
-      title: Đang tải tệp CSV
-      info_0: |
-        Chọn các tùy chọn cần thiết để đọc đúng tệp:
-        **{{ filename }}**.
-      info_1: |
-        *Đơn vị được định cấu hình trong mô hình là: **{{ unit }}**.
-        Đơn vị này sẽ được sử dụng cho các kích thước không được chỉ định đơn vị*.
-      options: Đang tải tùy chọn
-      option_col_sep: Dấu phân cách
-      option_col_sep_tab: Người lập
-      option_col_sep_comma: Dấu phẩy
-      option_col_sep_semicolon: Dấu chấm phẩy
-      option_first_line_headers: Dòng tiêu đề
-      option_first_line_headers_0: Dữ liệu
-      option_first_line_headers_1: Tiêu đề cột
-    import:
-      title: Nhập các bộ phận vào mô hình
-      info_0: |
-        Bạn sắp nhập **{{ count }} bộ phận** vào mô hình.
-        Phần này sẽ được đặt trong một nhóm ở gốc tọa độ của cảnh chính.
-      info_0_plural: |
-        Bạn sắp nhập **{{ count }} bộ phận** vào mô hình.
-        Phần này sẽ được đặt trong một nhóm ở gốc tọa độ của cảnh chính.
-      info_1: Click **Nhập** để xác nhận hành động.
-      options: |
-        Mô hình đã chứa *bộ phận*, *định nghĩa* hoặc *vật liệu*.
-        Chọn các tùy chọn nhập bạn cần.
-      option_remove_all_?: Tiếp theo là gì?
-      option_remove_all_false: Thêm vào các bộ phận hiện có
-      option_remove_all_true: Xóa hiện có!
-      option_keep_definitions_settings: Giữ cài đặt định nghĩa
-      option_keep_materials_settings: Giữ cài đặt vật liệu
-    column:
-      unused: Chưa sử dụng
-      mandatory: Các trường bắt buộc
-      optional: Trường tùy chọn
-      name: Tên gọi
-      count: Số lượng
-      bbox_length: Chiều dài
-      bbox_width: Chiều rộng
-      bbox_thickness: Độ dày
-      material: Vật liệu
-      tags: Nhãn hiệu
-    tooltip:
-      errors: Phần này sẽ không được nhập vì nó tạo ra các lỗi
-      warnings: Phần này sẽ được nhập nhưng nó tạo ra các cảnh báo
-    error:
-      no_model: Không có mô hình nào được mở. Không thể nhập các bộ phận vào khoảng trống;)
-      file_not_found: "Tệp tìm thấy tệp: **{{ filename }}**"
-      bad_extension: Tệp *{{ filename }}* không có đuôi mở rộng **.CSV** hoặc **.TSV**.
-      failed_to_load_csv_file: |
-        Không thể tải tệp CSV: **{{ error }}**
-        *Xác minh rằng bạn đã chọn dấu tách trường thích hợp.*
-      empty_file: Tệp có vẻ trống hoặc không thể hiểu được.
-      no_importable_part: Không có bộ phận nào có thể được nhập. Gán các trường bắt buộc vào các cột tương ứng.
-      invalid_name: Đối tượng không hợp lệ
-      invalid_length: Chiều dài không hợp lệ
-      invalid_width: Chiều rộng không hợp lệ
-      invalid_thickness: Độ dày không hợp lệ
-      failed_to_import: Nhập không thành công.
-    warning:
-      invalid_count: Số lượng không hợp lệ
-      invalid_material: Vật liệu không hợp lệ
-    success:
-      imported_title: Nhập xong
-      imported_body: "{{ count }} bộ phận đã được nhập thành công!"
-      imported_body_plural: "{{ count }} bộ phận đã được nhập thành công!"
-    obsolete_base: Để duy trì đồng bộ hóa, bạn phải tải lại tệp CSV.
   importers:
     default:
       open_file: Mở tệp {{ extension }}
@@ -2711,8 +2632,10 @@ tool:
     action_option_options_keep_b_status: Giữ các đối tượng B sau thao tác
     action_option_options_remove_unused_definitions_status: Xóa các định nghĩa component không còn được dùng sau thao tác
     action_option_options_reuse_definition: Dùng lại bộ phận
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_status: Dùng chung một định nghĩa component cho các tấm có hình dạng giống nhau
     action_option_options_reuse_definition_mirrored: Lắp đối xứng
+    # TODO change 'panneaux' to 'pièce'
     action_option_options_reuse_definition_mirrored_status: Lắp đối xứng cho các tấm cùng hình dạng đối diện nhau
     notify:
       validate_a: Xác nhận để chuyển sang chọn B
