@@ -9,13 +9,13 @@ module Ladb::OpenCutList
   class FormulaWrapper < DataContainer
 
     # Defense in depth : instances of this class (and its subclasses) are exposed directly to
-    # user-authored formulas evaluated by CommonEvalFormulaWorker. FormulaParser already rejects
+    # user-authored formulas evaluated by CommonEvalFormulaWorker. FormulaParser's white lists already reject
     # these method names statically, but this also removes them at runtime so a parser bypass
     # (or a future Ruby/Kernel method the parser doesn't know about yet) can't reach them.
     previous_verbose = $VERBOSE
     $VERBOSE = nil # Silence Ruby's "undefining '__send__' may cause serious problems" warning, this is intentional
-    FormulaParser::BLACK_LIST_COMMAND.each do |method_name|
-      next if method_name == 'binding' # Not called on wrappers, kept available for consistency with FormulaData
+    FormulaParser::RUNTIME_FORBIDDEN_METHODS.each do |method_name|
+      next if FormulaParser::RUNTIME_KEPT_METHODS.include?(method_name)
       undef_method(method_name) if method_defined?(method_name) || private_method_defined?(method_name)
     end
     $VERBOSE = previous_verbose
