@@ -323,6 +323,7 @@ core:
     libraries: المكتبات
     user: مكتبتي
     bundled: مكتبة OCL
+    family_modules: الوحدات
 tab:
   cutlist:
     label: القِطع
@@ -402,7 +403,7 @@ tab:
       ignore_grain_direction: اتجاه تعرق ألياف هذه القطعة مهمل
       follow_grain_direction: كشف استمرارية تعرّق الألياف مفعّل على هذه القطعة
       auto_oriented: لقد أُعيد توجيه هذه القطعة آليا
-      oko_label_filter: تضمين / استبعاد هذا الوسم
+      oko_label_filter: تضمين / استبعاد هذه الشارة
       add_label_filter: تصفية وفق '{{ label }}'
       remove_label_filter: إزالة التصفية وفق '{{ label }}'
       add_edge_material_name_filter: تصفية وفق '{{ material_name }}'
@@ -671,6 +672,7 @@ tab:
       veneer_material_names_filter: ترشيح وفقا لخامة قشرة الخشب
       names_filter: تصفية بالتسميات
       tags_filter: تصفية بالوسوم
+      tags_filter_any: كل الشارات
       dimensions_help: فهم الأبعاد
       summary: ملخص
       material_type: النوع
@@ -1716,6 +1718,7 @@ tab:
       formats: التنسيقات
       cut_options: خيارات التقطيع
       estimate_options: خصائص التثمين
+      export_options: خصائص التصدير
       attributes: السِّمات
       thickness: السُمك
       thickness_help: |
@@ -1777,6 +1780,29 @@ tab:
       raw_estimated_1: حجم المادة الخام اللازمة
       multiplier_coefficient: معامل الضرب
       multiplier_coefficient_help: تستخدم هذه الخاصية لتبيين معامل الضرب المطبق على الحجم الخالص
+      machining_separated: أشكال التشغيل الهندسية
+      machining_separated_help: |
+        يتيح تحديد أسلوب تصدير أشكال التشغيل الهندسية لهذه الخامة بصيغة ثنائية الأبعاد 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        تُطرح أشكال التشغيل الهندسية من شكل القطعة وتُدمج مع طبقات العمق الخاصة بها، كما لو أن العملية المجسّمة نُفّذت في هندسة القطعة.
+        *تُقتطع أشكال التشغيل الهندسية التي تتجاوز حدود القطعة.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        تحتفظ القطعة بشكلها الأصلي. يُصدَّر كل شكل تشغيل هندسي كما هو، دون دمجه مع غيره، على طبقة `MACHININGS` لكل عمق، تحمل اسم الخامة.
+      machining_separated_0: محفورة في القطعة
+      machining_separated_1: منفصلة في طبقاتها الخاصة
+      machining_material_colored: الألوان عند التصدير
+      machining_material_colored_help: |
+        يتيح تحديد ألوان عمليات التشغيل المنفصلة في التصدير ثنائي الأبعاد 2D (DXF, SVG).
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        يأخذ الخط الخارجي لعمليات التشغيل لون هذه الخامة، دون تعبئة.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        تأخذ عمليات التشغيل ألوان ما تقطعه في القطعة: ألوان التثقيب إذا كانت نافذة، وإلا ألوان التجاويف. مفيد للآلات التي تستنتج نوع القطع من الألوان.
+      machining_material_colored_0: تلقائية
+      machining_material_colored_1: لون الخامة
       std_attributes_dim_placeholder: حدد مقاسا
       std_volumic_masses: الكثافة
       std_volumic_masses_help: يتيح لك الخيار تعيين كثافة لجميع الأحجام و أيضًا لكل حجم خامة اعتيادي
@@ -2042,6 +2068,8 @@ tab:
         option_part_glass_material_name_help: الخامة التي ستطبق على القِطع **الزجاجية**
         option_front_part_layer_name: الواجهات
         option_front_part_layer_name_help: الوسم الذي سيطبق على لقِطع الواجهة
+        option_back_part_layer_name: الظهر
+        option_back_part_layer_name_help: الوسم الذي سيُطبَّق على ظهور الخزائن.
         option_machining_material_name: التشغيل
         option_machining_material_name_help: الخامة التي ستطبق على عمليات **التشغيل**
         option_machining_layer_name: التشغيل
@@ -2053,6 +2081,10 @@ tab:
         option_no_material_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي خامة*"
         option_default_material_help: "*إن تُرك هذا الحقل فارغا، فيستم إنشاء خامة افتراضية*"
         option_no_layer_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي وسم*"
+        option_subtract_machinings: حفر عمليات التشغيل داخل القِطع
+        option_subtract_machinings_help: تُطرح **الأخاديد** و**التجاويف الجانبية** و**الشطوب** من القِطع، بما فيها تلك المرتبطة بالعتاد، من حجمها بدلًا من رسمها. تبقى الثقوب مرسومة.
+        warning:
+          subtract_machinings_failed: "تعذّر حفر عمليات التشغيل في هذه القِطع، فرُسمت بدلًا من ذلك: {{ names }}"
         old_name: الاسم الأصلي
         new_name: الاسم الجديد
         count: العدد
@@ -2181,8 +2213,17 @@ tab:
     currency_precision: الدقة
     presets:
       export_global_presets: تصدير الإعدادات المسبقة
+      export_global_presets_help: |
+        تتيح لك هذه الميزة تصدير إعداداتك المسبقة إلى ملف **.json**.
+        اختر الإعدادات المسبقة التي تريد تصديرها إليه.
+        إذا كانت الإعدادات المسبقة المختارة تشير إلى ملفات **.skp** أو **.skm**، فإنها تُضمَّن في أرشيف **.oclp** ليكون التصدير قابلًا للمشاركة كما هو.
       export_global_presets_success: نجح تصدير الإعدادات المسبقة
+      export_global_presets_success_with_assets: تم تصدير الإعدادات المسبقة بنجاح، مع {{ count }} ملف (ملفات) مرتبطة.
       import_global_presets: استيراد إعدادات مسبقة
+      import_global_presets_help: |
+        اختر الإعدادات المسبقة الموجودة في ملف **.json** أو **.oclp** التي تريد استيرادها.
+        تنبيه: إذا كان هناك إعداد مسبق بالاسم نفسه، فسيُستبدل بالنسخة المستوردة.
+        تُنسخ الملفات الموجودة في أرشيف **.oclp** إلى مكتبتك، في الموضع نفسه الذي كانت تشغله في مكتبة المُرسِل.
       open_library_dir: فتح مجلد المكتبة
       import_global_presets_success: |
         لقد استوردت إعدادات *OpenCutList* المسبقة بنجاح
@@ -2277,12 +2318,14 @@ tool:
       invalid_multiplicator: المعامل {{ value }} غير صالح
       invalid_divider: القاسم {{ value }} غير صالح
       invalid_offset: الإزاحة {{ value }} غير صالحة
+      invalid_angle: الزاوية {{ value }} غير صالحة
       invalid_segment_count: عدد القطع {{ value }} غير صالح. يجب أن يكون بين 3 و999
       syntax_error: "خطأ في بناء الجملة : {{ error }}"
       unexpected_close_parenthesis: قوس إغلاق غير متوقع
       missing_close_parenthesis: قوس إغلاق مفقود
       missing_operand: متغير مفقود
       zero_division: القسمة على الصفر
+      invalid_argument_count: تتطلب الدالة min أو max أو floor أو ceil قيمتين على الأقل
       comma_argument_separator: افصل بين القيم بفاصلة منقوطة « ; » لأن الفاصلة تُستخدم فاصلًا عشريًاكذلك
       invalid_dimension: "لا يُجمع الطول إلا مع طول آخر: العدد بلا وحدة هو معامل"
       no_matching_value: لا قيمة من القيم المقترحة مناسبة
@@ -2345,6 +2388,8 @@ tool:
     action_option_options_draw_in_0: الرسم داخل العنصر النشط
     action_option_options_draw_in_1: الرسم داخل العنصر "الأب" للقٍطعة التابعة للنقطة الأولى
     action_option_options_draw_in_status: الرسم داخل العنصر "الأب" للقِطعة المستهدفة بواسطة النقطة الأولى
+    action_option_options_pick_material: القطّارة
+    action_option_options_pick_material_status: تطبيق خامة القطعة المستهدفة بالنقطة الأولى على القطعة المُنشأة
     action_option_options_ask_name: تسمية القِطع
     action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
     action_toggle_move_copy_status: التبديل بين النسخ/النقل
@@ -2354,20 +2399,68 @@ tool:
       part_created_plural: "{{ count }} قِطع جديدة أُنشئت : {{ name }}"
   smart_build:
     title: إنشاء
+    action_0: أدرج وحدة
+    action_0_status: أدرج وحدة مستوردة من ملف SKP، يضبط مقياسها على أبعاد الصندوق المرسوم
+    action_0_state_0_status: اختر ملف وحدة من المكتبة
+    action_0_state_1_status: انقر لوضع نقطة المبدإ للوحدة
+    action_0_state_2_status: انقر لتحديد عرض الوحدة (المحور X)
+    action_0_state_2_lock_status: ثبّت القياس على عرض الملف المصدر
     action_0_state_2_arrows_status: القفل على محور
+    action_0_state_3_status: انقر لتحديد عمق الوحدة (المحور Y)
+    action_0_state_3_lock_status: ثبّت القياس على عمق الملف المصدر
     action_0_state_3_arrows_status: قفل العمودي على المستوى XY على محور
+    action_0_state_4_status: انقر لتحديد ارتفاع الوحدة (المحور Z)
+    action_0_state_4_lock_status: ثبّت القياس على ارتفاع الملف المصدر
+    action_0_state_5_status: انقر على المثيل المراد إضافته
+    action_0_state_6_status: انقر على الوجه الأمامي للوحدة
+    action_0_state_7_status: انقر على الوجه العلوي للوحدة
+    action_0_add_title: أضف وحدة
     action_0_add_name: اسم الملف
     action_0_add_overwrite: الملف « {{ name }}.skp » موجود مسبقا. هل تريد استبداله؟
+    action_0_add_front_label: أمام
+    action_0_add_up_label: أعلى
+    action_0_flip_status: عكس الواجهة والظهر
+    action_0_flip_up_status: عكس الأعلى والأسفل
+    action_1: أنشئ فاصلا
+    action_1_status: أنشئ فاصلا داخل تجويف تشكّله مجموعة من القِطع الموجودة
+    action_1_state_0_status: انقر على جدار لإنشاء فاصل
+    action_1_state_1_status: انقر على جدار لإنشاء فواصل
+    action_2: أنشئ واجهة
+    action_2_status: أنشئ واجهة تُغلق تجويفًا تشكّله مجموعة من القِطع الموجودة
+    action_2_state_0_status: انقر داخل تجويف لإنشاء واجهة تتبع فتحته
+    action_2_state_0_merge_status: اسحب حتى بلوغ التجاويف المجاورة من أجل واجهة مشتركة
     action_3: إنشاء ظهر
+    action_3_status: أنشئ ظهرا يُغلق تجويفًا تشكّله مجموعة من القِطع الموجودة
+    action_option_group_groove: أخدود
     action_option_group_thickness: السُمك
+    action_option_group_overlay: التركيب
     action_option_group_axes: المحاور
     action_option_group_measure_type: القياس
+    action_option_group_measure_origin: المبدأ
+    action_option_group_anchor: نقطة الإرساء
     action_option_group_options: الخيارات
+    action_option_offset_front_panel_offset: الخلوص
+    action_option_offset_front_panel_offset_status: يحدد الخلوص المتروك على كل حافة من حواف لوح الواجهة
+    action_option_groove_groove_depth: عمق الأخدود
+    action_option_groove_groove_depth_status: يحدد عمق الأخدود الذي يُدخَل فيه الظهر
+    action_option_groove_groove_panel_reduction: تقليص اللوح
+    action_option_groove_groove_panel_reduction_status: يحدد مقدار تقليص كل حافة ظهر مُدخلة في أخدود، تاركًا هذا الخلوص في قاع الأخدود
+    action_option_groove_groove_width_clearance: خلوص العرض
+    action_option_groove_groove_width_clearance_status: يحدد مقدار زيادة عملية التشغيل لعرض الأخدود عن سُمك الظهر، من الجهة الخارجية تماما للخزانة
+    action_option_groove_groove_setback: تراجع
+    action_option_groove_groove_setback_status: يحدد مقدار تراجع الظهر إلى داخل الخزانة، وبالتالي موضع تشغيل الأخدود
+    action_option_groove_groove_through: أخدود سائر
+    action_option_groove_groove_through_status: تمديد الأخدود إلى نهايات القِطع التي تغطي جاراتها، عندما ينفذ إليها دون أن يكون ظاهرًا
     action_option_thickness_thickness: السُمك
     action_option_thickness_thickness_status: يحدد سُمك الألواح
+    action_option_overlay_inset_status: "واجهة مدمجة كليا: تُركَّب داخل الفتحة، على مستوى الوجه الأمامي"
+    action_option_overlay_full_overlay_status: "واجهة متراكبة تماما: تُركَّب على الوجه الأمامي، وتغطي الألواح الخارجية للخزانة تماما و تبلغ منتصف سُمك الألواح الداخلية"
+    action_3_option_overlay_full_overlay_status: "ظهر متراكب: يُركَّب على مؤخرة الخزانة، ويغطي ألواحها الخارجية و يبلغ منتصف سُمك الألواح الداخلية، دون أي عملية تشغيل"
     action_option_measure_type_inside_status: وضع السُمك داخل النقطة المستهدفة
     action_option_measure_type_centered_status: توسيط السُمك على النقطة المستهدفة
     action_option_measure_type_outside_status: وضع السُمك خارج النقطة المستهدفة
+    action_option_measure_origin_wall_status: القياس من الجدران الداخلية للتجويف
+    action_option_measure_origin_overall_status: القياس من الوجوه الخارجية للقِطع التي تُطبق على التجويف
     action_option_axes_active_status: المعالجة على طول المحاور النشطة
     action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر المضيف
     action_option_options_measure_reversed: قياس معكوس
@@ -2376,30 +2469,56 @@ tool:
     action_option_options_reduce_envelope_status: مراعاة القِطع الغائرة
     action_option_options_reuse_definition: إعادة استخدام القِطع
     action_option_options_reuse_definition_status: "بدلًا من إنشاء قطعة جديدة، أعد استخدام القطعة الموجودة التي لها نفس الشكل وتقع في نفس المنطقة "
+    action_option_options_mirror: عكس بمرآة
+    action_option_options_mirror_status: إدراج كل واجهة تحمل ترتيبا زوجيا على أنها مرآة عن جارتها
     action_option_options_pick_material: القطّارة
     action_option_options_pick_material_status: تطبيق خامة القِطعة التي يمر فوقها المؤشر على القِطع المُنشأة
     action_option_options_face_camera: مواجهة الكاميرا
+    action_option_options_face_camera_status: تدوير واجهة الوحدة تلقائيًا نحو الكاميرا
     action_option_options_top_up: إلى الأعلى نحو Z+
+    action_option_options_top_up_status: تدوير أعلى الوحدة تلقائيًا إلى الأعلى قدر الإمكان (Z+)
     action_option_options_ask_name: تسمية القِطع
     action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
+    action_option_options_layer_name: وسم
+    action_option_options_layer_name_status: اسم الوسم الذي تدرج فيه القطع
     action_option_anchor_center_x_status: توسيط على X
     action_option_anchor_center_y_status: توسيط على Y
     action_option_anchor_center_z_status: توسيط على Z
     action_option_anchor_origin_status: مبدأ العنصر
+    action_option_no_layer_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي وسم*"
+    detecting_cavities: اكتشاف التجاويف...
     error:
+      invalid_divider_seed: لا يسمح هذا النوع من القِطع بإنشاء فاصل
       invalid_divider_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
       invalid_divider_cavity: لا يوجد تجويف في هذا الموضع
       no_divider_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
+      invalid_front_panel_seed: لا يسمح هذا النوع من القِطع بإنشاء واجهة
       invalid_front_panel_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
+      invalid_front_panel_cavity: لا يوجد تجويف مفتوح نحوك في هذا الموضع
       no_front_panel_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
+      invalid_back_panel_seed: لا يسمح هذا النوع من القِطع بإنشاء ظهر
       invalid_back_panel_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
       no_back_panel_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
+      too_complex_cavity: الشكل الهندسي أعقد من أن تكتشف التجاويف فيه
+      closed_front_panel_opening: هذه الفتحة مغلقة مسبقًا بواجهة
+      closed_back_panel_opening: هذه الفتحة مغلقة مسبقًا بظهر
       divider_number_overflow: يتعذر وضع {{ number }} فواصل في هذا التجويف
+      front_panel_number_overflow: يتعذّر توزيع {{ number }} واجهات على هذه الفتحة
+      back_panel_number_overflow: يتعذّر توزيع {{ number }} أظهر على هذه الفتحة
+      module_file_not_found: "ملف الوحدة غير موجود: {{ file }}"
+      module_file_invalid: "تعذّر تحميل ملف الوحدة: {{ file }}"
+      module_file_invalid_name: "اسم ملف غير صالح: {{ name }}"
+      module_file_save_failed: "تعذّر حفظ ملف الوحدة: {{ name }}.skp"
+      module_stretch_failed: تعذّر تمديد الوحدة إلى هذه الأبعاد
+    warning:
+      no_module_file: لا توجد ملفات .skp في هذا المجلد
     success:
       part_created: "تم إنشاء قطعة جديدة: {{ name }}"
       part_created_plural: "{{ count }} قِطع جديدة أُنشئت : {{ name }}"
       part_reused: "مثيل جديد للقطعة الموجودة : {{ name }}"
       part_reused_plural: "{{ count }} مثيلات جديدة للقطعة الموجودة : {{ name }}"
+      module_file_saved: "حُفظت الوحدة: {{ name }}.skp"
+      module_created: "أُدرجت وحدة جديدة: {{ name }}"
   smart_handle:
     title: معالجة
     action_0: تحديد
@@ -2418,6 +2537,9 @@ tool:
     action_4_status: وزع قِطعة على محور معين
     action_4_state_1_status: انقر لتحديد نقطة القياس الأولى
     action_4_state_2_status: انقر لتحديد نقطة القياس الثانية أو أدخل مسافة معينة
+    action_5_status: فتح باب أو إغلاقه
+    action_5_state_0_status: انقر على باب لفتحه أو إغلاقه، أو اسحبه لضبط مقدار فتحه
+    action_5_state_0_amend_status: أدخل زاوية لضبط قيمة الفتح، أو انقر على باب لفتحه أو إغلاقه
     action_option_group_copy_measure_type: قياس
     action_option_group_move_measure_type: قياس
     action_option_group_axes: المحاور

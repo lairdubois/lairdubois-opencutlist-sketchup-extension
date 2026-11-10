@@ -1301,7 +1301,7 @@ tab:
 
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
 
-        *Edit the material '{{ material_name }}' to update this list.*
+        *Edit the properties of the material '{{ material_name }}' to update this list.*
       option_std_bin_1d_add: Add a size
       option_std_bin_1d_none: None
       option_scrap_bin_1d_dimensional_sizes: Board Offcuts

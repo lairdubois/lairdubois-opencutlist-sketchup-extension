@@ -283,7 +283,7 @@ core:
       browse: Обзор
       browse_library: Найти и скопировать в библиотеку
     textinput_size:
-      quantity: Кол-во
+      quantity: К-во
     three_viewer:
       view: Вид {{ view }}
       view_isometric: Изометрия
@@ -685,7 +685,7 @@ tab:
       volume: Объем
       number: N°
       name: Определение
-      count: Кол-во
+      count: К-во
       cutting: Раскрой
       bbox: Габаритный
       final: Фактически
@@ -796,7 +796,7 @@ tab:
       total_unused: Неиспользуемый
       total_mass: Σ Вес
       total_cost: Σ Цена
-      total_count: Кол-во
+      total_count: К-во
       total_instance_count: Σ Единиц
       total_volume: Σ Объемов
       total_area: Σ Площадей
@@ -1250,7 +1250,7 @@ tab:
         total_cut_count: Σ Число резов
         total_cut_length: Σ Длина пропилов
         efficiency: Эффективность
-        count: Кол-во
+        count: К-во
         length: Длина
         width: Ширина
         total_length: Σ Длин
@@ -2409,7 +2409,7 @@ tool:
     action_0_state_1_status: Кликните для указания расположения элемента
     action_0_state_2_status: Щелкните, чтобы задать ширину модуля (ось X)
     action_0_state_2_lock_status: Зафиксировать ширину исходного файла
-    action_0_state_2_arrows_status: зафиксировать по оси
+    action_0_state_2_arrows_status: Зафиксировать по оси
     action_0_state_3_status: Щелкните, чтобы задать глубину модуля (ось Y)
     action_0_state_3_lock_status: Зафиксировать глубину как в исходном файле
     action_0_state_3_arrows_status: зафиксировать нормаль плоскости XY по оси
@@ -2606,12 +2606,26 @@ tool:
     action_4_status: Создать деталь на пересечении нескольких деталей
     action_4_state_0_status: Выберите деталь А
     action_4_state_1_status: Выберите деталь B
+    action_5: Нарезать
+    action_5_status: Нарезать одну или несколько деталей по плоскости
+    action_5_state_1_status: Кликните на базовую плоскость лицевой стороны в любом месте
+    action_5_state_1_arrows_status: Нарезать перпендикулярно оси от края выделени
+    action_5_state_1b_status: Кликните, чтобы указать точку {{ index }} из 3 на базовой плоскости в любом месте
+    action_5_state_1b_arrows_status: Зафиксировать по оси
+    action_5_state_1c_status: Кликните, чтобы принять базовую плоскость, или нажмите Esc, чтобы отменить последнюю точку
+    action_5_state_2_status: Кликните, чтобы нарезать детали, или введите расстояние
+    action_5_state_2a_status: Кликните, чтобы установить плоскость реза, или введите расстояние
+    action_5_state_2_arrows_status: Сменить ось
+    action_5_state_3_status: Кликните со стороны детали, которую нужно сохранить
+    action_5_state_4_status: Кликните, чтобы нарезать детали на {{ number }} частей, или введите шаг интервала
     action_option_group_thickness: Толщина
     action_option_group_stretch_measure_type: Отсчет
     action_option_group_axes: Оси
     action_option_group_paneling_joint_type: Тип стыка
     action_option_group_paneling_direction: Направление
     action_option_group_csg_operation: Операция
+    action_option_group_slice_mode: Режим
+    action_option_group_slice_reference: Опора
     action_option_group_options: Опции
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Ввод толщины окантовки
@@ -2624,6 +2638,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Заусовка
     action_option_paneling_direction_inward_status: Внутри
     action_option_paneling_direction_outward_status: Снаружи
+    action_option_slice_mode_slice_status: Нарезать детали и сохранить все части
+    action_option_slice_mode_cut_status: Обрезать детали и сохранить только одну часть
+    action_option_slice_reference_face_status: Базовая плоскость построена по грани лицевой стороны
+    action_option_slice_reference_points_status: Базовая плоскость по 3 точкам
     action_option_options_centered_status: Симметричная растяжка элемента относительно собственного центра
     action_option_options_make_unique_status: Сделать уникальными полученные детали
     action_option_options_keep_a: Оставить деталь А
@@ -2632,7 +2650,7 @@ tool:
     action_option_options_keep_b_status: Сохранять экземпляры B после операции
     action_option_options_remove_unused_definitions_status: После выполнения операции удалять детали, которые опционально не выбраны для сохранения
     action_option_options_reuse_definition: Использовать детали повторно
-    action_option_options_reuse_definition_status: Назначить общее определение компонента для одинаковых панелей
+    action_option_options_reuse_definition_status: Объединять идентичные детали в один компонент
     action_option_options_reuse_definition_mirrored: Зеркальное отображение
     action_option_options_reuse_definition_mirrored_status: Зеркальный раскрой для противоположных одинаковых панелей
     notify:
