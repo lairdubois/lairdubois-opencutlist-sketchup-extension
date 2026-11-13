@@ -190,7 +190,7 @@ core:
       هناك نسخة جديدة من *OpenCutList* متوفرة الآن
       ! حدّث للحصول إلى آخر الميزات
     up_to_date: |
-      *OpenCutList* لديك حاليا آخر نسخة من 
+      *OpenCutList* لديك حاليا آخر نسخة من
 
       !*ضع في اعتبارك رعاية هذا المشروع لمساعدتنا في إضافة المزيد من الميزات*
     downloading: التحميل جارٍ
@@ -200,7 +200,7 @@ core:
     manual_download: تحميل يدوي
     zzz: "SketchUp أنا حاليا في وضع السكون بعد التحديث. لإعادتي إلى الوضع الطبيعي، عليك أن تعيد تشغيل "
     success: |
-      ! لقد اكتمل تحديث OpenCutList 
+      ! لقد اكتمل تحديث OpenCutList
 
       أعد تشغيل SKETCHUP لتفعيل التغييرات
     error:
@@ -355,8 +355,8 @@ tab:
       show_hide_block: أظهر / أخفِ المجموعة
       show_hide_blocks: أظهر / أخف كل المجموعات
       scroll_to_block: مُرَّ إلى المجموعة
-      not_available_std_width: لم يحدد العرض *{{ std_dimension_real }}* في العروض النظامية للخامة '{{ material_name }}'.
-      not_available_std_thickness: لم يحدد السمك *{{ std_dimension_real }}* ضمن السمك النظامي للخامة '{{ material_name }}'.
+      not_available_std_width: لم يحدد العرض *{{ std_dimension_real }}* في العروض النظامية للخامة '{{ material_name }}'
+      not_available_std_thickness: لم يحدد السمك *{{ std_dimension_real }}* ضمن السمك النظامي للخامة '{{ material_name }}'
       not_available_std_section: لم يحدد القطاع *{{ std_dimension_real }}* في القطاعات النظامية للخامة '{{ material_name }}'
       add_std_width_to_material: |
         إضافة عرض *{{ std_dimension }}*
@@ -420,7 +420,7 @@ tab:
       thickness_layered: العدد هنا يمثل عدد القطع اللازمة للحصول على كل الطبقات.
       thickness_layered_equation: "**{{ count }}** *قطعة* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *قِطَع* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: "تحذير، هذه القطعة مكونة من قطع فرعية موجودة في عدد {{ count }} طبقات مختلفة: {{ layers }}<br>"
+      multiple_content_layers: "تحذير، هذه القطعة مكونة من قطع فرعية موجودة في عدد {{ count }} وسوم-طبقات مختلفة: {{ layers }}<br>"
       children_warnings: تحذير، هناك عدد {{ count }} إنذار في القطع المجموعة
       children_warnings_plural: تحذير، هناك {{ count }} إنذارات في القطع المجموعة
       children_size_increase: جرى تمديد هذا البعد لـ {{ count }} قِطعٍ / قِطعةً مجموعة
@@ -536,12 +536,12 @@ tab:
       url: رابط
       url_help: |
         الـ *URL* يسمح بتوفير رابط مخصص إلى صفحة خارجية على كل تعريف لقطعة
-      tags: الوسوم
+      tags: الشارات
       tags_help: |
-        تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
-        بوسعك إضافة القدر الذي تشاء من الوسوم.
-        يمكن عندها تصفية القطع الظاهرة في قائمة قِطَعِك بالاعتماد على هذه الوسوم.
-      tags_multiple_info: الوسوم المشتركة فقط هي التي تظهر
+        تمكنك *الشارات* من إضافة كلمات مفتاحية مخصصة لتعريف كل قِطعة.
+        بوسعك إضافة القدر الذي تشاء من الشارات.
+        يمكن عندها تصفية القِطع الظاهرة في قائمة قِطَعِك بالاعتماد على هذه الشارات.
+      tags_multiple_info: الشارات المشتركة فقط هي التي تظهر
       orientation: توجيه
       orientation_locked_on_axis: قفل التوجيه على محاور القطعة
       orientation_locked_on_axis_help: |
@@ -612,15 +612,15 @@ tab:
       part_number_sequence_by_group_help: إن كانت هذه الخاصية محددة فإن ترقيم القِطع سيعاد تعيينه إلى 1 (أو A) في كل مجموعة (قائمة القِطع التي لها نفس الخامة و السمك).
       part_folding: جمع القطع المتماثلة
       part_folding_help: |
-        إن كانت هذه الخاصية مفعلة، فإن القطع المصنوعة من **خشب الجذوع الصلب و الألواح الخشبية و القضبان الخشبية** و التي تشترك في **نفس البعد** مع **نفس الوسوم** و **نفس المساحة النهائية** *(إن لم يكن عرض المساحة مخفيا)* ستجمع في نفس السطر في *قائمة القِطَع*.
+        إن كانت هذه الخاصية مفعلة، فإن القطع المصنوعة من **خشب الجذوع الصلب و الألواح الخشبية و القضبان الخشبية** و التي تشترك في **نفس البعد** مع **نفس الشارات** و **نفس المساحة النهائية** *(إن لم يكن عرض المساحة مخفيا)* ستجمع في نفس السطر في *قائمة القِطَع*.
 
         ستبقى القِطع مختلفة من ناحية إنشاء الملصقات و رسم التقطيعِ التخطيطيّ.
       hide_entity_names: أخف أسماء المثيلات
       hide_entity_names_help: إن كانت هذه الخاصية محددة فإن **أسماء المثيلات** الخاصة بالقِطع لن تعرض.
       hide_descriptions: أخف الأوصاف
       hide_descriptions_help: إن كان هذا الخيار محددا، فإن **الأوصاف** الموضوعة على القِطَع لن تعرض.
-      hide_tags: أخف الوسوم
-      hide_tags_help: إن كانت هذه الخاصية محددة، فستخفى **الوسوم**.
+      hide_tags: أخف الشارات
+      hide_tags_help: إن كانت هذه الخاصية محددة، فستخفى **الشارات**.
       hide_cutting_dimensions: أخف الأبعاد الأولية
       hide_cutting_dimensions_help: إن كانت هذه الخاصية محددة فإن الأبعاد **الأولية** للقطع ستخفى.
       hide_bbox_dimensions: أخف الأبعاد النهائية
@@ -658,11 +658,11 @@ tab:
       property_name: التسمية
       property_count: العدد
       property_edge_pattern: عدد الحواشي
-      property_tags: الوسوم
+      property_tags: الشارات
       property_thickness_layer_count: عدد الطبقات
-      tags: الوسوم
-      tags_help: قائمة الوسوم المخصصة المعروضة في نافذة خصائص القِطع.
-      tags_placeholder: أضف وسما
+      tags: الشارات
+      tags_help: قائمة الشارات المخصصة المعروضة في نافذة خصائص القِطع.
+      tags_placeholder: أضف شارة
     list:
       filters: مُرَشِّح
       filters_warning_0: يخفي هذا المُرَشِّح كل القطع!
@@ -671,7 +671,7 @@ tab:
       edge_material_names_filter: تصفية وفق خامة الحواشي
       veneer_material_names_filter: ترشيح وفقا لخامة قشرة الخشب
       names_filter: تصفية بالتسميات
-      tags_filter: تصفية بالوسوم
+      tags_filter: تصفية بالشارات
       tags_filter_any: كل الشارات
       dimensions_help: فهم الأبعاد
       summary: ملخص
@@ -758,7 +758,7 @@ tab:
       entity_names: أسماء المثيلات
       description: تعليق وصفيّ
       url: رابط
-      tags: الوسوم
+      tags: الشارات
       edge_ymin: طول الحاشية 1
       edge_ymax: طول الحاشية 2
       edge_xmin: عرض الحاشية 1
@@ -1407,7 +1407,7 @@ tab:
         part_length: الطول
         part_width: العرض
         part_thickness: السُّمك
-        part_tags: الوسوم
+        part_tags: الشارات
         part_batch: طقم
         part_edge_ymin: طول الحاشية 1
         part_edge_ymax: طول الحاشية 2
@@ -1894,7 +1894,7 @@ tab:
       definition_name: التعريف
       description: تعليق وصفيّ
       url: رابط
-      tags: الوسوم
+      tags: الشارات
       layer_name: وسم
       snapto: وصل
       snapto_none: لا شيء
@@ -1936,8 +1936,8 @@ tab:
       show_hidden_instances_help: إن تم تفعيل هذا الخيار، ستعرض المثيلات المخفية في النموذج في شجرة البُنية.
       hide_descriptions: أخف الأوصاف
       hide_descriptions_help: إن كان هذا الخيار محددا، فإن **الأوصاف** الموضوعة على القِطَع لن تعرض.
-      hide_tags: أخف الوسوم
-      hide_tags_help: إن كانت هذه الخاصية محددة، فستخفى **الوسوم**.
+      hide_tags: أخف الشارات
+      hide_tags_help: إن كانت هذه الخاصية محددة، فستخفى **الشارات**.
       minimize_on_set_active: تصغير بعد '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: إن تم تفعيل هذا الخيار، ستصغر نافذة OpenCutList عند استخدام وظيفة *'$t(tab.outliner.tooltip.set_active_node)'*
     snippet:
@@ -2017,7 +2017,7 @@ tab:
         bbox_width: العرض
         bbox_thickness: السُّمك
         material: الخامة
-        tags: الوسوم
+        tags: الشارات
       tooltip:
         errors: لن تُستورد هذه القطعة لأنها تحتوي على الأخطاء التالية
         warnings: ستستورد هذه القطعة و لكنها تحتوي على التحذيرات التالية
@@ -2431,7 +2431,10 @@ tool:
     action_2_state_0_merge_status: اسحب حتى بلوغ التجاويف المجاورة من أجل واجهة مشتركة
     action_3: إنشاء ظهر
     action_3_status: أنشئ ظهرا يُغلق تجويفًا تشكّله مجموعة من القِطع الموجودة
+    action_3_state_0_status: انقر داخل تجويف لإنشاء ظهر في الفتحةالمقابلة للمنظر
+    action_3_state_0_merge_status: اسحب نحو التجاويف المجاورة لإنشاء ظهر مشترك
     action_option_group_groove: أخدود
+    action_2_option_group_offset: الخلوص
     action_option_group_thickness: السُمك
     action_option_group_overlay: التركيب
     action_option_group_axes: المحاور
@@ -2454,8 +2457,11 @@ tool:
     action_option_thickness_thickness: السُمك
     action_option_thickness_thickness_status: يحدد سُمك الألواح
     action_option_overlay_inset_status: "واجهة مدمجة كليا: تُركَّب داخل الفتحة، على مستوى الوجه الأمامي"
+    action_3_option_overlay_inset_status: "ظهر يتبع الأخدود: يتم وضعه بين أخاديد مُشغَّلة في القِطع المحيطة بالفتحة"
     action_option_overlay_full_overlay_status: "واجهة متراكبة تماما: تُركَّب على الوجه الأمامي، وتغطي الألواح الخارجية للخزانة تماما و تبلغ منتصف سُمك الألواح الداخلية"
     action_3_option_overlay_full_overlay_status: "ظهر متراكب: يُركَّب على مؤخرة الخزانة، ويغطي ألواحها الخارجية و يبلغ منتصف سُمك الألواح الداخلية، دون أي عملية تشغيل"
+    action_option_overlay_against_protrusions_status: "واجهة متراكبة بين البروزات: تُركَّب على الألواح المحاذية للفتحة، وتُكيف على الألواح البارزة"
+    action_3_option_overlay_against_protrusions_status: "ظهر متراكب بين البروزات: يُركَّب على الألواح المحاذية للفتحة، ويُكيف على الألواح البارزة (جوانب بارزة)، دون أي تشغيل"
     action_option_measure_type_inside_status: وضع السُمك داخل النقطة المستهدفة
     action_option_measure_type_centered_status: توسيط السُمك على النقطة المستهدفة
     action_option_measure_type_outside_status: وضع السُمك خارج النقطة المستهدفة
@@ -2498,6 +2504,7 @@ tool:
       no_front_panel_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
       invalid_back_panel_seed: لا يسمح هذا النوع من القِطع بإنشاء ظهر
       invalid_back_panel_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
+      invalid_back_panel_cavity: لا يوجد تجويف مفتوح في الجهة المقابلة للمنظر في هذا الموضع
       no_back_panel_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
       too_complex_cavity: الشكل الهندسي أعقد من أن تكتشف التجاويف فيه
       closed_front_panel_opening: هذه الفتحة مغلقة مسبقًا بواجهة
@@ -2505,13 +2512,17 @@ tool:
       divider_number_overflow: يتعذر وضع {{ number }} فواصل في هذا التجويف
       front_panel_number_overflow: يتعذّر توزيع {{ number }} واجهات على هذه الفتحة
       back_panel_number_overflow: يتعذّر توزيع {{ number }} أظهر على هذه الفتحة
+      back_panel_severs_parts: "سيقطع الأخدود كل شيء: {{ names }}. قلّل عمقه"
       module_file_not_found: "ملف الوحدة غير موجود: {{ file }}"
       module_file_invalid: "تعذّر تحميل ملف الوحدة: {{ file }}"
       module_file_invalid_name: "اسم ملف غير صالح: {{ name }}"
       module_file_save_failed: "تعذّر حفظ ملف الوحدة: {{ name }}.skp"
       module_stretch_failed: تعذّر تمديد الوحدة إلى هذه الأبعاد
     warning:
+      no_back_panel_machining: "لا يوجد أي أخدود يمكن أن تجرى له عملية التشغيل: لا توجد قطعة مجاورة تحيط بالظهر عند هذا العمق"
       no_module_file: لا توجد ملفات .skp في هذا المجلد
+      module_axis_no_scale: "الوحدة غير قابلة للتمديد على {{ axis }}: يمنع ذلك سلوكُ العنصر"
+      module_axis_curve_intersect: "الوحدة غير قابلة للتمديد على {{ axis }}: أحد مستويات القطع يمر عبر منحنى غير قابل للتمديد"
     success:
       part_created: "تم إنشاء قطعة جديدة: {{ name }}"
       part_created_plural: "{{ count }} قِطع جديدة أُنشئت : {{ name }}"
@@ -2537,9 +2548,11 @@ tool:
     action_4_status: وزع قِطعة على محور معين
     action_4_state_1_status: انقر لتحديد نقطة القياس الأولى
     action_4_state_2_status: انقر لتحديد نقطة القياس الثانية أو أدخل مسافة معينة
+    action_5: تفاعل
     action_5_status: فتح باب أو إغلاقه
     action_5_state_0_status: انقر على باب لفتحه أو إغلاقه، أو اسحبه لضبط مقدار فتحه
     action_5_state_0_amend_status: أدخل زاوية لضبط قيمة الفتح، أو انقر على باب لفتحه أو إغلاقه
+    action_5_state_20_status: اسحب لضبط فتحة الباب ثم حرّر للتأكيد
     action_option_group_copy_measure_type: قياس
     action_option_group_move_measure_type: قياس
     action_option_group_axes: المحاور
@@ -2556,6 +2569,7 @@ tool:
       copies_disable_mirror: النسخ المتعدد يعطل خيار '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       not_door: هذه القِطعة ليست بابًا مزوّدًا بمفصلات
+      incoherent_door: مفصلات هذا الباب لا تدور حول المحور نفسه
   smart_reshape:
     title: أعد التشكيل
     action_0: مدِّد
@@ -2564,6 +2578,7 @@ tool:
     action_0_state_1a_status: انقر على مستوٍ قاطعٍ لتحريكه
     action_0_state_1b_status: أضف مستويا قاطعا
     action_0_state_1c_status: احذف مستويا قاطعا
+    action_0_state_1d_status: انقر لتحريك الشكل الهندسي الواقع بين مستويي القطع
     action_0_state_10_status: اسحب مستويا قاطعا لتحريكه
     action_0_state_11_status: انقر لإضافة المستوي القاطع
     action_0_state_12_status: انقر على مستوٍ قاطعٍ لحذفه
@@ -2572,6 +2587,9 @@ tool:
     action_1_status: إنشاء سلسلة من القِطع انطلاقاً من جسم مغلق أو رسم خطوط إنشائية
     action_1_state_0_status: انقر على جسم مغلق أو مجموعة خطوط إنشائية لتحديد الهندسة المرجعية
     action_1_state_1_status: حدد الوجوه التي ستمدد
+    action_1_rollover_face_status: الوجه الذي يمر فوقه المؤشر
+    action_1_select_similar_status: تحديد كل الأوجه ذات الشكل المطابق
+    action_1_select_all_edges_status: تحديد كل الحواف المتلامسة
     action_2: لَحْم
     action_2_status: لَحْم عدة قِطع في قطعة واحدة
     action_2_state_0_status: حدد القطعة A
@@ -2584,12 +2602,26 @@ tool:
     action_4_status: إنشاء قطعة تقابل تقاطع عدة قِطع
     action_4_state_0_status: حدد القطعة A
     action_4_state_1_status: حدد القطعة B
+    action_5: تقسيم
+    action_5_status: تقسيم قِطعة أو أكثر بمستوِ
+    action_5_state_1_status: اضغط على الوجه المرجعي في أي موضع في النموذج
+    action_5_state_1_arrows_status: من نهاية التحديد، قسّم بالتعامد مع محور
+    action_5_state_1b_status: انقر لوضع نقطة {{ index }} من 3 نقاط من المستوي المرجعي، في أي موضع في النموذج
+    action_5_state_1b_arrows_status: القفل على محور
+    action_5_state_1c_status: انقر للتأكيد على المستوي المرجعي أو اضغط على Esc لإزالة النقطة الأخيرة
+    action_5_state_2_status: انقر لتقسيم القِطع أو أدخل مسافة
+    action_5_state_2a_status: انقر لإدراج مستوٍ قاطع أو أدخل مسافة
+    action_5_state_2_arrows_status: غير المحور
+    action_5_state_3_status: انقر على جانب القِطعة لإبقائها
+    action_5_state_4_status: انقر لتقسيم القِطع إلى {{ number }} قِطعة أو أدخل مسافات للتباعد
     action_option_group_thickness: السُمك
     action_option_group_stretch_measure_type: قياس
     action_option_group_axes: المحاور
     action_option_group_paneling_joint_type: وصلة
     action_option_group_paneling_direction: الاتجاه
     action_option_group_csg_operation: عملية
+    action_option_group_slice_mode: النمط
+    action_option_group_slice_reference: المرجع
     action_option_group_options: الخيارات
     action_option_thickness_thickness: السُمك
     action_option_thickness_thickness_status: يحدد سُمك الألواح
@@ -2602,6 +2634,10 @@ tool:
     action_option_paneling_joint_type_miter_status: وصلة مشطوبة
     action_option_paneling_direction_inward_status: باتجاه الداخل
     action_option_paneling_direction_outward_status: باتجاه الخارج
+    action_option_slice_mode_slice_status: قسّم القِطع و أبق على كل الأجزاء
+    action_option_slice_mode_cut_status: قسّم القطع و أبق على جزء واحد فقط
+    action_option_slice_reference_face_status: المستوي المرجعي المأخوذ من وجه
+    action_option_slice_reference_points_status: المستوي المرجعي الناشئ انطلاقا من 3 نقاط
     action_option_options_centered_status: توسيط العناصر الممددة
     action_option_options_make_unique_status: جعل العناصر المُعاد تشكيلها فريدة
     action_option_options_keep_a: الاحتفاظ بـ A
@@ -2610,6 +2646,9 @@ tool:
     action_option_options_keep_b_status: الاحتفاظ بمثيلات B بعد العملية
     action_option_options_remove_unused_definitions_status: حذف تعريفات العناصر التي لم تعد مستخدمة بعد العملية
     action_option_options_reuse_definition: إعادة استخدام القِطع
+    action_option_options_reuse_definition_status: شارك تعريف العنصر نفسه عبر قطع تحمل الشكل ذاته
+    action_option_options_reuse_definition_mirrored: اعكس التخطيط بخاصية المرآة
+    action_option_options_reuse_definition_mirrored_status: اعكس التخطيط بخاصية المرآة للقِطع ذات الشكل الواحد المقابلة لبعضها
     notify:
       validate_a: أكّد للانتقال إلى تحديد B
       validate_b: أكّد لتطبيق العملية
@@ -2662,6 +2701,7 @@ tool:
     warning:
       no_material: لا توجد خامة
       no_material_type: "'{{ type }}' لا توجد خامة من نوع"
+      selection_disable_instances_all: التحديد بالمستطيل يعطّل الخيار '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: المجسم المستهدف ليس قِطعة (عنصر)
       not_edge: الوجه المستهدف ليس حاشية لوح

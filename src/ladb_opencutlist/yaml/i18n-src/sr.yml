@@ -131,9 +131,12 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Nacrtaj komade
+      smart_build: Izgradi delove
       smart_handle: Upravljaj komadima
+      smart_reshape: Preoblikuj delove
       smart_paint: Oboji komade
       smart_axes: Orijentacija komada
+      smart_join: Spoji delove
       smart_export: Izvezi komade
   messagebox:
     dir_override: |
@@ -171,6 +174,8 @@ core:
       Došlo je do greške prilikom izvoza u *{{ path }}*.
        **{{ error }} **
     unsupported_file_format: "Format datoteke nije podržan : **{{ format }}**"
+    unsupported_skp_version: |
+      SKP datoteka je napravljena novijom verzijom SketchUp-a: {{ version }}
   success:
     exported_to: Uspešno izvezeno u {{ path }}.
     copied_to_clipboard: Kopirano u privremenu memoriju
@@ -215,16 +220,21 @@ core:
       *Snimanje prilagođenih podešavanja omogućava vam zadržavanje trenutnih podešavanja obrasca globalno kako biste ih mogli ponovo koristiti u svim svojim modelima.*
 
       Unesite ime za podešavanja:
+    rename_prompt_title: Preimenovanje
+    rename_prompt: Unesite novi naziv preseta **"{{ name }}"**
     delete_confirm_title: Uklanjanje
     delete_confirm: Da li ste sigurni da želite obrisati podešavanja **"{{ name }}"**?
     override_confirm_title: Ažuriranje
     override_confirm: Potvrđujete li izmenu podešavanja **"{{ name }}"** sa ovim parametrima?
+    new_error: Nije moguće, preset **"{{ name }}"** već postoji
     new_success: Podešavanja **"{{ name }}"** su kreirana
     override_success: Podešavanja **"{{ name }}"** su izmenjena
     restore_success: Obrazac je popunjen sa unapred definisanim podešavanjima **"{{ name }}"**
+    rename_success: Preset **"{{ name }}"** preimenovan u **"{{ new_name }}"**
     delete_success: Podešavanja **"{{ name }}"** su izbrisana
     tooltip:
       save_to: Ažurirajte podešavanja '{{ name }}'
+      rename: Preimenuj preset '{{ name }}'
       delete: Izbriši podešavanja '{{ name }}'
     dictionary:
       component_textinput_color: Paleta boja
@@ -243,6 +253,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -265,6 +278,10 @@ core:
       remove: Ukloni boju
     textinput_code:
       snippets: Primeri formula
+      help: Otkucajte **@** da otvorite listu promenljivih podataka.
+    textinput_file:
+      browse: Pregledaj
+      browse_library: Pregledaj i kopiraj u biblioteku
     textinput_size:
       quantity: Količina
     three_viewer:
@@ -286,6 +303,29 @@ core:
       failed_to_load: |
         Nije moguće otvoriti dokumentaciju.
         Proverite da li ste povezani na Internet.
+  solid:
+    error:
+      empty: Telo ne sadrži nikakvu geometriju
+      empty_named: „{{ name }}” ne sadrži nikakvu geometriju
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
+      non_manifold_edges: Telo sadrži {{ count }} non-manifold ivicu
+      non_manifold_edges_plural: Telo sadrži {{ count }} non-manifold ivica
+      non_manifold_edges_named: „{{ name }}” sadrži {{ count }} non-manifold ivicu
+      non_manifold_edges_named_plural: „{{ name }}” sadrži {{ count }} non-manifold ivica
+      open_edges: Telo sadrži {{ count }} otvorenu ivicu
+      open_edges_plural: Telo sadrži {{ count }} otvorenih ivica
+      open_edges_named: „{{ name }}” sadrži {{ count }} otvorenu ivicu
+      open_edges_named_plural: „{{ name }}” sadrži {{ count }} otvorenih ivica
+      locked_instances: "Operacija ne može da izmeni zaključanu instancu: {{ list }}"
+    rebuild:
+      error:
+        no_segment: U izboru nema upotrebljivih konstrukcionih linija
+        no_face: Nije bilo moguće rekonstruisati nijednu zatvorenu komplanarnu petlju
+  library:
+    libraries: Biblioteke
+    user: Moja biblioteka
+    bundled: OCL biblioteka
+    family_modules: Moduli
 tab:
   cutlist:
     label: Delovi
@@ -363,6 +403,7 @@ tab:
       flipped: Ovaj komad je simetrično okrenut u odnosu na svoju definiciju
       symmetrical: Detekcija preslikanog dela je onemogućena na ovom delu
       ignore_grain_direction: Orijentacija teksture se na ovom komadu zanemaruje
+      follow_grain_direction: Detekcija kontinuiteta teksture je uključena na ovom delu
       auto_oriented: Ovaj deo je automatski reorijentisan
       oko_label_filter: Uključi / Isključi ovu oznaku
       add_label_filter: Filtriranje na '{{ label }}'
@@ -387,11 +428,21 @@ tab:
       children_size_increase: Ova dimenzija se uvećava za iznos za {{ count }} grupisanih delova
       invalid_final_area: Oprez, ovo sumirano polje nije moguće izračunati jer {{ count }} dio (od {{ total }}) ima pogrešno polje
       invalid_final_area_plural: Oprez, ovo sumirano područje nije moguće izračunati jer delovi {{ count }} (od {{ total }}) imaju pogrešno područje
+      is_instance_name: Opis ovog dela preuzet je iz naziva instance grupe
       is_dynamic_attributes_name: Opis ovog dela izdvojen je iz atributa 'Name' dinamičke komponente
       has_edges: Ovaj deo sadrži {{ count }} kant trake
       has_edges_plural: Ovaj deo sadrži {{ count }} kantovanih ivica
       has_faces: Ovaj komad sadrži {{ count }} obložene strane
       has_faces_plural: Ovaj komad sadrži {{ count }} obloženih strana
+      size_increased_0: |
+        Uvećano za dodatak Materijala
+        ({{ increase_1 }})
+      size_increased_1: |
+        Uvećano za dodatak Dela
+        ({{ increase_2 }})
+      size_increased_2: |
+        Uvećano za dodatak Materijala i Dela
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: Smanjeno za debljinu kant trake ({{ decrement }})
       edge_ymin: Dužina ivice 1
       edge_ymax: Dužina ivice 2
@@ -506,9 +557,20 @@ tab:
       symmetrical_help: |
         Ako je ovo polje označeno, detekcija *simetrično okrenutog komada* neće biti primenjena na ovaj komad.
       ignore_grain_direction: Pravac teksture
+      ignore_grain_direction_help: |
+        Ova opcija omogućava da se za ovaj deo zanemari smer teksture definisan na materijalu.
       ignore_grain_direction_0: Šara prati dužinu
       ignore_grain_direction_1: Zanemari pravac teksture
+      follow_grain_direction: Kontinuitet teksture
+      follow_grain_direction_help: |
+        Uključivanjem ove opcije instance ovog dela mogu se smatrati delovima raspoređenim u **Kontinuitetu teksture** sa susednim delovima koji dele:
+        - istu *Grupu kontinuiteta teksture*
+        - istu Ravan
+        - istu Orijentaciju
+        - isti Materijal sa teksturom
+        - istu Debljinu
       follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Detekcija kontinuiteta teksture uključena
       axes: Ose
       axes_help: Reorganizujte dimenzije tako da odgovaraju željenim bojama ose u vašem delu.
       axes_tip: |

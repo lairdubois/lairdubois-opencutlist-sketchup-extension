@@ -7,7 +7,7 @@ _disabled_msg: |
   To help complete the translation, please visit the [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: To apply all the changes, you must **close** and **reopen** the OpenCutList window.
-_description: Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)
+_description: Cutlist and Cutting Diagram Generator for Sheet Goods and Dimensional Lumber for Woodworkers. Open Source, crowdfunded and easy to use ;)
 default:
   minimize: Minimize
   maximize: Maximize
@@ -1128,7 +1128,7 @@ tab:
       option_stacking_2: Widthwise
       option_stacking_3: All possibilities
       option_keep: Off-cuts minimal size
-      option_keep_help: Off-cuts that are larger than the minimum length and width are marked **to be kept**.
+      option_keep_help: Offcuts that are larger than the minimum length and width are marked **to be kept**.
       option_std_bar_dimensional: Standard board
       option_std_bar_edge: Standard Edge Banding
       option_std_bar_help: |
@@ -1157,7 +1157,7 @@ tab:
       option_scrap_sheet_veneer_sizes: Veneer Sheet Off-cuts
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
       option_scrap_sheet_sizes_help: |
-        List all your off-cut sheet goods or veneers to be considered first in the cutting diagram.
+        List all your offcut sheet goods or veneers to be considered first in the cutting diagram.
         Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the off-cut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
@@ -1366,7 +1366,7 @@ tab:
       option_rectangle_leftover_mode_y: Across the length of the panel
       option_irregular_allowed_rotations: Allowed Rotations
       option_irregular_allowed_rotations_help: |
-        Sets the allowed rotations for part placing.
+        Sets the increments of rotation angles for placing parts.
 
         *Materials with grain can only be rotated by 0 and 180°.*
       option_irregular_allowed_rotations_0: None
@@ -1534,7 +1534,7 @@ tab:
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identifiers
         option_texts_help: |
-          Enables export of part identification texts and color selection.
+          Allows you to enable the export of part identification text and to select their colors.
         option_leftovers: Offcuts
         option_leftovers_help: |
           Allows you to enable the export of offcuts and select their colors.
@@ -1674,7 +1674,7 @@ tab:
       option_pins: Callouts
       option_pins_hidden: Display
       option_pins_hidden_0: With callouts
-      option_pins_hidden_1: No callouts
+      option_pins_hidden_1: Without callouts
       option_pins_hidden_help: Shows or hides the part's callouts with number or designation.
       option_pins_colored: Color
       option_pins_colored_0: Without color
@@ -2504,6 +2504,7 @@ tab:
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Dutch*)
       - Zoltán Nagy, Roland Kovács (*Hungarian*)
       - Milan Divovic (*Serbian*)
+      - Erhan Kutslev (*Bulgarian*)
     credits_description: |
       The development of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -3067,7 +3068,7 @@ tool:
         Failed to load the SKP file : {{ file }}
       failed_to_load_skm_file: |
         Unable to load the SKM file: {{ file }}
-      unsupported_skm_load: Loading SKM files requires SketchUp 2019.2 or later
+      unsupported_skm_load: Loading SKM material files requires SketchUp 2019.2 or later
       failed_to_load_hardware: |
         Unable to load the hardware: {{ file }}
       invalid_hardware: |
