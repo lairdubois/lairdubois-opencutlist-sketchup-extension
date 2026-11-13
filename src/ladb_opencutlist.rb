@@ -36,7 +36,7 @@ module Ladb
       when 'de'
         ex.description = 'Holzlisten- und Schnittplänegenerator für Platten und Stangen für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)'
       when 'es'
-        ex.description = 'Generador de lista de piezas y diagrama de corte de tableros y listones para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)'
+        ex.description = 'Generador de listado de piezas y diagrama de corte de tableros y listones para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)'
       when 'fr'
         ex.description = 'Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
       when 'he'
@@ -66,7 +66,7 @@ module Ladb
       when 'zh'
         ex.description = '木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)'
       else
-        ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
+        ex.description = 'Cutlist and Cutting Diagram Generator for Sheet Goods and Dimensional Lumber for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##
       end
 

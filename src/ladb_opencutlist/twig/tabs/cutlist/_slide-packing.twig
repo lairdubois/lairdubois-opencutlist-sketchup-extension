@@ -407,7 +407,7 @@
                         <span class="ladb-horizontal-left-separator pull-right"><strong>{{ 'tab.cutlist.packing.list.efficiency'|i18next }} : </strong>{{ (bin.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</span>
                         {% if bin.cut_length %}<span class="pull-right"><strong>{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : </strong>{{ bin.cut_length }}</span>{% endif %}
                         {% if group.material_is_2d %}<span class="pull-left"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}
-                        <span{% if group.material_is_2d %} class="ladb-horizontal-left-separator pull-left"{% endif %}>{{ bin.number_of_items }}&nbsp;{{ ('tab.cutlist.packing.list.parts')|i18next({ 'count':bin.number_of_items })|lower }}</span>
+                        <span{% if group.material_is_2d %} class="ladb-horizontal-left-separator pull-left"{% endif %}>{{ bin.number_of_items }}&nbsp;{{ ('tab.cutlist.packing.list.parts')|i18next({ 'count':bin.number_of_items }) }}</span>
                         {% if bin.number_of_leftovers_to_keep > 0 %}<span class="ladb-horizontal-left-separator pull-left">{{ bin.number_of_leftovers_to_keep }}&nbsp;{{ ('tab.cutlist.packing.list.leftovers_to_keep')|i18next({ 'count':bin.number_of_leftovers_to_keep })|lower }}</span>{% endif %}
                     </td>
                 </tr>
