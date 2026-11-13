@@ -217,7 +217,7 @@ core:
     user_defaults: Meine Voreinstellung
     new: Neue Voreinstellung
     new_prompt: |
-      *Durch das Erstellen einer benutzerdefinierten Voreinstellung können Sie die aktuellen Einstellungen des Formulars global beibehalten, damit Sie diese in allen Ihren Modellen wiederverwenden können.*
+      *Durch das Erstellen einer benutzerdefinierten Voreinstellung können Sie die aktuellen Parameter des Formulars global beibehalten, damit Sie diese in allen Ihren Modellen wiederverwenden können.*
 
       Geben Sie den Namen der Voreinstellung ein:
     rename_prompt_title: Umbenennung
@@ -1463,7 +1463,7 @@ tab:
         summary: Zusammenfassung
         cached: Aus dem Cache geladen
         trimming: Rand
-        settings: Einstellungen
+        settings: Parameter
         stats: Statistiken
         time: Zeitaufwand
         total_efficiency: Gesamteffizienz
@@ -1601,7 +1601,7 @@ tab:
       option_cutting_marks_0: Keine
       option_cutting_marks_1: Sichtbar
       option_formula: Feld
-      option_size: Größe
+      option_size: Abmessung
       option_custom_formula: Formel
       option_anchor: Verankerung
       option_anchor_start: Anfang - Unten
@@ -1814,18 +1814,18 @@ tab:
         Aktiviert die Erkennung von Kreisen und Bögen.
 
         *Diese Option erkennt keine anderen Kurventypen.*
-      option_merge_holes: Zusammenführungsmodus
+      option_merge_holes: Zerlegung
       option_merge_holes_0: Einfach
       option_merge_holes_1: Kontur + Bohrungen + Bearbeitungszugabe
       option_merge_holes_help: |
         **Einfach**
-        Die Bauteilform wird mit einem Layer pro Tiefe exportiert.
+        Die Form des Teils wird zusammen mit der Projektion jeder Fläche auf eine ihrer Tiefe entsprechende Lage exportiert.
 
         **Kontur + Bohrungen + Bearbeitungszugabe**
-        Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungs-Überlaufabstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Kavitäten befinden.
+        Aktiviert die Trennung der Außenkontur der Teile von deren Bohrungen sowie die Berechnung der Bearbeitungszugabe für die Flächen am Rand der Kontour und der Hohlräume.
       option_merge_holes_overflow: Bearbeitungszugabe
       option_merge_holes_overflow_help: |
-        Legt den Bearbeitungszugabe für Flächen an den Grenzen von Konturen und Fächern fest.
+        Legt die Bearbeitungszugabe für Flächen an den Grenzen von Konturen und Fächern fest.
       option_include_paths: Pfade
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Kanten verwenden, die nicht mit einer Fläche verbunden sind
@@ -2197,7 +2197,7 @@ tab:
         An dieser Stelle können Sie Teile, als rechteckige Volumen (quaderförmig), aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
         Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
 
-        Klicken Sie auf **CSV-Datei öffnen** zum Starten.
+        Klicken Sie auf **CSV-Datei öffnen**, um den Vorgang zu starten.
       load:
         title: Laden einer CSV-Datei
         info_0: |
@@ -2293,7 +2293,7 @@ tab:
         option_front_part_layer_name: Frontteile
         option_front_part_layer_name_help: Tag für Frontteile.
         option_back_part_layer_name: Rückwände
-        option_back_part_layer_name_help: Tag für Rückwände.
+        option_back_part_layer_name_help: Tag für die Rückwände der Korpusse.
         option_machining_material_name: Bearbeitungen
         option_machining_material_name_help: Material zum Auftragen auf **Bearbeitungen**.
         option_machining_layer_name: Bearbeitungen
@@ -2431,7 +2431,7 @@ tab:
     length_format_2: Ingenieurswesen
     length_format_3: $t(default.fractional)
     length_precision: Genauigkeit
-    suppress_units_display: Längeneinheiten für jeden Wert anzeigen
+    suppress_units_display: Längeneinheiten bei jedem Wert anzeigen
     mass_unit: Masseneinheit
     mass_precision: Genauigkeit
     currency_symbol: Währungssymbol
@@ -2504,6 +2504,7 @@ tab:
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Niederländisch*)
       - Zoltán Nagy, Roland Kovács (*Ungarisch*)
       - Milan Divovic (*Serbisch*)
+      - Erhan Kutslev (*Bulgarisch*)
     credits_description: |
       Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
       In diesem Sinn ist auch sie *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
@@ -2803,7 +2804,7 @@ tool:
     action_0_state_1a_status: Klicken Sie auf eine Trennebene, um sie zu verschieben
     action_0_state_1b_status: Trennebene hinzufügen
     action_0_state_1c_status: Trennebene löschen
-    action_0_state_1d_status: Klicken Sie hier, um die Geometrie zwischen den beiden Schnittebenen zu verschieben
+    action_0_state_1d_status: Klicken Sie hier, um die Geometrie zwischen den beiden Trennebenen zu verschieben
     action_0_state_10_status: Ziehen Sie die Trennebene, um sie zu verschieben
     action_0_state_11_status: Klicken Sie, um die Trennebene hinzuzufügen
     action_0_state_12_status: Klicken Sie auf eine Trennebene, um sie zu löschen
@@ -2878,7 +2879,7 @@ tool:
       validate_a: Bestätigen Sie, um zur Auswahl von B zu gelangen
       validate_b: Bestätigen Sie, um den Vorgang auszuführen
     error:
-      curve_intersect: Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
+      curve_intersect: Eine der Trennebenen verläuft durch eine nicht dehnbare Kurve
       # @no-translate
       slice_number_overflow: "{{ number }} Stücke können nicht auf die Auswahl verteilt werden"
   smart_paint:

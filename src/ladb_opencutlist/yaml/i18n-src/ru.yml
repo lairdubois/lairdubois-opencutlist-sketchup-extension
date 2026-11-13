@@ -6,7 +6,7 @@ _disabled_msg: |
 
   Чтобы помочь завершить перевод, обратитесь к [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
-_reload_msg: Для того, чтобы принять все изменения, необходимо **закрыть** и **открыть** заново плагин OpenСutList.
+_reload_msg: Для того, чтобы принять все изменения, необходимо **закрыть** и **открыть** заново плагин OpenCutList.
 _description: Плагин расчета карт раскроя для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)
 default:
   minimize: Свернуть
@@ -344,7 +344,7 @@ tab:
     highlight_parts: Просмотр деталей в модели
     edit_part_properties: Редактировать свойства детали
     edit_part_axes_properties: Редактировать свойства (осей) детали
-    edit_part_edges_properties: Редактировать свойства (кромки) детали
+    edit_part_edges_properties: Редактировать свойства (торцы) детали
     edit_part_faces_properties: Редактировать свойства детали (Шпон)
     part_drawing_type_1: 2D Вид спереди
     part_drawing_type_2: 2D Вид сзади
@@ -430,7 +430,7 @@ tab:
       invalid_final_area_plural: Внимание, эта общая площадь не может быть вычислена, поскольку {{ count }} составляющие части (of {{ total }}) имеют некорректную площадь
       is_instance_name: Наименование этой детали извлекается из имени экземпляра группы
       is_dynamic_attributes_name: Описание этой детали извлечено из атрибута 'Name' динамического компонента
-      has_edges: Эта деталь содержит {{ count }} кромки
+      has_edges: Эта деталь содержит кромку на {{ count }} торцах
       has_edges_plural: Эти детали содержат {{ count }} кромки
       has_faces: Эта деталь содержит {{ count }} облицованную поверхность
       has_faces_plural: Эта деталь содержит {{ count }} облицованные поверхности
@@ -450,7 +450,7 @@ tab:
       edge_xmax: Кромка по ширине 2
       face_zmin: Тыльная
       face_zmax: Лицевая
-      dblclick_to_copy_all_edges: Дважды щелкните здесь, чтобы скопировать это значение на все остальные кромки
+      dblclick_to_copy_all_edges: Дважды щелкните здесь, чтобы скопировать это значение на все остальные торцы
       dblclick_to_copy_all_faces: Дважды щелкните здесь, чтобы скопировать это значение на другую поверхность
       dblclick_to_sort_axes: Дважды щелкните здесь, чтобы автоматически ориентировать оси в соответствии с размерами детали
       part_axes: Внутренние оси детали
@@ -610,7 +610,7 @@ tab:
         <i class='ladb-opencutlist-icon-warning'></i> Детали с одинаковым описанием будут разделены, если атрибут *Name* не имеет одинакового значения.
       part_number_with_letters: Использовать буквы для нумерации деталей
       part_number_with_letters_help: Если эта опция активна, детали в группах списка элементов нумеруются с помощью букв (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: Нумерация каждой группы
+      part_number_sequence_by_group: Сбросить нумерацию деталей для каждой группы
       part_number_sequence_by_group_help: Если эта опция активна, перечисление деталей в каждой группе одного и того же типа и толщины материала будет заново начинаться с 1 (или A).
       part_folding: Группировать идентичные детали
       part_folding_help: |
@@ -1669,7 +1669,7 @@ tab:
     type_1: Массив дерева
     type_2: Панель
     type_3: Погонаж
-    type_4: Кромочный
+    type_4: Кромочная лента
     type_5: Фурнитура
     type_6: Лист шпона
     type_7: Мехобработка
