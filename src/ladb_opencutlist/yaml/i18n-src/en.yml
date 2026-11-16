@@ -1045,244 +1045,6 @@ tab:
           For this estimate to be calculated correctly:
           - the used materials must have at least a density and a price.
           - the used hardware must have at least a weight and a price.
-    # @no-translate
-    cuttingdiagram:
-      title: Cutting Diagram
-      start_msg: Optimization running
-      end_msg: Optimization finished
-      options_material: Material
-      options_config: Configuration
-      options_display: Display
-      option_bar_folding_dimensional: Group Similar Boards
-      option_bar_folding_edge: Group Similar Edge Bandings
-      option_bar_folding_0: "No"
-      option_bar_folding_1: "Yes"
-      option_bar_folding_help: Group boards or edge bandings containing the same parts and cuts.
-      option_sheet_folding_good: Group Similar Panels
-      option_sheet_folding_veneer: Group Similar Veneer Sheets
-      option_sheet_folding_0: "No"
-      option_sheet_folding_1: "Yes"
-      option_sheet_folding_help: Group panels or sheets having the same parts and cuts.
-      option_hide_part_list: Parts List
-      option_hide_part_list_1d_dimensional_0: Displayed for each board
-      option_hide_part_list_1d_edge_0: Displayed for each edge banding
-      option_hide_part_list_2d_good_0: Displayed for each panel
-      option_hide_part_list_2d_veneer_0: Displayed for each veneer sheet
-      option_hide_part_list_1: Hidden
-      option_hide_part_list_1d_help: Display or hide the list of parts for each board or edge banding.
-      option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
-      option_use_names: Part Identification
-      option_use_names_0: Use the number
-      option_use_names_1: Use the designation
-      option_use_names_help: Choose between **number** and **designation** to identify parts on the cutting diagram.
-      option_origin_corner: Position of the Origin
-      option_origin_corner_1d_0: From the left
-      option_origin_corner_1d_1: From the right
-      option_origin_corner_2d_0: Top left corner
-      option_origin_corner_2d_1: Bottom left corner
-      option_origin_corner_2d_2: Top right corner
-      option_origin_corner_2d_3: Bottom right corner
-      option_origin_corner_1d_help: Determines the location of the origin of the coordinate system for displaying parts of dimensional lumber or edge banding.
-      option_origin_corner_2d_help: Determines the location of the origin of the coordinate system for displaying parts on panels.
-      option_full_width_diagram: Full Width Display
-      option_full_width_diagram_0: "No"
-      option_full_width_diagram_1: "Yes"
-      option_full_width_diagram_help: If this option is selected, the cutting diagrams are displayed using the available width. Otherwise, their width follows a fixed scale factor of their real size.
-      option_wrap_length: Wrap Board Length
-      option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
-      option_hide_cross: Off-cuts
-      option_hide_cross_0: Dimensions and Cross
-      option_hide_cross_1: Dimensions Only
-      option_hide_cross_help: Shows or hides the cross indicating parts defined as off-cuts on the diagram.
-      option_highlight_primary_cuts: Primary Cuts
-      option_highlight_primary_cuts_0: On hover only
-      option_highlight_primary_cuts_1: Always visible
-      option_highlight_primary_cuts_help: Allows you to always highlight primary cuts.
-      option_hide_edges_preview: Display of Edge Bandings
-      option_hide_edges_preview_0: Displayed in the cutting diagram
-      option_hide_edges_preview_1: Hidden in the cutting diagram
-      option_hide_edges_preview_help: Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
-      option_part_drawing_type: Shape of Parts
-      option_part_drawing_type_0: Hidden
-      option_part_drawing_type_1: Displaying Front Face
-      option_part_drawing_type_2: Displaying Backside View
-      option_part_drawing_type_help: |
-        Shows or hides the actual shape of parts and their machining on the diagram.
-
-        *This option must be enabled for shapes to be exported.*
-      option_saw_kerf: Blade Thickness
-      option_saw_kerf_help: The width of material removed by the sawblade cut.
-      option_spacing: Spacing
-      option_spacing_help: Minimum spacing between parts.
-      option_trimming: Trimming
-      option_trimming_help_1d: The amount of material at each end of the board or edge banding to be treated as waste.
-      option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
-      option_optimization: Optimization Level
-      option_optimization_help: The optimization level defines the number of computed possibilities, and therefore also the calculation time.
-      option_optimization_0: Medium
-      option_optimization_1: Advanced
-      option_stacking: Stack Identical Parts
-      option_stacking_help: Stacking direction for parts with a common length or width.
-      option_stacking_0: No preference
-      option_stacking_1: Lengthwise
-      option_stacking_2: Widthwise
-      option_stacking_3: All possibilities
-      option_keep: Off-cuts minimal size
-      option_keep_help: Offcuts that are larger than the minimum length and width are marked **to be kept**.
-      option_std_bar_dimensional: Standard board
-      option_std_bar_edge: Standard Edge Banding
-      option_std_bar_help: |
-        Select the standard board or edge banding, which will be duplicated to contain all the parts.
-        This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
-        Edit the material '{{ material_name }}' to update this list.
-      option_std_bar_add: Add a size
-      option_std_bar_none: None
-      option_scrap_bar_dimensional_lengths: Board Off-cuts
-      option_scrap_bar_edge_lengths: Edge Banding Off-cuts
-      option_scrap_bar_lengths_placeholder: length x quantity ; ...
-      option_scrap_bar_lengths_help: |
-        List all your off-cut boards or edge bandings to be considered first in the cutting diagram.
-        Expected format: **L**x**Q**, where **L** is the *length* of the off-cut and **Q** the quantity.
-        Quantity is optional.
-        *Sizes without units are considered to be in model units.*
-      option_std_sheet_good: Standard Panel
-      option_std_sheet_veneer: Standard Veneer Sheet
-      option_std_sheet_help: |
-        Select the standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
-        This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
-        Edit the material '{{ material_name }}' to complete this list.
-      option_std_sheet_add: Add a size
-      option_std_sheet_none: None
-      option_scrap_sheet_good_sizes: Panel Off-cuts
-      option_scrap_sheet_veneer_sizes: Veneer Sheet Off-cuts
-      option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
-      option_scrap_sheet_sizes_help: |
-        List all your offcut sheet goods or veneers to be considered first in the cutting diagram.
-        Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the off-cut and **Q** the quantity.
-        Quantity is optional.
-        *Sizes without units are considered to be in model units.*
-      tooltip:
-        scroll_to_block_1d: Scroll to first board or edge banding
-        scroll_to_block_2d: Scroll to first panel
-        copy_leftovers_to_clipboard: Copy off-cuts to clipboard
-      list:
-        unplaced_parts: Unplaced Parts
-        summary: Summary
-        count: Qty.
-        bar: Board
-        sheet: Panel
-        length: Length
-        width: Width
-        total_length: Σ Length
-        total_area: Σ Area
-        total_part_count: "# Parts"
-        total_used: Total used
-        trimming: Trimming
-        stats: Statistics
-        total_cut_count: Number of Cuts
-        total_cut_length: Length of Cuts
-        overall_efficiency: Overall Efficiency
-        efficiency: Efficiency
-        leftover: Off-cuts
-        leftover_to_keep: Off-cut to keep
-        leftover_to_keep_plural: Off-cuts to keep
-        leftover_to_throw_away: Disposable off-cut
-        cut: Cut
-        cut_plural: Cuts
-        cut_trimming: Trimming cut
-        cut_bounding: Primary cut (level 1)
-        cut_bounding_plural: Primary cuts (level 1)
-        cut_internal_through: Primary cut (level 2)
-        cut_internal_through_plural: Primary cuts (level 2)
-        cut_none: None
-        bar_dimensional_type_0: Standard Dimensional
-        bar_dimensional_type_1: Board Offcut
-        bar_edge_type_0: Standard Edge Banding
-        bar_edge_type_1: Edge Banding Off-cut
-        sheet_good_type_0: Standard Panel
-        sheet_good_type_1: Panel Off-cut
-        sheet_veneer_type_0: Standard Veneer Sheet
-        sheet_veneer_type_1: Veneer Sheet Off-cut
-        unused: Unused
-        parts: "{{ count }} part"
-        parts_plural: "{{ count }} parts"
-        settings: Settings
-      write:
-        title: Cutting Diagram Export
-        info_0: |
-          This module lets you export the **geometry** of the *cutting diagram* as a list of files in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: DXF Structure
-        option_dxf_structure_1: Layers
-        option_dxf_structure_2: Layers + Blocks
-        option_dxf_structure_help: |
-          Selects the DXF file structure.
-
-          - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
-          - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_sheet_good: Panel
-        option_sheet_good_help: |
-          Enables sheet good export and color selection.
-        option_sheet_veneer: Veneer Sheet
-        option_sheet_veneer_help: |
-          Enables veneer sheet export and color selection.
-        option_bar_dimensional: Dimensional
-        option_bar_dimensional_help: |
-          Enables dimensional export and color selection.
-        option_bar_band: Edge Banding
-        option_bar_band_help: |
-          Enables edge banding export and color selection.
-        option_parts: Parts
-        option_parts_help: |
-          Enables part export and color selection.
-        option_parts_holes: Holes
-        option_parts_holes_help: |
-          Selects the color of drillings.
-        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
-        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: Identifiers
-        option_texts_help: |
-          Enables export of part identification texts and color selection.
-        option_leftovers: Off-cuts
-        option_leftovers_help: |
-          Enables export of off-cuts and color selection.
-        option_cuts: Cuts
-        option_cuts_help: |
-          Enables export of cuts and color selection.
-        warning:
-          is_sheet_selection: The **hidden panels** will not be exported.
-      error:
-        no_bar_dimensional: The standard board is not configured correctly and no off-cut is available.
-        no_bar_edge: The standard edge banding is not configured correctly and no off-cut is available.
-        parameters: Parameters are incorrect. The trimming size is larger than 25% of the longest board or edge banding.
-        no_parts: No parts.
-        no_sheet: The standard panel is not configured correctly and no off-cut is available.
-        no_placement_possible_1d: No placement possible (standard board too small, trimming size too large, saw kerf too large, ...).
-        no_placement_possible_2d: No placement possible (standard panel too small, trimming size too large, saw kerf too large, ...).
-        bad_error: Algorithm error. Please contact the developers, as this is an interesting case.
-        unplaced_parts: "**1 part** is too large to fit."
-        unplaced_parts_plural: "**{{ count }} parts** are too large to fit."
-      warning:
-        is_part_selection: This cutting diagram is limited to **selected parts**.
-        cutting_dimensions: This cutting diagram uses the **raw** dimensions of the parts.
-        cutting_dimensions_increase_1d: Dimensions increased by the length allowance (**{{ length_increase }}**) configured for the '{{ material_name }}' material.
-        cutting_dimensions_increase_2d: Dimensions increased by the allowances configured for the '{{ material_name }}' material in length (**{{ length_increase }}**) and width (**{{ width_increase }}**).
-        cutting_dimensions_edge_decrement: Dimensions reduced by the thickness of the edge banding. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
       title: Cutting Diagram
       option_problem_type: Type
@@ -1441,7 +1203,7 @@ tab:
       option_hide_edges_preview: Display of Edge Bandings
       option_hide_edges_preview_0: Displayed in the cutting diagram
       option_hide_edges_preview_1: Hidden in the cutting diagram
-      option_hide_edges_preview_help: Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
+      option_hide_edges_preview_help: Show or hide the visual display of the edge bandings for each part in the cutting diagram.
       option_zoom_threshold: Zoom threshold
       # TODO find a better explanation
       option_zoom_threshold_help: |
@@ -1675,7 +1437,7 @@ tab:
       option_pins_hidden: Display
       option_pins_hidden_0: With callouts
       option_pins_hidden_1: Without callouts
-      option_pins_hidden_help: Shows or hides the part's callouts with number or designation.
+      option_pins_hidden_help: Show or hide the part's callouts with number or designation.
       option_pins_colored: Color
       option_pins_colored_0: Without color
       option_pins_colored_1: Color of the part
@@ -1756,7 +1518,7 @@ tab:
     write:
       title: Parts Export
       info_2d: |
-        This module allows you to export the 2D **projection** of parts as files in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) format.
+        This module allows you to export the **2D projection** of parts as files in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) format.
       info_3d: |
         This module lets you export the **3D geometry** of parts as files in [STL](https://wikipedia.org/wiki/STL_(file_format)) or [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) format.
       option_file_format: Format
@@ -1768,7 +1530,7 @@ tab:
       option_dxf_structure_help: |
         Allows you to choose the DXF file structure.
 
-        - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
+        - The **Layers** structure draws all paths flat, distinguishing between different line types solely by using layers. *This structure offers greater compatibility with third-party software.*
         - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
       option_dxf_depth_to_z: Depths in Z
       option_dxf_depth_to_z_0: $t(default.no)

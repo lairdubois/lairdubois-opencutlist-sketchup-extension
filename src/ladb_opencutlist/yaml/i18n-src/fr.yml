@@ -1485,7 +1485,7 @@ tab:
       option_explode: Éclaté
       error:
         no_part: Il n'y a aucune pièce à dessiner.
-        failed_to_save_as_skp: Echec de l'écriture du fichier SKP à envoyer à Layout.
+        failed_to_save_as_skp: Échec de l'écriture du fichier SKP à envoyer à Layout.
         failed_to_layout: |
           Erreur lors de l'écriture du fichier Layout : *{{ error }}*
 

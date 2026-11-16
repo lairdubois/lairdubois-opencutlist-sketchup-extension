@@ -27,19 +27,19 @@ default:
   print: Печать
   export: Экспорт
   import: Импорт
-  load: Загрузка
+  load: Загрузить
   replace: Заменить
   preview: Обзор
   options: Опции
   caution: Внимание!
-  remove: Извлечь
-  remove_all: Удалить все
+  remove: Убрать
+  remove_all: Убрать все
   delete: Удалить
   create: Создать
   duplicate: Дубликат
   ignore: Пропустить
   download: Скачать
-  upgrade: Обновление
+  upgrade: Обновить
   copy: Копировать
   select_all: Выбрать всё
   unselect_all: Отменить выбор
@@ -106,7 +106,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist: Создать карту раскроя
+      generate_cutlist: Создать список деталей
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
@@ -405,13 +405,13 @@ tab:
       ignore_grain_direction: Направление волокон фактуры этой детали игнорируется
       follow_grain_direction: Для этой детали включен подбор текстуры
       auto_oriented: Эта деталь была автоматически переориентирована
-      oko_label_filter: Включить/выключить этот значок
+      oko_label_filter: Включить/выключить этот маркер
       add_label_filter: Фильтровать по '{{ label }}'
-      remove_label_filter: Удалить фильтрацию по '{{ label }}'
-      add_edge_material_name_filter: Фильтровать '{{ material_name }}'
-      remove_edge_material_name_filter: Не фильтровать '{{ material_name }}'
-      add_veneer_material_name_filter: Фильтровать '{{ material_name }}'
-      remove_veneer_material_name_filter: Не фильтровать '{{ material_name }}'
+      remove_label_filter: Не фильтровать по '{{ label }}'
+      add_edge_material_name_filter: Фильтровать по '{{ material_name }}'
+      remove_edge_material_name_filter: Не фильтровать по '{{ material_name }}'
+      add_veneer_material_name_filter: Фильтровать по '{{ material_name }}'
+      remove_veneer_material_name_filter: Не фильтровать по '{{ material_name }}'
       not_aligned_on_axes: Внимание! Контуры детали возможно неправильно ориентированы относительно осей компонента
       instance_count_by_part: Эта деталь учитывается комплектом по **{{ count }}** ед.
       unused_instance_count: Обратите внимание, что **{{ count }}** единица из последнего комплекта не образует комплект.
@@ -432,8 +432,8 @@ tab:
       is_dynamic_attributes_name: Описание этой детали извлечено из атрибута 'Name' динамического компонента
       has_edges: Эта деталь содержит кромку на {{ count }} торцах
       has_edges_plural: Эти детали содержат {{ count }} кромки
-      has_faces: Эта деталь содержит {{ count }} облицованную поверхность
-      has_faces_plural: Эта деталь содержит {{ count }} облицованные поверхности
+      has_faces: Эта деталь содержит облицовку {{ count }} пластей
+      has_faces_plural: Эта деталь содержит облицовку {{ count }} пластей
       size_increased_0: |
         С учетом припуска материала
         ({{ increase_1 }})
@@ -542,7 +542,7 @@ tab:
       tags_help: |
         *Маркеры* позволяют добавлять пользовательские слова-идентификаторы к каждому определению детали.
         Вы можете добавить столько маркеров, сколько хотите.
-        Затем вы можете отфильтровать детали, видимые в вашей карте раскроя, по этим маркерам.
+        Затем вы можете отфильтровать детали, видимые в вашей спецификации деталей, по этим маркерам.
       tags_multiple_info: Видны только общие маркеры
       orientation: Ориентация
       orientation_locked_on_axis: Блокировка ориентации по осям
@@ -614,9 +614,9 @@ tab:
       part_number_sequence_by_group_help: Если эта опция активна, перечисление деталей в каждой группе одного и того же типа и толщины материала будет заново начинаться с 1 (или A).
       part_folding: Группировать идентичные детали
       part_folding_help: |
-        Если эта опция включена, детали из **массива древесины, листовой панели или погонажа**, имеющие **одинаковые размеры**, с **одинаковыми маркерами** и **одинаковой готовой поверхностью** *(если отображение этой поверхности не скрыто)* будут сгруппированы на одной линии в *карте раскроя*.
+        Если эта опция включена, детали из **материала массива древесины, листовой панели или погонажа**, имеющие **одинаковые размеры**, с **одинаковыми маркерами** и **одинаковой облицовкой поверхности** *(если отображение этой поверхности не скрыто)* будут сгруппированы в одну строку в *спецификации деталей*.
 
-        Для целей маркировки и компоновки детали все равно будут считаться разными.
+        Для формирования этикеток и карты раскроя детали все равно будут считаться разными.
       hide_entity_names: Скрыть случайные имена
       hide_entity_names_help: Если эта опция выбрана, **случайные имена** деталей не будут отображаться.
       hide_descriptions: Скрыть описание
@@ -670,10 +670,10 @@ tab:
       filters_warning_0: Этот фильтр скрывает все детали!
       filters_warning: Данный фильтр отображает только **{{ count }}** деталь из общего {{ total }}.
       filters_warning_plural: Данный фильтр отображает только **{{ count }}** детали из общего {{ total }}.
-      edge_material_names_filter: Фильтр по материалу кромок
-      veneer_material_names_filter: Фильтр материалов шпона
-      names_filter: Фильтр наименований
-      tags_filter: Фильтр маркеров
+      edge_material_names_filter: Фильтровать по материалу Кромка
+      veneer_material_names_filter: Фильтровать по материалу Облицовка
+      names_filter: Фильтровать по наименованию
+      tags_filter: Фильтровать по маркеру
       tags_filter_any: Все маркеры
       dimensions_help: Иллюстрация размеров
       summary: Спецификация
@@ -824,244 +824,6 @@ tab:
           Для правильного расчета сметы:
           - Используемые материалы должны иметь в настройках хотя бы одно заданное пользователем значение плотности и цены.
           - Используемые комплектующие, как минимум должны иметь в настройках заданное пользователем значение массы и цены.
-    # @no-translate
-    cuttingdiagram:
-      title: Карта раскроя
-      start_msg: Оптимизация в процессе
-      end_msg: Оптимизация завершена
-      options_material: Материал
-      options_config: Конфигурация
-      options_display: Просмотр
-      option_bar_folding_dimensional: Группировать одинаковые
-      option_bar_folding_edge: Группировать одинаковые кромки
-      option_bar_folding_0: Нет
-      option_bar_folding_1: Да
-      option_bar_folding_help: Позволяет группировать доски или кромки, содержащие одинаковые детали и одинаковые разрезы.
-      option_sheet_folding_good: Группировать одинаковые панели
-      option_sheet_folding_veneer: Группировать одинаковые листы
-      option_sheet_folding_0: Нет
-      option_sheet_folding_1: Да
-      option_sheet_folding_help: Позволяет группировать панели или листы, содержащие одинаковые детали и разрезы.
-      option_hide_part_list: Список деталей
-      option_hide_part_list_1d_dimensional_0: Отображать для каждой доски
-      option_hide_part_list_1d_edge_0: Отображать для каждой кромки
-      option_hide_part_list_2d_good_0: Отобразить для каждой панели
-      option_hide_part_list_2d_veneer_0: Отображать для каждого листа
-      option_hide_part_list_1: Скрыть
-      option_hide_part_list_1d_help: Показывает или скрывает список деталей, присутствующих в отдельной кромочной ленте или в группе.
-      option_hide_part_list_2d_help: Показывает или скрывает список деталей, присутствующих на каждой панели или листе.
-      option_use_names: Идентификация деталей
-      option_use_names_0: Использовать код
-      option_use_names_1: Использовать определение
-      option_use_names_help: Для удобства идентификации деталей на карте раскроя можно выбрать либо буквенный **код** либо **определение**. Определение будет соответствовать одноименной графе "Данные объекта" в SketchUp.
-      option_origin_corner: Исходный угол
-      option_origin_corner_1d_0: Слева
-      option_origin_corner_1d_1: Справа
-      option_origin_corner_2d_0: Левый верхний
-      option_origin_corner_2d_1: Левый нижний
-      option_origin_corner_2d_2: Правый верхний
-      option_origin_corner_2d_3: Правый нижний
-      option_origin_corner_1d_help: Позволяет выбрать исходное размещение для деталей в отдельной кромочной ленте или доске.
-      option_origin_corner_2d_help: Позволяет выбрать угол листа в качестве исходной позиции размещения деталей для формирования карты раскроя.
-      option_full_width_diagram: Отображать по ширине экрана
-      option_full_width_diagram_0: Нет
-      option_full_width_diagram_1: Да
-      option_full_width_diagram_help: Если выбрать опцию "Да", карты раскроя будут отображены по доступной ширине экрана. В противном случае, их ширина определяется фиксированным коэффициентом масштабирования.
-      option_wrap_length: Длина разбивки
-      option_wrap_length_help: Максимальная длина единичной части схематического отображения разбивки раскроя бухты кромочной полосы на отдельные отрезки.
-      option_hide_cross: Обрезки
-      option_hide_cross_0: Размеры и перекрестие
-      option_hide_cross_1: Только размеры
-      option_hide_cross_help: Настройка отражает или скрывает диагональное перекрестие на обрезках материала на карте раскроя. При необходимости, это поможет отличить детали проектируемой модели от деловых отходов материала.
-      option_highlight_primary_cuts: Очередность раскроя
-      option_highlight_primary_cuts_0: Свободная
-      option_highlight_primary_cuts_1: Выделить
-      option_highlight_primary_cuts_help: Выбор опции "Выделить" позволит наглядно оценить оптимальную очередность раскроя материала.
-      option_hide_edges_preview: Индикаторы облицовки
-      option_hide_edges_preview_0: Отображать на диаграмме
-      option_hide_edges_preview_1: Скрывать на диаграмме
-      option_hide_edges_preview_help: Позволяет отображать или скрывать визуальную индикацию краев поверхности, на которую необходимо нанести декоративное покрытие, для каждой детали на эскизе карты раскроя..
-      option_part_drawing_type: Формы деталей
-      option_part_drawing_type_0: Скрыть
-      option_part_drawing_type_1: Рисунки - вид спереди
-      option_part_drawing_type_2: Рисунки - вид сзади
-      option_part_drawing_type_help: |
-        Позволяет отображать или скрывать на схеме реальную форму деталей, а также процесс их обработки.
-
-        *Для экспорта фигур эта опция должна быть включена.*
-      option_saw_kerf: Ширина пропила
-      option_saw_kerf_help: Пильный диск при распиле удаляет часть материала на ширину зуба. Это необходимо учитывать для точного расчета карты раскроя.
-      option_spacing: Расстояние между ними
-      option_spacing_help: Минимальное расстояние между деталями.
-      option_trimming: Обрезка
-      option_trimming_help_1d: Размер обрезки на конце доски или кромочной ленты, для удаления дефектного края.
-      option_trimming_help_2d: Размер обрезки листа по периметру для удаления дефектов внешнего вида листа и его прямоугольного выравнивания.
-      option_optimization: Уровень оптимизации
-      option_optimization_help: Уровень оптимизации определяет объем цифровой обработки данных модели, что влияет на продолжительность расчета.
-      option_optimization_0: Средний
-      option_optimization_1: Глубокий
-      option_stacking: Сложить идентичные детали
-      option_stacking_help: Способ предварительного планирования размещения деталей, имеющих равную ширину или длину.
-      option_stacking_0: Не учитывать
-      option_stacking_1: По длине
-      option_stacking_2: По ширине
-      option_stacking_3: Все варианты
-      option_keep: Размер отходов
-      option_keep_help: Обрезки с габаритами, превышающими их заданнные минимальные размеры, не будут считаться отходами от распила и получат маркировку **Сохранить**.
-      option_std_bar_dimensional: Стандартный погонаж
-      option_std_bar_edge: Стандартная кромка
-      option_std_bar_help: |
-        Выберите здесь стандартный размер кромочной полосы, которая будет наилучшим шаблоном для применения в проекте.
-        Этот список определяется полем **$t(tab.materials.edit_material.std_lengths)** выбора материала.
-        Отредактируйте материал '{{ material_name }}' и обновите список.
-      option_std_bar_add: Добавить размер панели
-      option_std_bar_none: Нет
-      option_scrap_bar_dimensional_lengths: Деловые остатки
-      option_scrap_bar_edge_lengths: Деловые остатки
-      option_scrap_bar_lengths_placeholder: длина x количество ; ...
-      option_scrap_bar_lengths_help: |
-        Введите здесь параметры деловых остатков погонажа или кромочной ленты, которые можно использовать для деталей проекта.
-        Формат ввода: **Д**x**К**. Где **Л** это *длина*, а **К** - количество.
-        При этом, количество не обязательный параметр.
-        *Если единица измерения не задана, то будет учтена единица измерения модели.*
-      option_std_sheet_good: Стандартная панель
-      option_std_sheet_veneer: Стандартный лист
-      option_std_sheet_help: |
-        Выберите здесь стандартный размер панели или листа, который можно будет продублировать, чтобы распределить все детали наилучшим образом.
-        Этот список определяется полем **$t(tab.materials.edit_material.std_sizes)** материала.
-        Отредактируйте материал '{{ material_name }}', чтобы обновить этот список.
-      option_std_sheet_add: Добавить размер панели
-      option_std_sheet_none: Нет
-      option_scrap_sheet_good_sizes: Деловые остатки
-      option_scrap_sheet_veneer_sizes: Остатки листа
-      option_scrap_sheet_sizes_placeholder: длина x ширина x количество ; ...
-      option_scrap_sheet_sizes_help: |
-        Введите здесь параметры деловых остатков вашей панели или листа, которые можно использовать для деталей проекта.
-        Ожидаемый формат: **Д**x**Ш**x**К**. Где **Д** и **Ш** — соответственно *длина* и *ширина* остатка, а **К** — количество.
-        Количество не является обязательным.
-        *Если размеры не содержат единиц измерения, то будет применена единица измерения, заданная в параметрах модели.*
-      tooltip:
-        scroll_to_block_1d: Прокрутка до первой доски или кромочной полосы
-        scroll_to_block_2d: Прокрутка до первой панели
-        copy_leftovers_to_clipboard: Скопируйте обрезки в буфер обмена
-      list:
-        unplaced_parts: Неразмещенные детали
-        summary: Спецификация
-        count: Кол-во
-        bar: Погонаж
-        sheet: Панель
-        length: Длина
-        width: Ширина
-        total_length: Σ Длин
-        total_area: Σ Площадей
-        total_part_count: Σ Деталей
-        total_used: Всего использовано
-        trimming: Обрезка
-        stats: Статистика
-        total_cut_count: Σ Число резов
-        total_cut_length: Σ Длина пропилов
-        overall_efficiency: Общая эффективность
-        efficiency: Эффективность
-        leftover: Остаток
-        leftover_to_keep: Деловой остаток
-        leftover_to_keep_plural: Деловые остатки
-        leftover_to_throw_away: Отходы на выброс
-        cut: Пропил
-        cut_plural: Распилы
-        cut_trimming: Чистый рез
-        cut_bounding: Первичный рез (уровень 1)
-        cut_bounding_plural: Первичные разрезы (уровень 1)
-        cut_internal_through: Первичный рез (уровень 2)
-        cut_internal_through_plural: Первичные разрезы (уровень 2)
-        cut_none: Нет
-        bar_dimensional_type_0: Стандартный размер
-        bar_dimensional_type_1: Обрезок погонажа
-        bar_edge_type_0: Стандартный размер
-        bar_edge_type_1: Остаток кромки
-        sheet_good_type_0: Стандартная панель
-        sheet_good_type_1: Обрезок панели
-        sheet_veneer_type_0: Стандартный лист
-        sheet_veneer_type_1: Остаток листа
-        unused: Неиспользованный
-        parts: "{{ count }} деталь"
-        parts_plural: "{{ count }} детали"
-        settings: Настройки
-      write:
-        title: Экспорт карты раскроя
-        info_0: |
-          Этот модуль позволяет экспортировать **чертежи** *карты раскроя* в виде списка файлов в [SVG](https://ru.wikipedia.org/wiki/SVG) или [DXF](https://ru.wikipedia.org/wiki/DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Структура DXF
-        option_dxf_structure_1: Слои
-        option_dxf_structure_2: Слои + Блоки
-        option_dxf_structure_help: |
-          Позволяет выбрать структуру файла DXF.
-
-          - Структура **Слои** рисует все линии плоскими, распознавая различные типы линий только с помощью слоев. *Такая структура обеспечивает лучшую совместимость со сторонним программным обеспечением.*
-          - Структура **Слои + Блоки** создает по одному блоку для каждой детали и вставляет эти блоки столько раз, сколько частей повторяются. *Такая структура обеспечивает большую гибкость при редактировании файла.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_sheet_good: Панель
-        option_sheet_good_help: |
-          Позволяет активировать экспорт панели и выбрать ее цвета.
-        option_sheet_veneer: Лист
-        option_sheet_veneer_help: |
-          Позволяет активировать экспорт листа и выбрать его цвета.
-        option_bar_dimensional: Погонаж
-        option_bar_dimensional_help: |
-          Позволяет активировать экспорт погонажа и выбрать его цвета.
-        option_bar_band: Кромка
-        option_bar_band_help: |
-          Позволяет активировать экспорт кромки и выбрать ее цвета.
-        option_parts: Детали
-        option_parts_help: |
-          Позволяет активировать экспорт деталей и выбирать их цвета.
-        option_parts_holes: Отверстия
-        option_parts_holes_help: |
-          Позволяет задать цвет отверстий в деталях.
-        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
-        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: Идентификации
-        option_texts_help: |
-          Позволяет активировать экспорт текстов идентификации деталей, а также выбрать их цвета.
-        option_leftovers: Обрезки
-        option_leftovers_help: |
-          Позволяет активировать экспорт деловых обрезков и выбирать их цвета.
-        option_cuts: Распилы
-        option_cuts_help: |
-          Позволяет активировать экспорт разрезов, а также выбрать их цвет.
-        warning:
-          is_sheet_selection: "**Скрытые панели** не будут экспортированы."
-      error:
-        no_bar_dimensional: Стандартная панель настроена неправильно, поэтому не определа в раскрое.
-        no_bar_edge: Стандартные размеры кромочной полосы введены неверно, поэтому она не определена в раскрое.
-        parameters: Параметры неверны. Размер обрезки более чем на 25% превышает самую длинную деталь раскройки кромочной полосы.
-        no_parts: Нет детали.
-        no_sheet: Стандартные размеры панели неправильно введены, поэтому она не определена в раскрое.
-        no_placement_possible_1d: Расчет раскроя не возможен из-за заданных нестандартных параметров (стандартный погонаж слишком мал, запас под обрезку слишком велик, пильный диск слишком толстый, и т.д, ...).
-        no_placement_possible_2d: Некоторые размеры слишком велики или малы, чтобы рассчитать раскрой (обрезка велика, стандартная панель мала, ширина пропила велика,...).
-        bad_error: Сбой расчета, пожалуйста, свяжитесь с разработчиками, у вас интересный случай.
-        unplaced_parts: "**1 деталь** не возможно разместить, так как она слишком велика для размещения."
-        unplaced_parts_plural: Есть **{{ count }} детали** которые не могут быть размещены, потому что они превышают размеры панели.
-      warning:
-        is_part_selection: Данный отчет ограничен **выделенными деталями**.
-        cutting_dimensions: Эта карта раскроя отображает детали с их **пильными** размерами.
-        cutting_dimensions_increase_1d: "Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**)."
-        cutting_dimensions_increase_2d: "Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**) и Припуск к ширине (**{{ width_increase }}**)."
-        cutting_dimensions_edge_decrement: Размеры уменьшены на толщину кромки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
       title: Карта раскроя
       option_problem_type: Тип
@@ -1114,7 +876,7 @@ tab:
         Определяет режим оптимизации, с ограничением по времени или без.
       option_objective: Цель
       option_objective_help: |
-        Определяет назначение раскроя.
+        Определяет цель оптимизации карта раскроя.
       option_rectangleguillotine_cut_type: Тип разреза
       option_rectangleguillotine_cut_type_help: |
         Определяет тип разреза.
@@ -1217,7 +979,7 @@ tab:
       option_highlight_primary_cuts_0: Только при наведении
       option_highlight_primary_cuts_1: Выделить
       option_highlight_primary_cuts_help: Выбор опции "Выделить" позволит наглядно оценить оптимальную очередность раскроя материала.
-      option_hide_edges_preview: Индикаторы кромки
+      option_hide_edges_preview: Индикатор кромки
       option_hide_edges_preview_0: Отображать на диаграмме
       option_hide_edges_preview_1: Скрывать на диаграмме
       option_hide_edges_preview_help: Позволяет отображать или скрывать визуальную индикацию краев поверхности, на которую необходимо нанести декоративное покрытие, для каждой детали на эскизе карты раскроя..
@@ -2073,9 +1835,9 @@ tab:
         option_front_part_layer_name_help: Маркер (тег), применяемый к деталям фасадов.
         option_back_part_layer_name: Задние стенки
         option_back_part_layer_name_help: Тег, применяемый к задним стенкам корпуса.
-        option_machining_material_name: Обработка
+        option_machining_material_name: Мехобработка
         option_machining_material_name_help: Материал, требующий **Обработки**.
-        option_machining_layer_name: Обработка
+        option_machining_layer_name: Мехобработка
         option_machining_layer_name_help: Метка, применяемая к элементам обработки.
         option_hardware_material_name: Комплектующие
         option_hardware_material_name_help: Материал, применяемый к **Комплектующим**.
@@ -2578,7 +2340,7 @@ tool:
     title: Модификатор
     action_0: Растянуть
     action_0_status: Растянуть деталь
-    action_0_state_1_status: Кликните на маркер, чтобы растянуть
+    action_0_state_1_status: Кликните на манипулятор, чтобы растянуть
     action_0_state_1a_status: Кликните на вспомогательную плоскость, чтобы переместить ее
     action_0_state_1b_status: Добавить вспомогательную плоскость
     action_0_state_1c_status: Удалить вспомогательную плоскость
@@ -2608,12 +2370,12 @@ tool:
     action_4_state_1_status: Выберите деталь B
     action_5: Нарезать
     action_5_status: Нарезать одну или несколько деталей по плоскости
-    action_5_state_1_status: Кликните на базовую плоскость лицевой стороны в любом месте
+    action_5_state_1_status: Кликните в любом месте детали для создания вспомогательной плоскости
     action_5_state_1_arrows_status: Нарезать перпендикулярно оси от края выделени
     action_5_state_1b_status: Кликните, чтобы указать точку {{ index }} из 3 на базовой плоскости в любом месте
     action_5_state_1b_arrows_status: Зафиксировать по оси
-    action_5_state_1c_status: Кликните, чтобы принять базовую плоскость, или нажмите Esc, чтобы отменить последнюю точку
-    action_5_state_2_status: Кликните, чтобы нарезать детали, или введите расстояние
+    action_5_state_1c_status: Кликните, чтобы принять плоскость, или нажмите Esc, чтобы отменить последнюю точку
+    action_5_state_2_status: Перемещайте плоскость для нарезки детали, или введите нужное расстояние
     action_5_state_2a_status: Кликните, чтобы установить плоскость реза, или введите расстояние
     action_5_state_2_arrows_status: Сменить ось
     action_5_state_3_status: Кликните со стороны детали, которую нужно сохранить
