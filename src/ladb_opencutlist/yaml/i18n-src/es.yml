@@ -192,9 +192,9 @@ core:
       Está disponible una nueva versión de *OpenCutList*.
       ¡Actualice para obtener las últimas funciones!
     up_to_date: |
-      Ya tienes la última versión de *OpenCutList*.
+      Ya tiene la última versión de *OpenCutList*.
 
-      *¡Para ayudarnos a agregar aún más funciones, no dudes en colaborar económicamente con el proyecto!*
+      *¡Para ayudarnos a agregar aún más funciones, no dude en colaborar económicamente con el proyecto!*
     downloading: Descarga en curso
     changelog: ¿Qué novedades hay?
     ignore_update: Omitir esta actualización
@@ -204,7 +204,7 @@ core:
     success: |
       ¡La actualización de OpenCutList ha finalizado!
 
-      REINICIA SKETCHUP para activar los cambios.
+      REINICIE SKETCHUP para activar los cambios.
     error:
       download: Error al descargar el archivo.
       unzip: Error al descomprimir el archivo.
@@ -225,7 +225,7 @@ core:
     delete_confirm_title: Supresión
     delete_confirm: ¿Confirma la eliminación del preajuste **"{{ name }}"**?
     override_confirm_title: Actualización
-    override_confirm: ¿Confirmas la actualización del preajuste **"{{ name }}"** con los parámetros del formulario?
+    override_confirm: ¿Confirma la actualización del preajuste **"{{ name }}"** con los parámetros del formulario?
     new_error: Imposible, ya existe un preajuste **"{{ name }}"**
     new_success: Preajuste **"{{ name }}"** creado
     override_success: Preajuste **"{{ name }}"** actualizado
@@ -454,7 +454,7 @@ tab:
       dblclick_to_copy_all_faces: Haga doble clic aquí para duplicar este valor en la otra cara
       dblclick_to_sort_axes: Haga doble clic aquí para reordenar automáticamente los ejes según las dimensiones de la pieza
       part_axes: Ejes internos de la pieza
-      select_unselect_all_parts: Selecciona/Deselecciona todas las piezas del grupo
+      select_unselect_all_parts: Seleccione/Deseleccione todas las piezas del grupo
       select_parts_in_cutlist: Seleccionar la pieza en el listado de piezas
       select_parts_in_cutlist_plural: Seleccionar las {{ count }} piezas en el listado de piezas
       setup_group_cuttingdiagram: Configure el diagrama de corte de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
@@ -523,7 +523,7 @@ tab:
       thickness_layer_count_help: |
         Defina aquí el número de capas que dividen la pieza dibujada en su espesor.
 
-        *Ejemplo:* Si tienes una pieza dibujada de *38mm* de espesor y quieres hacerla pegando dos tableros de *19mm*, introduce **2** en este campo.
+        *Ejemplo:* Si tiene una pieza dibujada de *38mm* de espesor y quiere hacerla pegando dos tableros de *19mm*, introducza **2** en este campo.
         *OpenCutList contará entonces 2 piezas de 19mm de espesor en lugar de 1 pieza de 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
@@ -824,244 +824,6 @@ tab:
           Para que esta estimación se calcule correctamente:
           - Los materiales utilizados deben tener al menos una densidad y un precio configurados.
           - Los accesorios utilizados deben tener al menos una masa y un precio.
-    # @no-translate
-    cuttingdiagram:
-      title: Diagrama de corte
-      start_msg: Optimización en curso
-      end_msg: Optimización completada
-      options_material: Material
-      options_config: Configuración
-      options_display: Visualización
-      option_bar_folding_dimensional: Agrupar listones idénticos
-      option_bar_folding_edge: Agrupar tiras de canto similares
-      option_bar_folding_0: "No"
-      option_bar_folding_1: Sí
-      option_bar_folding_help: Agrupar tableros o tiros de canto que tengan las mismas partes y cortes.
-      option_sheet_folding_good: Agrupar paneles similares
-      option_sheet_folding_veneer: Agrupación de hojas idénticas
-      option_sheet_folding_0: "No"
-      option_sheet_folding_1: Sí
-      option_sheet_folding_help: Permite agrupar paneles u hojas que contengan las mismas piezas y cortes.
-      option_hide_part_list: Lista de partes
-      option_hide_part_list_1d_dimensional_0: Mostrado para cada tablero
-      option_hide_part_list_1d_edge_0: Mostrado para cada tira de canto
-      option_hide_part_list_2d_good_0: Mostrado para cada panel
-      option_hide_part_list_2d_veneer_0: Mostrado para cada hoja
-      option_hide_part_list_1: Enmascarado
-      option_hide_part_list_1d_help: Muestre o enmascare la lista de partes de cada tablero o tira de canto.
-      option_hide_part_list_2d_help: Muestre o enmascare la lista de partes de cada tablero o hoja.
-      option_use_names: Identificación de la parte
-      option_use_names_0: Utilice el número
-      option_use_names_1: Utilice la designación
-      option_use_names_help: Permite elegir entre **número** y **designación** para identificar las piezas en el diagrama de corte.
-      option_origin_corner: Posición del origen
-      option_origin_corner_1d_0: A la izquierda
-      option_origin_corner_1d_1: A la derecha
-      option_origin_corner_2d_0: Esquina superior izquierda
-      option_origin_corner_2d_1: Esquina inferior izquierda
-      option_origin_corner_2d_2: Esquina superior derecha
-      option_origin_corner_2d_3: Esquina inferior derecha
-      option_origin_corner_1d_help: Le permite elegir la esquina original de la colocación de piezas en barras o en tiras de canto.
-      option_origin_corner_2d_help: Determina la posición del origen de coordenadas para la visualización de las piezas en los tableros.
-      option_full_width_diagram: Pantalla de ancho total
-      option_full_width_diagram_0: "No"
-      option_full_width_diagram_1: Sí
-      option_full_width_diagram_help: Si esta opción está activada, los diagramas de corte se muestran utilizando el ancho disponible. De lo contrario, su ancho se define mediante un factor de escala que depende de todos los diagramas.
-      option_wrap_length: Longitud del tablero envolvente
-      option_wrap_length_help: Longitud máxima después de la cual una tabla o una tira de canto se envolverá en varias líneas.
-      option_hide_cross: Desperdicios
-      option_hide_cross_0: Dimensiones y Cruz
-      option_hide_cross_1: Solo dimensiones
-      option_hide_cross_help: Muestra u oculta la cruz que indica las partes definidas como caídas en el diagrama de corte.
-      option_highlight_primary_cuts: Cortes primarios
-      option_highlight_primary_cuts_0: Sólo en vista general
-      option_highlight_primary_cuts_1: Siempre visible
-      option_highlight_primary_cuts_help: Le permite resaltar cortes primarios.
-      option_hide_edges_preview: Indicadores de cantos
-      option_hide_edges_preview_0: Visualizado en el diagrama
-      option_hide_edges_preview_1: Enmascarado en el diagrama
-      option_hide_edges_preview_help: Permite mostrar u ocultar la indicación visual de los cantos para cada parte del diagrama.
-      option_part_drawing_type: Forma de las piezas
-      option_part_drawing_type_0: Ocultas
-      option_part_drawing_type_1: Planos vista frontal
-      option_part_drawing_type_2: Planos vista trasera
-      option_part_drawing_type_help: |
-        Permite mostrar u ocultar la forma real de las piezas, así como su mecanizado en el diagrama.
-
-        *Esta opción debe activarse para que las formas puedan ser exportadas.*
-      option_saw_kerf: Espesor de la hoja
-      option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
-      option_spacing: Espaciado
-      option_spacing_help: Espacio mínimo entre cada pieza.
-      option_trimming: Margen
-      option_trimming_help_1d: La cantidad de material en cada extremo del tablero o tira de canto que se tratará como desecho.
-      option_trimming_help_2d: La cantidad de material alrededor del panel en bruto que se tratará como residuo.
-      option_optimization: Nivel de optimización
-      option_optimization_help: El nivel de optimización define el número de posibilidades calculadas y, por tanto, también el tiempo de cálculo.
-      option_optimization_0: Medio
-      option_optimization_1: Avanzado
-      option_stacking: Apilar piezas idénticas
-      option_stacking_help: La forma en que las partes con ancho o largo común se colocan provisionalmente juntas.
-      option_stacking_0: Sin preferencias
-      option_stacking_1: A lo largo
-      option_stacking_2: A lo ancho
-      option_stacking_3: Todas las posibilidades
-      option_keep: Tamaño mínimo de recorte
-      option_keep_help: Los recortes cuyas dos dimensiones sean mayores que el tamaño mínimo se marcarán con **conservar**.
-      option_std_bar_dimensional: Liston estándar
-      option_std_bar_edge: Canto estándar
-      option_std_bar_help: |
-        Seleccione el tablero o la tira de canto estándar, que se duplicará para contener todas las partes.
-        Esta lista se define en el campo **$t(tab.materials.edit_material.std_lengths)** del material.
-        Edita el material '{{ material_name }}' para actualizar esta lista.
-      option_std_bar_add: Agregar un tamaño de panel
-      option_std_bar_none: Ninguna
-      option_scrap_bar_dimensional_lengths: Tableros de corte
-      option_scrap_bar_edge_lengths: Restos de Canto
-      option_scrap_bar_lengths_placeholder: largo x cantidad ; ...
-      option_scrap_bar_lengths_help: |
-        Enumere las tablas o las tiras de canto sobrantes que se deben considerar primero en el plan de corte.
-        Formato esperado: **L** x **Q**, donde **L** es la *longitud* del recorte y **Q** la cantidad.
-        La cantidad es opcional.
-        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
-      option_std_sheet_good: Panel estándar
-      option_std_sheet_veneer: Hoja estándar
-      option_std_sheet_help: |
-        Seleccione el panel o la hoja estándar que se duplicará para contener todas las partes.
-        Esta lista se define en el campo **$t(tab.materials.edit_material.std_sizes)** del material.
-        Edita el material '{{ material_name }}' para actualizar esta lista.
-      option_std_sheet_add: Agregar un tamaño de panel
-      option_std_sheet_none: Ninguno
-      option_scrap_sheet_good_sizes: Productos en piezas cortadas
-      option_scrap_sheet_veneer_sizes: Restos de hojas
-      option_scrap_sheet_sizes_placeholder: largo x ancho x cantidad; ...
-      option_scrap_sheet_sizes_help: |
-        Indique aquí la lista de sus paneles u hojas sobrantes que deben considerarse prioritarios para el diagrama de corte.
-        Formato esperado: **L** x **W** x **Q**, donde **L** y **W** representan el *largo* y el *ancho* del panel y **Q** la cantidad.
-        La cantidad es opcional.
-        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
-      tooltip:
-        scroll_to_block_1d: Desplazate al primer tabla o tiro de canto
-        scroll_to_block_2d: Desplazate al primer tablero
-        copy_leftovers_to_clipboard: Copiar los recortes al porta-papeles
-      list:
-        unplaced_parts: Piezas no colocadas
-        summary: Resumen
-        count: Cant.
-        bar: Liston
-        sheet: Tablero
-        length: Longitud
-        width: Anchura
-        total_length: Σ Longitudes
-        total_area: Σ Areas
-        total_part_count: Σ Partes
-        total_used: Total utilizado
-        trimming: Margen
-        stats: Estadísticas
-        total_cut_count: Número de cortes
-        total_cut_length: Longitud de cortes
-        overall_efficiency: Eficacia general
-        efficiency: Eficiencia
-        leftover: Sobrante
-        leftover_to_keep: Recorte para conservar
-        leftover_to_keep_plural: Recortes para conservar
-        leftover_to_throw_away: Recorte para desechar
-        cut: Corte
-        cut_plural: Cortes
-        cut_trimming: Corte de limpieza
-        cut_bounding: Corte primario (nivel 1)
-        cut_bounding_plural: Cortes primarios (nivel 1)
-        cut_internal_through: Corte primario (nivel 2)
-        cut_internal_through_plural: Cortes primarios (nivel 2)
-        cut_none: Ninguna
-        bar_dimensional_type_0: Liston estándar
-        bar_dimensional_type_1: Trozo
-        bar_edge_type_0: Canto estándar
-        bar_edge_type_1: Resto de canto
-        sheet_good_type_0: Tablero estándar
-        sheet_good_type_1: Trozo
-        sheet_veneer_type_0: Hoja estándar
-        sheet_veneer_type_1: Resto de hojas
-        unused: No usado
-        parts: "{{ count }} parte"
-        parts_plural: "{{ count }} partes"
-        settings: Configuraciones
-      write:
-        title: Exportación del diseño
-        info_0: |
-          Este módulo le permite exportar la **geometría** del *diseño* en forma de lista de archivos en formato [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) o [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Estructura DXF
-        option_dxf_structure_1: Calcos
-        option_dxf_structure_2: Calcos + bloques
-        option_dxf_structure_help: |
-          Permite elegir la estructura del archivo DXF:
-
-          - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros.*
-          - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_sheet_good: Tablero
-        option_sheet_good_help: |
-          Permite activar la exportación del panel, así como elegir su color.
-        option_sheet_veneer: Hoja
-        option_sheet_veneer_help: |
-          Permite activar la exportación de la hoja, así como elegir su color.
-        option_bar_dimensional: Liston
-        option_bar_dimensional_help: |
-          Permite activar la exportación de la barra, así como elegir su color.
-        option_bar_band: Placa
-        option_bar_band_help: |
-          Permite activar la exportación de la placa, así como elegir su color.
-        option_parts: Piezas
-        option_parts_help: |
-          Permite activar la exportación de piezas, así como elegir su color.
-        option_parts_holes: Perforaciones
-        option_parts_holes_help: |
-          Permite elegir el color de las perforaciones de las piezas.
-        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
-        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: Identificaciones
-        option_texts_help: |
-          Permite activar la exportación de textos de identificación de las piezas, así como elegir su color.
-        option_leftovers: Desperdicios
-        option_leftovers_help: |
-          Permite activar la exportación de los recortes, así como elegir su color.
-        option_cuts: Cortes
-        option_cuts_help: |
-          Permite activar la exportación de los cortes, así como elegir su color.
-        warning:
-          is_sheet_selection: Los **tableros ocultos** no se exportarán.
-      error:
-        no_bar_dimensional: La tabla estándar no se configuró correctamente y no se definieron cortes.
-        no_bar_edge: La tira de canto estándar no se configuró correctamente y no se definieron cortes.
-        parameters: Los parámetros son incorrectos. El recorte es superior al 25% de la tira de canto más larga.
-        no_parts: Ninguna parte.
-        no_sheet: Los tamaños de tableros estándar están configurados incorrectamente y no hay cortes disponibles.
-        no_placement_possible_1d: Todas sus piezas son demasiado grandes para caber en un panel (liston estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...).
-        no_placement_possible_2d: Todas sus piezas son demasiado grandes para caber en un panel (tablero estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...).
-        bad_error: Pánico algorítmico, póngase en contacto con los desarrolladores, tiene un caso interesante.
-        unplaced_parts: "**1 Una pieza** no se pudo colocar porque es demasiado grande para colocar."
-        unplaced_parts_plural: Existen **{{ count }} piezas** que no se pudieron colocar porque son demasiado grandes para colocar.
-      warning:
-        is_part_selection: Este diagrama de corte se limita a las **piezas seleccionadas**.
-        cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
-        cutting_dimensions_increase_1d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**)."
-        cutting_dimensions_increase_2d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**)."
-        cutting_dimensions_edge_decrement: Dimensiones reducidas por el espesor de las tiras del canto. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
       title: Diagrama de corte
       option_problem_type: Tipo
@@ -1641,8 +1403,8 @@ tab:
       area: Superficie
       volume: Volumen
     error:
-      no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
-      no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)
+      no_model: Ningún modelo está abierto. Necesitará darme más información ;)
+      no_entities: Su modelo está vacío. Necesitarás darme más información. ;)
       no_component_in_selection: No se detectó ninguna instancia de un componente visible en su selección.
       no_component_in_model: No se detectó ninguna instancia de un componente visible en su escena.
       unknow_part: La pieza seleccionada no existe en el listado de piezas.
@@ -1763,7 +1525,7 @@ tab:
 
         *Si no hay ninguna unidad especificada se aplicarán las unidades del modelo.*
       grained: Veta de la madera
-      grained_help: Selecciona la orientación de la veta en relación con la longitud del tablero.
+      grained_help: Seleccione la orientación de la veta en relación con la longitud del tablero.
       grained_0: Sin veta
       grained_1: La veta sigue la longitud
       edge_decremented: Reducir
@@ -1806,7 +1568,7 @@ tab:
         Los mecanizados toman los colores de lo que cortan en la pieza: los de las perforaciones si son pasantes, los de los huecos en caso contrario. Útil para las máquinas que deducen el tipo de corte a partir de los colores.
       machining_material_colored_0: Automáticos
       machining_material_colored_1: Color del material
-      std_attributes_dim_placeholder: Elige un tamaño
+      std_attributes_dim_placeholder: Elija un tamaño
       std_volumic_masses: Densidad
       std_volumic_masses_help: Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
       std_prices: Precio
@@ -1852,7 +1614,7 @@ tab:
       message: |
         Seleccione el nombre del nuevo material, que se copiará de **{{ material_name }}**.
     error:
-      no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
+      no_model: Ningún modelo está abierto. Necesitará darme más información ;)
       no_materials: El modelo no contiene ningún material.
       material_not_found: No se encontró ningún material.
       no_texture: El material no tiene textura.
@@ -1946,7 +1708,7 @@ tab:
     snippet:
       name_size: Denominación - Tamaño
     error:
-      no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
+      no_model: Ningún modelo está abierto. Necesitará darme más información ;)
       no_entities: Su modelo se encuentra vacío
       node_not_found: Nodo no encontrado
       entity_not_found: Instancia no encontrada
@@ -1996,10 +1758,10 @@ tab:
       import:
         title: Importar piezas al modelo
         info_0: |
-          Estás a punto de importar **{{ count }} pieza** en el modelo.
+          Está a punto de importar **{{ count }} pieza** en el modelo.
           Esta pieza se colocará en el origen de la escena principal.
         info_0_plural: |
-          Estás a punto de importar **{{ count }} piezas** en el modelo.
+          Está a punto de importar **{{ count }} piezas** en el modelo.
           Estas piezas se apilarán comenzando en el origen de la escena principal.
         info_1: Haga clic en **Importar** para confirmar la acción.
         options: |
@@ -2173,7 +1935,7 @@ tab:
       cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
     objective_details:
       default: |
-        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización!
+        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto sigue necesitando su apoyo para la próxima actualización!
       # @no-translate
       cuttingdiagram_export: |
         Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
@@ -2182,7 +1944,7 @@ tab:
     objective_crowdfunding: |
       El desarrollo de nuevas funcionalidades se realizará gracias a la **Recaudación de fondos** y comenzará cuando se alcance su **Meta financiera**.
     objective_thanks: |
-      ¡Gracias por tu contribución!
+      ¡Gracias por su contribución!
     objective_funded_progress: financiado en {{ progress }}%
   settings:
     label: Preferencias
@@ -2343,12 +2105,12 @@ tool:
     state_0_status: Haga clic sobre una pieza para seleccionarla
     state_0_to_6_status: Seleccionar un elemento principal
     state_0_to_7_status: Selección múltiple
-    state_4_status: Arrastra a una pieza idéntica con el mismo padre para añadirla a la selección y, a continuación, suelta para continuar
+    state_4_status: Arrastre a una pieza idéntica con el mismo padre para añadirla a la selección y, a continuación, suelte para continuar
     state_5_status: Arrastre para añadir a la selección y suelte para continuar
     state_6_status: Seleccione un elemento de la lista
     state_7_status: Haga clic en una pieza para añadirla o quitarla de la selección
     warning:
-      no_active_part: Primero debes pasar el cursor sobre una pieza
+      no_active_part: Primero debe pasar el cursor sobre una pieza
       no_parent_group: La pieza bajo el cursor no tiene grupo o componente padre
   smart_draw:
     title: Dibujar
@@ -2547,7 +2309,7 @@ tool:
     action_3: Mover
     action_3_status: Mover una pieza a lo largo de un eje
     action_3_state_1_status: Haga clic para indicar el primer punto de medida
-    action_3_state_2_status: Haga clic para colocar la pieza o introduce una distancia
+    action_3_state_2_status: Haga clic para colocar la pieza o introduzca una distancia
     action_4: Distribuir
     action_4_status: Distribuir una pieza a lo largo de un eje
     action_4_state_1_status: Haga clic para indicar el primer punto de medida

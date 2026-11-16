@@ -826,27 +826,6 @@ tab:
           Da bi se ova procjena mogla ispravno izračunati:
           - korišteni materijali moraju imati barem postavljenu gustoću i cijenu.
           - korišteni okovi moraju imati barem masu i cijenu.
-    # @no-translate
-    cuttingdiagram:
-      write:
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
-        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
     packing:
       title: Plan krojenja
       option_problem_type: Vrsta
@@ -1454,6 +1433,8 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
     new_material:
+      name: Naziv
+      color: Boja
       color_warning: Nevaljana boja
       type: Vrsta
     edit_material:
@@ -1513,7 +1494,12 @@ tab:
       grained_help: Omogućuje određivanje smjera vlakana površine u odnosu na duljinu ploče.
       grained_0: Bez vlakana
       grained_1: Vlakna idu po duljini
+      multiplier_coefficient: Koeficijent
+      texture_width: Širina
+      texture_height: Visina
     option:
+      general: Općenito
+      property_type: Vrsta
       property_name: Naziv
     delete:
       message: |
@@ -1563,7 +1549,16 @@ tab:
       name: Naziv
       instance_name: Instanca
       material: Materijal
+      description: Opis
+      url: URL
+      tags: Značke
+      layer_name: Oznaka
+      erase: Obriši
+    deep_rename_parts:
+      formula: Formula
     option:
+      general: Općenito
+      hide_descriptions: Sakrij opise
       hide_descriptions_help: Ako je ova opcija uključena, **opisi** dodani dijelovima se ne prikazuju.
       hide_tags: Sakrij značke
       hide_tags_help: Ako je ova opcija uključena, **značke** dodane dijelovima se ne prikazuju.
@@ -1595,14 +1590,74 @@ tab:
         failed_to_import: Uvoz nije uspio.
       success:
         imported_title: Uvoz završen
+    csv:
+      label: CSV
+      load:
+        option_col_sep: Razdjelnik
+        option_col_sep_tab: Tabulator
+        option_col_sep_comma: Zarez
+        option_col_sep_semicolon: Točka-zarez
+      column:
+        name: Naziv
+        count: Količina
+        bbox_length: Gotova duljina
+        bbox_width: Gotova širina
+        bbox_thickness: Gotova debljina
+        material: Materijal
+        tags: Značke
+    bxf2:
+      label: BXF2
+      import:
+        materials: Materijali
+        layers: Oznake
+        option_parts_formula: Formula
+        formula:
+          part: Dio
+      cabinet:
+        description: Naziv
+        width: Širina
+        height: Visina
+      article:
+        total_quantity: Kol.
+        description: Opis
+        material: Materijal
+  sponsor:
+    objective: Cilj
   settings:
+    language_auto: Automatski
     font_size_auto: $t(default.automatic)
+    length_format: Format
     length_format_0: $t(default.decimal)
     length_format_3: $t(default.fractional)
 tool:
+  default:
+    more: Više
+    vcb_length: Duljina
+    vcb_thickness: Debljina
+    vcb_spacings: Razmaci
+  smart_draw:
+    action_option_group_offset: Pomak
+    action_option_group_options: Opcije
+    action_option_offset_shape_offset: Pomak
+    action_option_options_smoothing: Zaglađivanje
   smart_build:
     action_0_state_2_arrows_status: zaključaj na os
     action_0_state_3_arrows_status: zaključaj normalu ravnine XY na os
+    action_0_add_name: Naziv datoteke
+    action_option_group_axes: Osi
+    action_option_group_anchor: Sidrenje
+    action_option_group_options: Opcije
+    action_option_thickness_thickness: Debljina
+    action_option_options_layer_name: Oznaka
+  smart_handle:
+    action_option_group_axes: Osi
+    action_option_group_options: Opcije
+  smart_reshape:
+    action_option_group_thickness: Debljina
+    action_option_group_axes: Osi
+    action_option_group_paneling_direction: Smjer
+    action_option_group_options: Opcije
+    action_option_thickness_thickness: Debljina
   smart_paint:
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
@@ -1611,7 +1666,16 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     filter_7: $t(tab.materials.type_7)
+    action_option_group_edges: Broj rubnih traka
+    face_zmin: Naličje
+    face_zmax: Lice
+  smart_axes:
+    action_option_group_direction: Smjer
   smart_export:
+    action_option_group_file_format: Format
+    action_option_group_unit: Jedinica
+    action_option_group_faces: Plohe
+    action_option_group_options: Opcije
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
