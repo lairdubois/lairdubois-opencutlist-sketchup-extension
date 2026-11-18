@@ -1489,8 +1489,8 @@ tab:
 
           **Make sure the file is not open in Layout.**
       warning:
-        is_group_selection: Parts contained in **hidden groups** of the Parts List will not be drawn.
-        is_part_selection: This overview drawing is limited to **selected parts**.
+        is_group_selection: Parts contained in the **hidden groups** of the Parts List will not be drawn.
+        is_part_selection: This overview is limited to **selected parts**.
       message:
         adding_new_page: |
           Would you like to add a new page?
@@ -1542,7 +1542,7 @@ tab:
       option_unit: Unit
       option_unit_help: |
         Allows you to choose the unit used in the exported file.
-      option_use_count: Quantity
+      option_use_count: Quantities
       option_use_count_0: One file per part
       option_use_count_1: One file per part instance
       option_use_count_help: |

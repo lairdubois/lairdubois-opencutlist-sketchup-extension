@@ -430,7 +430,7 @@ tab:
       invalid_final_area_plural: Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ {{ count }} części (z {{ total }}) mają nieprawidłowy obszar
       is_instance_name: Oznaczenie tej części pochodzi z nazwy instancji grupy
       is_dynamic_attributes_name: Oznaczenie tej części pochodzi z atrybutu 'Name' elementu dynamicznego
-      has_edges: Ta część zawiera {{ count }} stronnie oklejoną krawędź
+      has_edges: Ta część zawiera {{ count }} oklejone obrzeże
       has_edges_plural: Ten kawałek zawiera {{ count }} formirowane krawędzie
       has_faces: Ta część zawiera {{ count }} powierzchnię fornirowaną
       has_faces_plural: Ta część zawiera {{ count }} powierzchni fornirowanych
@@ -456,7 +456,7 @@ tab:
       part_axes: Osie wewnętrzne części
       select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
       select_parts_in_cutlist: Wybierz element w lista części
-      select_parts_in_cutlist_plural: Wybierz {{ count }} elementy w arkuszu rozkroju
+      select_parts_in_cutlist_plural: Wybierz {{ count }} części z listy części
       setup_group_cuttingdiagram: Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
       setup_group_packing: Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
       open_part_url: Otwórz adres URL części
@@ -716,7 +716,7 @@ tab:
         Pole **Tytuł** umożliwia dostosowanie tytułu kolumny.
       column_formula: Wzór
       column_formula_help: |
-        Pole **Formula** umożliwia napisanie kodu *Ruby* w celu dostosowania wartości kolumny.
+        Pole **Wzór** umożliwia napisanie kodu *Ruby* w celu dostosowania wartości kolumny.
       options: Opcje eksportu
       options_customize: Dostosowywanie
       option_source: Źródło
@@ -843,7 +843,7 @@ tab:
         Ta lista jest definiowana przez pole **$t(tab.materials.edit_material.std_lengths)** materiału.
 
         *Edytuj właściwości materiału '{{ material_name }}', aby zaktualizować tę listę.*
-      option_std_bin_1d_add: Dodaj rozmiar arkusza
+      option_std_bin_1d_add: Dodaj rozmiar
       option_std_bin_1d_none: Brak
       option_scrap_bin_1d_dimensional_sizes: Odpady do wykorzystania
       option_scrap_bin_1d_edge_sizes: Odpady obrzeży
@@ -1322,7 +1322,7 @@ tab:
       option_unit_help: |
         Wybiera jednostkę używaną w eksportowanym pliku.
       option_use_count: Ilości
-      option_use_count_0: Jeden plik na pokój
+      option_use_count_0: Jeden plik na część
       option_use_count_1: Jeden plik na instancję części
       option_use_count_help: |
         Określa, czy liczba wystąpień części jest brana pod uwagę.
@@ -1336,7 +1336,7 @@ tab:
         Umożliwia wybranie, czy wyszukiwanie kształtu części ma być przeprowadzane na wszystkich jej powierzchniach, czy tylko na powierzchni docelowej.
       option_anchor: Punkt zaczepienia
       option_anchor_0: Automatyczny
-      option_anchor_1: Wyświetl pochodzenie części
+      option_anchor_1: Rzutuj początek części
       option_anchor_help: |
         **Automatyczne**
         Lewy dolny róg ramki otaczającej eksportowaną geometrię jest używany jako punkt zakotwiczenia.
@@ -1371,7 +1371,7 @@ tab:
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Użyj krawędzi niezwiązanych z powierzchnią
       option_include_paths_help: |
-        Umożliwia aktywację użycia krawędzi niezwiązanych z powierzchnią i zawartych w części w celu wyeksportowania ich jako wykresu.
+        Umożliwia aktywację użycia krawędzi niezwiązanych z powierzchnią i zawartych w części w celu wyeksportowania ich jako ścieżki.
       option_parts: Części
       option_parts_help: |
         Wybierz kolor części.
@@ -1516,7 +1516,7 @@ tab:
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       std_sections: Standardowe Przekroje
       std_sections_help: |
-        Sekcje standardowe dostępne dla tego przedmiotu.
+        Sekcje standardowe dostępne dla tego materiału.
 
         *Jeśli nie określono żadnej jednostki, zostanie zastosowana jednostka modelowa.*
       std_sizes: Standardowe rozmiary
@@ -2516,7 +2516,7 @@ tool:
     action_1: Eksportuj część 2D
     action_1_status: Kliknij powierzchnię części
     action_2: Eksportuj powierzchnię
-    action_2_status: Zaznacz warstwę
+    action_2_status: Kliknij powierzchnię
     action_3: Eksportuj ścieżkę
     action_3_status: Kliknij krawędź
     action_option_group_file_format: Format
