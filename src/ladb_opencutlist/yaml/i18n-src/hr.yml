@@ -1495,6 +1495,7 @@ tab:
       grained_0: Bez vlakana
       grained_1: Vlakna idu po duljini
       multiplier_coefficient: Koeficijent
+      std_prices: Cijena
       texture_width: Širina
       texture_height: Visina
     option:
@@ -1553,6 +1554,8 @@ tab:
       url: URL
       tags: Značke
       layer_name: Oznaka
+      snapto_1: Vodoravno
+      snapto_2: Okomito
       erase: Obriši
     deep_rename_parts:
       formula: Formula
