@@ -56,7 +56,7 @@ module Ladb
       when 'ro'
         ex.description = 'Generator de liste de debitare și diagrame de tăiere pentru tâmplari. Sursă deschisă (Open Source), finanțat prin donații și ușor de utilizat ;)'
       when 'ru'
-        ex.description = 'Плагин расчета карт раскроя для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)'
+        ex.description = 'Плагин для формирования спецификаций деталей и карт раскроя плитных и линейных материалов для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)'
       when 'sr'
         ex.description = 'Generator lista i dijagrama rezanja za stolare. Otvoreni kod, finansiran dobrovoljnim prilozima i jednostavan za upotrebu ;)'
       when 'uk'
