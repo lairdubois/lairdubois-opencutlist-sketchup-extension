@@ -1991,7 +1991,7 @@ tab:
         option_remove_all_?: Was tun?
         option_remove_all_false: Teile zu bestehenden hinzufügen
         option_remove_all_true: Alles löschen!
-        option_keep_definitions_settings: Einstellungen zu Definitionen beibehalten
+        option_keep_definitions_settings: Einstellungen in den Definitionen beibehalten
         option_keep_materials_settings: Materialparameter beibehalten
       column:
         unused: Nicht verwendet
@@ -2407,7 +2407,7 @@ tool:
     action_0_add_overwrite: Die Datei „{{ name }}.skp“ existiert bereits. Möchten Sie sie ersetzen?
     action_0_add_front_label: VORDERSEITE
     action_0_add_up_label: OBERSEITE
-    action_0_flip_status: Vorder- und Rückseite vertauschen
+    action_0_flip_status: Front und Rückseite vertauschen
     action_0_flip_up_status: Ober- und Unterseite vertauschen
     action_1: Trennwand bauen
     action_1_status: Eine Trennwand in einem Fach errichten, das aus einer Gruppe bestehender Teile gebildet wird

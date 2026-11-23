@@ -1,0 +1,2536 @@
+# this label must be your language
+_label: فارسی (experimental, no rtl)
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  این زبان هنوز **به‌طور کامل ترجمه نشده** است.
+
+  برای کمک به تکمیل ترجمه، لطفاً [مستندات OpenCutList](https://docs.opencutlist.org/for-translators/general) را مطالعه کنید.
+# the reload message will be displayed when a user switches to this language
+_reload_msg: برای اعمال همه تغییرات، پنجره OpenCutList را ببندید و دوباره باز کنید.شبرای اعمال همهٔ تغییرات، باید پنجرهٔ OpenCutList را **ببندید** و **دوباره باز کنید**.
+_description: تولیدکنندهٔ لیست برش و چیدمان بهینهٔ ورق‌ها و تیرک‌ها برای نجاران. متن‌باز، با حمایت مالی کاربران و بسیار ساده برای استفاده ;)
+default:
+  minimize: کوچک‌کردن
+  maximize: بزرگ‌کردن
+  cancel: انصراف
+  stop: توقف
+  validate: اعمال
+  confirm: تأیید
+  finish: پایان
+  ok: تأیید
+  open: باز کردن
+  see: مشاهده
+  close: بستن
+  clear: حذف
+  refresh: بازآوری
+  generate: ایجاد
+  regenerate: ایجاد مجدد
+  print: چاپ
+  export: خروجی گرفتن
+  import: وارد کردن
+  load: بارگذاری
+  replace: جایگزینی
+  preview: پیش‌نمایش
+  options: گزینه‌ها
+  caution: احتیاط
+  remove: برداشتن
+  remove_all: برداشتن همه
+  delete: حذف
+  create: ایجاد
+  duplicate: تکثیر
+  ignore: نادیده گرفتن
+  download: دانلود
+  upgrade: به‌روزرسانی
+  copy: کپی
+  select_all: انتخاب همه
+  unselect_all: لغو انتخاب همه
+  draw: رسم
+  estimate: برآورد
+  rename: تغییر نام
+  next: بعدی
+  "yes": بله
+  "no": خیر
+  automatic: خودکار
+  # this is name of a new file saved by SketchUp
+  empty_filename: بدون‌عنوان.skp
+  help: راهنما
+  # mild expression of frustration or disappointment, polite and family-friendly
+  error: اوه!
+  warning: احتیاط
+  tip: نکته
+  good: خوب
+  bad: بد
+  by: توسط
+  # date format in use in your language
+  date_format: m/d/Y g:ia
+  # short date format in use in your language
+  date_format_short: m/d/Y
+  decimal: اعشاری
+  fractional: کسری
+  unit_0: اینچ
+  unit_1: فوت
+  unit_2: میلی‌متر
+  unit_3: سانتی‌متر
+  unit_4: متر
+  unit_5: یارد
+  unit_mass_0: کیلوگرم
+  unit_mass_1: پوند
+  unit_angle_0: درجه
+  instance_single: عدد
+  instance_plural: عدد
+  part_single: قطعه
+  part_plural: قطعه
+  cut_single: برش
+  cut_plural: برش
+  thickness_layer_single: لایه
+  thickness_layer_plural: لایه
+  setup_model_units: واحدهای مدل را تنظیم کنید
+  load_more: بارگذاری بیشتر
+  reset_to_app_defaults: بازگردانی به تنظیمات اولیه
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
+  constrain_key: Shift
+  copy_key_win: Ctrl
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: Tab
+  file: فایل
+  file_plural: فایل‌ها
+  stroke_color: رنگ خط
+  fill_color: رنگ پرکننده
+  length: طول
+  width: عرض
+  thickness: ضخامت
+  height: ارتفاع
+  deprecated: منسوخ‌شده
+core:
+  menu:
+    submenu: OpenCutList
+    item:
+      generate_cutlist: ایجاد لیست قطعات
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: ویرایش نمونه
+      edit_parent_part_instance: ویرایش گروه/کامپوننتِ شامل این نمونه
+      hide_part_instance: پنهان‌کردن نمونه
+      unhide_part_instance: نمایش نمونه
+      edit_part_instance_properties: ویرایش ویژگی‌های نمونه
+      smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
+      smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
+      smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: $t(core.toolbar.command.smart_join)
+      smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: بازنشانی موقعیت پنجره
+  toolbar:
+    name: OpenCutList
+    tools: ابزارها
+    command:
+      dialog: OpenCutList
+      smart_draw: رسم قطعات
+      smart_build: ساخت قطعات
+      smart_handle: مدیریت قطعات
+      smart_reshape: تغییر شکل قطعات
+      smart_paint: رنگ‌آمیزی قطعات
+      smart_axes: جهت‌دهی قطعات
+      smart_join: مونتاژ قطعات
+      smart_export: خروجی گرفتن از قطعات
+  messagebox:
+    dir_override: |
+      «{{ target }}» از قبل وجود دارد. آیا می‌خواهید آن را جایگزین کنید؟
+
+      پوشه‌ای با همین نام در پوشهٔ {{ parent }} موجود است. در صورت جایگزینی، محتوای اصلی از بین خواهد رفت.
+  savepanel:
+    export_to_file: خروجی گرفتن در فایل {{ file_format }}
+  dialog:
+    title: OpenCutList از L'Air du Bois
+  leftbar:
+    import: وارد کردن
+    more: بیشتر
+    more_docs: مستندات
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
+    more_reviews: نظرات
+    more_plans: مدل‌ها
+    # only appears in the french version
+    more_extensions: افزونه‌ها
+    more_update: به‌روزرسانی
+  bottombar:
+    report_a_bug: گزارش خطا
+  warning:
+    dev: |
+      شما از نسخهٔ **توسعه** *OpenCutList* استفاده می‌کنید.
+
+      برای گزارش خطا: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: در این زمینه در دسترس نیست
+  error:
+    exception: "خطا: **{{ error }}**"
+    forbidden: "غیرمجاز: **{{ error }}**"
+    extern: "خطای خارجی: **{{ error }}**"
+    feature_unavailable: این قابلیت به SketchUp نسخهٔ {{ version }} یا بالاتر نیاز دارد
+    failed_export_to: |
+      هنگام خروجی گرفتن در *{{ path }}* خطایی رخ داد.
+      **{{ error }}**
+    unsupported_file_format: "قالب فایل پشتیبانی نمی‌شود: **{{ format }}**"
+    unsupported_skp_version: |
+      فایل SKP با نسخهٔ جدیدتری از SketchUp ساخته شده است: {{ version }}
+  success:
+    exported_to: خروجی با موفقیت در {{ path }} ذخیره شد.
+    copied_to_clipboard: در کلیپ‌بورد کپی شد
+  event:
+    model_change: مدل فعال تغییر کرده است.
+    options_change: گزینه‌های مدل تغییر کرده‌اند.
+    material_change: دست‌کم یک متریال تغییر کرده است.
+    selection_change: انتخاب در مدل فعال تغییر کرده است.
+    layers_change: برچسب‌های مدل فعال تغییر کرده‌اند.
+    drawing_change: طرح مدل فعال تغییر کرده است.
+  upgrade:
+    unavailable: تعیین آخرین نسخهٔ *OpenCutList* ممکن نیست.
+    available: |
+      نسخهٔ جدیدتری از *OpenCutList* در دسترس است.
+      برای دریافت جدیدترین قابلیت‌ها به‌روزرسانی کنید!
+    up_to_date: |
+      شما از قبل آخرین نسخهٔ *OpenCutList* را دارید.
+
+      *برای کمک به افزودن قابلیت‌های بیشتر، از این پروژه حمایت مالی کنید!*
+    downloading: در حال دانلود
+    changelog: چه چیزی جدید است؟
+    ignore_update: رد کردن این به‌روزرسانی
+    download_rescue: مشکل در دانلود؟
+    manual_download: دانلود دستی
+    zzz: من پس از به‌روزرسانی در حال استراحت هستم. برای بازگرداندن من به بهترین حالت، باید SketchUp را دوباره راه‌اندازی کنید.
+    success: |
+      به‌روزرسانی OpenCutList کامل شد!
+
+      برای اعمال تغییرات، SketchUp را دوباره راه‌اندازی کنید.
+    error:
+      download: خطا در دانلود آرشیو.
+      unzip: خطا در استخراج آرشیو.
+  preset:
+    label: پیش‌تنظیم‌ها
+    manage: مدیریت پیش‌تنظیم‌ها
+    save_to: ذخیره به‌عنوان
+    restore_from: بازیابی از
+    app_defaults: پیش‌تنظیم کارخانه
+    user_defaults: پیش‌تنظیم پیش‌فرض من
+    new: پیش‌تنظیم جدید
+    new_prompt: |
+      *با ایجاد پیش‌تنظیم سفارشی، تنظیمات فعلی فرم به‌صورت سراسری ذخیره می‌شود و می‌توانید بعداً در همهٔ مدل‌های خود از آن استفاده کنید.*
+
+      نام پیش‌تنظیم را وارد کنید:
+    rename_prompt_title: تغییر نام
+    rename_prompt: نام جدید پیش‌تنظیم **"{{ name }}"** را وارد کنید
+    delete_confirm_title: حذف
+    delete_confirm: آیا مطمئن هستید که می‌خواهید پیش‌تنظیم **"{{ name }}"** را حذف کنید؟
+    override_confirm_title: به‌روزرسانی
+    override_confirm: آیا مطمئن هستید که می‌خواهید پیش‌تنظیم **"{{ name }}"** را با پارامترهای فرم به‌روزرسانی کنید؟
+    new_error: ممکن نیست، پیش‌تنظیم **"{{ name }}"** از قبل وجود دارد
+    new_success: پیش‌تنظیم **"{{ name }}"** ایجاد شد
+    override_success: پیش‌تنظیم **"{{ name }}"** به‌روزرسانی شد
+    restore_success: فرم با پیش‌تنظیم **"{{ name }}"** پر شد
+    rename_success: نام پیش‌تنظیم **"{{ name }}"** به **"{{ new_name }}"** تغییر کرد
+    delete_success: پیش‌تنظیم **"{{ name }}"** حذف شد
+    tooltip:
+      save_to: به‌روزرسانی پیش‌تنظیم '{{ name }}'
+      rename: تغییر نام پیش‌تنظیم '{{ name }}'
+      delete: حذف پیش‌تنظیم '{{ name }}'
+    dictionary:
+      component_textinput_color: پالت رنگ
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) ۲ بعدی
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) ۲ بعدی
+      cutlist_export_options: $t(tab.cutlist.label)$t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label)$t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label)$t(tab.cutlist.layout.title)
+      cutlist_layout_single_options: $t(tab.cutlist.label)$t(default.part_single)$t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label)$t(default.options)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label)$t(tab.cutlist.estimate.title)
+      cutlist_write2d_options: 2 بعدی$t(tab.cutlist.write.title)$t(tab.cutlist.label)
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) ۳ بعدی
+      importers_csv_import_options: $t(tab.importers.csv.label)$t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label)$t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label)$t(default.import)
+      materials_material_attributes: $t(tab.materials.label)$t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label)$t(default.options)
+      outliner_options: $t(tab.outliner.label)$t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label)$t(tab.outliner.deep_rename_parts.title)
+      settings_model: $t(tab.settings.label) / مدل
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
+  progress:
+    please_wait: در حال محاسبهٔ دنیایی از آرامش
+  component:
+    textinput:
+      reset: بازنشانی این مقدار
+    textinput_color:
+      store: ذخیرهٔ رنگ
+      remove: حذف رنگ
+    textinput_code:
+      snippets: نمونه‌های فرمول
+      help: برای دریافت فهرست متغیرها **@** را تایپ کنید.
+    textinput_file:
+      browse: مرور
+      browse_library: مرور و کپی در کتابخانه
+    textinput_size:
+      quantity: تعداد
+    three_viewer:
+      view: نمای {{ view }}
+      view_isometric: ایزومتریک
+      view_top: بالا
+      view_bottom: پایین
+      view_front: جلو
+      view_back: عقب
+      view_left: چپ
+      view_right: راست
+      zoom: مقیاس {{ zoom }}
+      explode_factor: دامنهٔ نمای انفجاری
+      toggle_box_helper: نمایش/پنهان‌کردن جعبهٔ محیطی
+      toggle_box_dimensions_helper: نمایش/پنهان‌کردن ابعاد
+      toggle_axes_helper: نمایش/پنهان‌کردن محورها
+  docs:
+    error:
+      failed_to_load: |
+        بازکردن مستندات ممکن نیست.
+        بررسی کنید که آنلاین باشید.
+  solid:
+    error:
+      empty: جسم هیچ هندسه‌ای ندارد
+      empty_named: «{{ name }}» هیچ هندسه‌ای ندارد
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
+      non_manifold_edges: جسم شامل {{ count }} لبهٔ نامنیفولد است
+      non_manifold_edges_plural: جسم شامل {{ count }} لبهٔ نامنیفولد است
+      non_manifold_edges_named: «{{ name }}» شامل {{ count }} لبهٔ نامنیفولد است
+      non_manifold_edges_named_plural: «{{ name }}» شامل {{ count }} لبهٔ نامنیفولد است
+      open_edges: جسم شامل {{ count }} لبهٔ باز است
+      open_edges_plural: جسم شامل {{ count }} لبهٔ باز است
+      open_edges_named: «{{ name }}» شامل {{ count }} لبهٔ باز است
+      open_edges_named_plural: «{{ name }}» شامل {{ count }} لبهٔ باز است
+      locked_instances: "این عملیات نمی‌تواند نمونهٔ قفل‌شده را ویرایش کند: {{ list }}"
+    rebuild:
+      error:
+        no_segment: هیچ خط ساختمانی قابل‌استفاده‌ای در انتخاب وجود ندارد
+        no_face: هیچ حلقهٔ بستهٔ هم‌صفحه‌ای قابل بازسازی نبود
+  library:
+    libraries: کتابخانه‌ها
+    user: کتابخانهٔ من
+    bundled: کتابخانهٔ OCL
+    family_modules: ماژول‌ها
+tab:
+  cutlist:
+    label: قطعات
+    title: لیست قطعات
+    help: |
+      کامپوننت ریشهٔ لیست برش را در صحنهٔ فعلی انتخاب کنید و روی دکمهٔ **ایجاد** کلیک کنید.
+      اگر هیچ کامپوننتی انتخاب نشده باشد، همهٔ کامپوننت‌های قابل‌مشاهده در صحنه در نظر گرفته می‌شوند.
+    is_selection: فقط انتخاب‌شده‌ها
+    select_part: انتخاب قطعه
+    select_part_plural: انتخاب قطعات
+    material_undefined: بدون متریال
+    not_available_std_width: عرض غیراستاندارد
+    not_available_std_thickness: ضخامت غیراستاندارد
+    not_available_std_section: مقطع غیراستاندارد
+    highlight_part: برجسته‌کردن قطعه در مدل
+    highlight_parts: برجسته‌کردن قطعات در مدل
+    edit_part_properties: ویرایش ویژگی‌های قطعه
+    edit_part_axes_properties: ویرایش ویژگی‌های (محورهای) قطعه
+    edit_part_edges_properties: ویرایش ویژگی‌های (لبه‌های) قطعه
+    edit_part_faces_properties: ویرایش ویژگی‌های (سطوح) قطعه
+    part_drawing_type_1: دوبعدی - روی قطعه
+    part_drawing_type_2: دوبعدی - پشت قطعه
+    part_drawing_type_3: دوبعدی - نمای چپ
+    part_drawing_type_4: دوبعدی - نمای راست
+    part_drawing_type_5: دوبعدی - نمای روبه‌رو
+    part_drawing_type_6: دوبعدی - نمای پشت
+    part_drawing_type_7: سه‌بعدی
+    tooltip:
+      show_hide_block: نمایش / پنهان‌کردن این گروه
+      show_hide_blocks: نمایش / پنهان‌کردن همهٔ گروه‌ها
+      scroll_to_block: پیمایش به گروه
+      not_available_std_width: عرض *{{ std_dimension_real }}* در عرض‌های استاندارد متریال '{{ material_name }}' تعریف نشده است
+      not_available_std_thickness: ضخامت *{{ std_dimension_real }}* در ضخامت‌های استاندارد متریال '{{ material_name }}' تعریف نشده است
+      not_available_std_section: مقطع *{{ std_dimension_real }}* در مقطع‌های استاندارد متریال '{{ material_name }}' تعریف نشده است
+      add_std_width_to_material: |
+        افزودن عرض *{{ std_dimension }}*
+        به متریال '{{ material_name }}'
+      add_std_thickness_to_material: |
+        افزودن ضخامت *{{ std_dimension }}*
+        به متریال '{{ material_name }}'
+      add_std_section_to_material: |
+        افزودن مقطع *{{ std_dimension }}*
+        به متریال '{{ material_name }}'
+      rounded_std_width: |
+        عرض *{{ std_dimension }}* با دقت واحدهای مدل گرد شده است.
+        عرض واقعی: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        ضخامت *{{ std_dimension }}* با دقت واحدهای مدل گرد شده است.
+        ضخامت واقعی: "*{{ std_dimension_real }}*"
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        مقطع *{{ std_dimension }}* با دقت واحدهای مدل گرد شده است.
+        مقطع واقعی: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
+      rounded_std_footer: دقت را در *اطلاعات مدل* تنظیم کنید یا ابعاد قطعات این گروه را بررسی کنید.
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: ویرایش ویژگی‌های گروه قطعات
+      edit_material: $t(tab.cutlist.menu.edit_material)
+      folding_part: باز کردن / بستن
+      material_origin_1: متریال در نظر گرفته‌شده برای این قطعه روی نمونه‌های آن تعریف شده است
+      material_origin_2: متریال در نظر گرفته‌شده برای این قطعه از یکی از عناصر والد آن به ارث رسیده است
+      material_origin_3: متریال در نظر گرفته‌شده برای این قطعه از عناصر فرزند آن استخراج شده است
+      orientation_locked_on_axis: جهت این قطعه روی محورهایش قفل شده است
+      number_saved: شمارهٔ قطعه ذخیره شده است
+      number_hidden: شمارهٔ '{{ number }}' ثبت‌شده روی این قطعه قابل استفاده نیست زیرا قبلاً به قطعهٔ دیگری اختصاص یافته است
+      number_generated: شمارهٔ این قطعه به‌صورت خودکار ایجاد می‌شود
+      resized: اندازهٔ این قطعه نسبت به تعریف کامپوننتش تغییر کرده است
+      flipped: این قطعه نسبت به تعریف کامپوننتش قرینه شده است
+      symmetrical: تشخیص قطعهٔ قرینه برای این قطعه غیرفعال است
+      ignore_grain_direction: جهت الیاف در این قطعه نادیده گرفته می‌شود
+      follow_grain_direction: تشخیص پیوستگی الیاف برای این قطعه فعال است
+      auto_oriented: جهت این قطعه به‌صورت خودکار تغییر یافته است
+      oko_label_filter: شامل / مستثنا کردن این نشان
+      add_label_filter: فیلتر بر اساس '{{ label }}'
+      remove_label_filter: حذف فیلتر '{{ label }}'
+      add_edge_material_name_filter: فیلتر بر اساس '{{ material_name }}'
+      remove_edge_material_name_filter: حذف فیلتر '{{ material_name }}'
+      add_veneer_material_name_filter: فیلتر بر اساس '{{ material_name }}'
+      remove_veneer_material_name_filter: حذف فیلتر '{{ material_name }}'
+      not_aligned_on_axes: احتیاط، ممکن است این قطعه روی محورهایش به‌درستی تراز نباشد
+      instance_count_by_part: این قطعه در بسته‌های **{{ count }}** عددی شمارش می‌شود.
+      unused_instance_count: توجه کنید که **{{ count }}** عدد از آخرین بسته استفاده نخواهد شد.
+      unused_instance_count_plural: توجه کنید که **{{ count }}** عدد از آخرین بسته استفاده نخواهد شد.
+      used_instance_count: "**{{ count }}** عدد از {{ total }} استفاده شده"
+      used_instance_count_plural: "**{{ count }}** عدد از {{ total }} استفاده شده"
+      thickness_layer_count: قطعهٔ نهایی از **{{ count }}** لایه در ضخامت ساخته شده است
+      thickness_layered: تعداد در اینجا به تعداد قطعاتی اشاره دارد که باید برش بخورند تا همهٔ لایه‌ها به دست آیند.
+      thickness_layered_equation: "**{{ count }}** *قطعه* × **{{ layerCount }}** *لایه* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *قطعه* × **{{ layerCount }}** *لایه* = **{{ cuttingPartCount }}**"
+      multiple_content_layers: احتیاط، این قطعه از زیرقطعاتی تشکیل شده که در {{ count }} برچسب مختلف قرار دارند:<br>{{ layers }}
+      children_warnings: احتیاط، {{ count }} هشدار در قطعات گروه‌شده وجود دارد
+      children_warnings_plural: احتیاط، {{ count }} هشدار در قطعات گروه‌شده وجود دارد
+      children_size_increase: این بُعد برای {{ count }} مورد از قطعات گروه‌شده با اضافه‌اندازه افزایش یافته است
+      invalid_final_area: احتیاط، این مساحت قابل جمع‌زدن محاسبه نشد زیرا {{ count }} قطعه (از {{ total }}) مساحت نامعتبر دارد
+      invalid_final_area_plural: احتیاط، این مساحت قابل جمع‌زدن محاسبه نشد زیرا {{ count }} قطعه (از {{ total }}) مساحت نامعتبر دارند
+      is_instance_name: عنوان این قطعه از نام نمونهٔ گروه استخراج شده است
+      is_dynamic_attributes_name: عنوان این قطعه از ویژگی 'Name' کامپوننت پویا استخراج شده است
+      has_edges: این قطعه شامل {{ count }} لبه‌چسبانی است
+      has_edges_plural: این قطعه شامل {{ count }} لبه‌چسبانی است
+      has_faces: این قطعه شامل {{ count }} سطح روکش‌دار است
+      has_faces_plural: این قطعه شامل {{ count }} سطح روکش‌دار است
+      size_increased_0: |
+        افزایش‌یافته با اضافه‌اندازهٔ متریال
+        ({{ increase_1 }})
+      size_increased_1: |
+        افزایش‌یافته با اضافه‌اندازهٔ قطعه
+        ({{ increase_2 }})
+      size_increased_2: |
+        افزایش‌یافته با اضافه‌اندازهٔ متریال و قطعه
+        ({{ increase_1 }} + {{ increase_2 }})
+      edge_decremented: کاهش‌یافته به‌اندازهٔ ضخامت لبه‌چسبانی‌ها ({{ decrement }})
+      edge_ymin: لبهٔ طولی ۱
+      edge_ymax: لبهٔ طولی ۲
+      edge_xmin: لبهٔ عرضی ۱
+      edge_xmax: لبهٔ عرضی ۲
+      face_zmin: پشت
+      face_zmax: رو
+      dblclick_to_copy_all_edges: برای کپی این مقدار روی سایر لبه‌ها دوبار کلیک کنید
+      dblclick_to_copy_all_faces: برای کپی این مقدار روی سطح دیگر دوبار کلیک کنید
+      dblclick_to_sort_axes: برای مرتب‌سازی خودکار محورها بر اساس ابعاد قطعه دوبار کلیک کنید
+      part_axes: محورهای داخلی قطعه
+      select_unselect_all_parts: انتخاب / لغو انتخاب همهٔ قطعات گروه
+      select_parts_in_cutlist: انتخاب قطعه در لیست قطعات
+      select_parts_in_cutlist_plural: انتخاب {{ count }} قطعه در لیست قطعات
+      setup_group_cuttingdiagram: پیکربندی نقشهٔ برش '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      setup_group_packing: پیکربندی نقشهٔ برش '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      open_part_url: باز کردن نشانی اینترنتی قطعه
+    menu:
+      show_all_groups: نمایش همهٔ گروه‌ها
+      hide_all_other_groups: پنهان‌کردن همهٔ گروه‌های دیگر
+      numbers_save: ذخیرهٔ شمارهٔ قطعات
+      numbers_reset: بازنشانی شمارهٔ قطعات
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: چاپ برچسب‌ها
+      write_2d: تصویر دوبعدی
+      write_3d: هندسهٔ سه‌بعدی
+      write_2d_parts: خروجی تصویر دوبعدی قطعات
+      write_3d_parts: خروجی هندسهٔ سه‌بعدی قطعات
+      group_write_2d_parts: خروجی تصویر دوبعدی قطعات گروه
+      group_write_3d_parts: خروجی هندسهٔ سه‌بعدی قطعات گروه
+      group_layout_parts: چاپ نقشهٔ کلی قطعات گروه
+      group_numbers_save: ذخیرهٔ شمارهٔ قطعات این گروه
+      group_numbers_reset: بازنشانی شمارهٔ قطعات گروه
+      group_cuttingdiagram: نقشهٔ برش
+      group_packing: نقشهٔ برش
+      group_labels: چاپ برچسب قطعات گروه
+      group_export: خروجی گرفتن از گروه
+      group_estimate: برآورد گروه
+      edit_material: ویرایش متریال '{{ material_name }}'
+      expand_all: باز کردن همهٔ ردیف‌ها
+      collapse_all: بستن همهٔ ردیف‌ها
+      reset_prices: بازنشانی قیمت همهٔ قطعات
+      reset_prices_confirm: |
+        در حال بازنشانی قیمت همهٔ قطعات مدل خود هستید.
+        این عمل نهایی است. **همهٔ قیمت‌ها صفر می‌شوند.**
+        برای ادامه تأیید کنید.
+      reset_prices_success: قیمت همهٔ قطعات بازنشانی شد.
+    edit_part:
+      title: ویژگی‌های قطعهٔ '{{ name }}'
+      title_multiple: ویژگی‌های گروه قطعات
+      multiple_alert: ویژگی‌های مشترک گروهی از {{ part_count }} قطعه.
+      general: عمومی
+      extra_help: فهرست ویژگی‌های مخصوص نوع متریال "**$t(tab.materials.type_{{ material_type }})**".
+      edges: لبه‌ها
+      faces: سطوح
+      name: نام
+      material: متریال
+      cumulable: تجمعی
+      cumulable_help: |
+        اگر این گزینه انتخاب شود، هنگام مرتب‌سازی لیست قطعات، **طول** یا **عرض** برابر **طول واحد** یا **عرض واحد** ضرب در تعداد در نظر گرفته می‌شود.
+      cumulable_0: غیرتجمعی
+      cumulable_1: تجمعی در طول
+      cumulable_2: تجمعی در عرض
+      instance_count_by_part: بسته‌بندی
+      instance_count_by_part_help: |
+        اجازه می‌دهد قطعه به‌عنوان یک *بسته* از یک یا چند *عدد* در نظر گرفته شود.
+        بنابراین تعداد مرتبط با قطعه در لیست قطعات، نشان‌دهندهٔ تعداد بسته‌های کاملی است که برای رسیدن به تعداد واقعی موجود در مدل لازم است.
+
+        *مثال: برای شمارش فقط ۱ قطعه به ازای یک جفت ریل کشو:
+        بسته‌بندی = ۲ عدد / قطعه*
+      instance_count_by_part_1: ۱ عدد در هر قطعه
+      instance_count_by_part_2: ۲ عدد در هر قطعه
+      mass: وزن
+      mass_help: وزن قطعه هنگام ایجاد **برآورد** استفاده خواهد شد.
+      price: قیمت
+      price_help: قیمت قطعه هنگام ایجاد **برآورد** استفاده خواهد شد.
+      thickness_layer_count: تعداد لایه‌ها
+      thickness_layer_count_help: |
+        تعداد لایه‌هایی را تعیین کنید که قطعهٔ رسم‌شده را در راستای ضخامت تقسیم می‌کنند.
+
+        *مثال:* اگر می‌خواهید قطعه‌ای با ضخامت *۳۸ میلی‌متر* را با چسباندن دو *۱۹ میلی‌متری* بسازید، در این فیلد **۲** را وارد کنید.
+        *OpenCutList آن‌گاه به‌جای ۱ قطعهٔ ۳۸ میلی‌متری، ۲ قطعهٔ ۱۹ میلی‌متری را می‌شمارد.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
+      description: توضیحات
+      description_help: |
+        *توضیحات* به شما امکان می‌دهد برای هر تعریف قطعه اطلاعات دلخواه ارائه دهید.
+      url: نشانی اینترنتی
+      url_help: |
+        *نشانی اینترنتی* به شما امکان می‌دهد در هر تعریف قطعه پیوندی دلخواه به یک صفحهٔ خارجی قرار دهید.
+      tags: نشان‌ها
+      tags_help: |
+        *نشان‌ها* کلیدواژه‌های دلخواهی هستند که می‌توان به هر تعریف قطعه افزود.
+        می‌توانید هر تعداد نشان که بخواهید اضافه کنید.
+        سپس می‌توانید قطعات قابل‌مشاهده در لیست قطعات را بر اساس این نشان‌ها فیلتر کنید.
+      tags_multiple_info: فقط نشان‌های مشترک نمایش داده می‌شوند
+      orientation: جهت‌گیری
+      orientation_locked_on_axis: قفل‌کردن جهت‌گیری روی محورهای قطعه
+      orientation_locked_on_axis_help: |
+        اگر این گزینه انتخاب شود، گزینهٔ *جهت‌دهی خودکار قطعات* روی این قطعه اثری نخواهد داشت
+
+        بنابراین در دستگاه مختصات محلی:
+        - *طول* روی محور <span style='color:red'>قرمز</span> است،
+        - *عرض* روی محور <span style='color:green'>سبز</span> است و
+        - *ضخامت* روی محور <span style='color:blue'>آبی</span> است
+      symmetrical: غیرفعال‌کردن تشخیص قطعهٔ قرینه برای این قطعه
+      symmetrical_help: |
+        اگر این گزینه انتخاب شود، تشخیص *قطعهٔ قرینه* روی این قطعه اثری نخواهد داشت.
+      ignore_grain_direction: الیاف
+      ignore_grain_direction_help: |
+        اگر این گزینه انتخاب شود، جهت الیاف متریال برای این قطعه نادیده گرفته می‌شود.
+      ignore_grain_direction_0: جهت الیاف در راستای طول است
+      ignore_grain_direction_1: نادیده‌گرفتن جهت الیاف
+      follow_grain_direction: پیوستگی الیاف
+      follow_grain_direction_help: |
+        فعال‌کردن این گزینه باعث می‌شود نمونه‌های این قطعه به‌عنوان قطعاتی در نظر گرفته شوند که با همسایگان خود در **پیوستگی الیاف** چیده شده‌اند، به‌شرطی که این موارد مشترک باشد:
+        - همان *گروه پیوستگی الیاف*
+        - همان صفحه
+        - همان جهت‌گیری
+        - همان متریال الیاف‌دار
+        - همان ضخامت
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: تشخیص پیوستگی الیاف فعال است
+      axes: محورها
+      axes_help: ابعاد را بازچینی کنید تا با رنگ محورهای دلخواه در قطعهٔ شما مطابقت داشته باشد.
+      axes_tip: |
+        توجه کنید که اگر گزینهٔ *جهت‌دهی خودکار قطعات* فعال نباشد یا قطعه *روی محورهایش قفل شده* باشد:
+         - **طول** روی محور <strong style='color:red'>قرمز</strong>،
+         - **عرض** روی محور <strong style='color:green'>سبز</strong> و
+         - **ضخامت** روی محور <strong style='color:blue'>آبی</strong> خوانده می‌شود
+      axes_origin_position_none: مبدأ تغییر نکند
+      axes_origin_position_min: مبدأ در یک گوشه قرار گیرد
+      axes_origin_position_center: مبدأ در مرکز قرار گیرد
+      axes_origin_position_front_min: مبدأ در یک گوشهٔ روی قطعه قرار گیرد
+      axes_origin_position_front_center: مبدأ در مرکز روی قطعه قرار گیرد
+      over_length: در راستای طول
+      over_width: در راستای عرض
+      edge_disabled_help: این لبه‌چسبانی قابل پیکربندی نیست زیرا هیچ سطح دارای متریالی روی این لبهٔ قطعه در مدل شناسایی نشده است.
+      face_disabled_help: این رویه قابل پیکربندی نیست زیرا هیچ سطح دارای متریالی روی این سطح قطعه در مدل شناسایی نشده است.
+      multiple_values: مقادیر چندگانه
+      loading_preview: در حال بارگذاری پیش‌نمایش
+    option:
+      auto_orient: جهت‌دهی خودکار قطعات
+      auto_orient_help: |
+        اگر این گزینه انتخاب شود، قطعات بر اساس ابعاد مرتب می‌شوند به‌طوری که بزرگ‌ترین بُعد *طول* و کوچک‌ترین بُعد *ضخامت* باشد.
+
+        در غیر این صورت،
+         - *طول* روی محور <span style='color:red'>قرمز</span>،
+         - *عرض* روی محور <span style='color:green'>سبز</span> و
+         - *ضخامت* روی محور <span style='color:blue'>آبی</span> خوانده می‌شود
+      flipped_detection: تشخیص قطعات قرینه
+      flipped_detection_help: |
+        اگر این گزینه انتخاب شود، قطعات قرینه شناسایی شده و مانند یک قطعهٔ جدید نمایش داده می‌شوند.
+      smart_material: تخصیص *هوشمند* متریال
+      smart_material_help: اگر این گزینه انتخاب شود، ممکن است به قطعات بدون متریال تعریف‌شده، متریال اصلی عناصر فرزندشان یا متریال به‌ارث‌رسیده از عناصر والدشان اختصاص داده شود.
+      dynamic_attributes_name: استفاده از ویژگی *Name* کامپوننت‌های پویا
+      dynamic_attributes_name_help: |
+        اگر این گزینه انتخاب شود، عنوان قطعاتی که کامپوننت پویا هستند، در صورت تعریف‌شدن، از ویژگی *Name* استخراج می‌شود.
+
+        <i class='ladb-opencutlist-icon-warning'></i> نمونه‌های قطعه با تعریف کامپوننت یکسان، اگر ویژگی *Name* مقدار یکسانی نداشته باشد، از هم جدا خواهند شد.
+      part_number_with_letters: استفاده از حروف برای شماره‌گذاری قطعات
+      part_number_with_letters_help: اگر این گزینه انتخاب شود، قطعات با حروف (A, B, C, ... Z, AA, AB, ...) شماره‌گذاری می‌شوند.
+      part_number_sequence_by_group: بازنشانی شماره‌گذاری قطعات برای هر گروه
+      part_number_sequence_by_group_help: اگر این گزینه انتخاب شود، شماره‌گذاری قطعات در هر گروه (فهرست قطعات با متریال یکسان و ضخامت خام یکسان) از ۱ (یا A) دوباره شروع می‌شود.
+      part_folding: گروه‌بندی قطعات یکسان
+      part_folding_help: |
+        اگر این گزینه انتخاب شود، قطعاتی از **متریال چوب ماسیو، ورق یا الوار** که **اندازهٔ نهایی یکسان**، **نشان‌های یکسان** و **رویهٔ نهایی یکسان** *(اگر نمایش این رویه پنهان نشده باشد)* دارند، در *لیست قطعات* در یک ردیف گروه‌بندی می‌شوند.
+
+        این قطعات برای برچسب‌ها و نقشهٔ برش همچنان متفاوت در نظر گرفته می‌شوند.
+      hide_entity_names: پنهان‌کردن نام نمونه‌ها
+      hide_entity_names_help: اگر این گزینه انتخاب شود، **نام نمونه‌های** قطعات نمایش داده نمی‌شود.
+      hide_descriptions: پنهان‌کردن توضیحات
+      hide_descriptions_help: اگر این گزینه انتخاب شود، **توضیحات** درج‌شده روی قطعات نمایش داده نمی‌شود.
+      hide_tags: پنهان‌کردن نشان‌ها
+      hide_tags_help: اگر این گزینه انتخاب شود، **نشان‌های** درج‌شده روی قطعات نمایش داده نمی‌شود.
+      hide_cutting_dimensions: پنهان‌کردن ابعاد خام
+      hide_cutting_dimensions_help: اگر این گزینه انتخاب شود، ابعاد **خام** قطعات نمایش داده نمی‌شود.
+      hide_bbox_dimensions: پنهان‌کردن ابعاد نهایی
+      hide_bbox_dimensions_help: اگر این گزینه انتخاب شود، ابعاد **نهایی** قطعات نمایش داده نمی‌شود.
+      hide_final_areas: پنهان‌کردن مساحت واقعی قطعات نوع *ورق*
+      hide_final_areas_help: اگر این گزینه انتخاب شود، **مساحت واقعی** قطعات نوع *ورق* نمایش داده نمی‌شود.
+      hide_edges: پنهان‌کردن ستون‌های لبه
+      hide_edges_help: اگر این گزینه انتخاب شود، **ستون‌های لبه‌چسبانی** قطعات نوع *ورق* نمایش داده نمی‌شود.
+      hide_faces: پنهان‌کردن ستون‌های رویه
+      hide_faces_help: اگر این گزینه انتخاب شود، **ستون‌های رویه** قطعات نوع *ورق* نمایش داده نمی‌شود.
+      hide_material_colors: پنهان‌کردن رنگ متریال‌ها
+      hide_material_colors_help: اگر این گزینه انتخاب شود، رنگ متریال‌ها نمایش داده نمی‌شود.
+      minimize_on_highlight: کوچک‌کردن پس از *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: اگر این گزینه انتخاب شود، هنگام استفاده از عملکرد *'$t(tab.cutlist.highlight_part)'* پنجرهٔ OpenCutList کوچک می‌شود.
+      general: عمومی
+      sorting: مرتب‌سازی
+      group_order_strategy: مرتب‌سازی گروه‌ها
+      group_order_strategy_help: |
+        ویژگی‌های زیر را بازچینی کنید تا راهبرد مرتب‌سازی گروه‌ها تعیین شود.
+        هر ویژگی را می‌توان به‌صورت <i class="ladb-opencutlist-icon-sort-asc"></i> *صعودی* یا <i class="ladb-opencutlist-icon-sort-desc"></i> *نزولی* مرتب کرد.
+      part_order_strategy: مرتب‌سازی قطعات
+      part_order_strategy_help: |
+        ویژگی‌های زیر را بازچینی کنید تا راهبرد مرتب‌سازی قطعات هر گروه تعیین شود.
+        هر ویژگی را می‌توان به‌صورت <i class="ladb-opencutlist-icon-sort-asc"></i> *صعودی* یا <i class="ladb-opencutlist-icon-sort-desc"></i> *نزولی* مرتب کرد.
+      dimension_column_order_strategy: ترتیب ستون‌ها
+      dimension_column_order_strategy_help: |
+        ویژگی‌های زیر را بازچینی کنید تا ترتیب نمایش ستون‌های ابعاد تعیین شود.
+      property_material_type: نوع متریال
+      property_material_name: نام متریال
+      property_std_width: عرض استاندارد
+      property_std_thickness: ضخامت استاندارد
+      property_thickness: ضخامت
+      property_length: طول
+      property_width: عرض
+      property_name: عنوان
+      property_count: تعداد
+      property_edge_pattern: تعداد لبه‌چسبانی‌ها
+      property_tags: نشان‌ها
+      property_thickness_layer_count: تعداد لایه‌ها
+      tags: نشان‌ها
+      tags_help: فهرست دلخواه نشان‌های موجود در پنجرهٔ ویژگی‌های قطعه.
+      tags_placeholder: افزودن نشان
+    list:
+      filters: فیلترها
+      filters_warning_0: این فیلتر همهٔ قطعات را پنهان می‌کند!
+      filters_warning: این فیلتر فقط **{{ count }}** قطعه از مجموع {{ total }} را نمایش می‌دهد.
+      filters_warning_plural: این فیلتر فقط **{{ count }}** قطعه از مجموع {{ total }} را نمایش می‌دهد.
+      edge_material_names_filter: فیلتر بر اساس متریال لبه‌چسبانی
+      veneer_material_names_filter: فیلتر بر اساس متریال روکش
+      names_filter: فیلتر بر اساس عنوان
+      tags_filter: فیلتر بر اساس نشان‌ها
+      tags_filter_any: همهٔ نشان‌ها
+      dimensions_help: توضیح ابعاد
+      summary: خلاصه
+      material_type: نوع
+      material_thickness: متریال / ابعاد
+      part_count: تعداد قطعات
+      area: مساحت
+      area_short: مساحت
+      volume: حجم
+      number: ردیف
+      name: عنوان
+      count: تعداد
+      cutting: خام
+      bbox: نهایی
+      final: واقعی
+      total_cutting: Σ خام
+      total_final: Σ واقعی
+      length: طول
+      length_short: L
+      width: عرض
+      width_short: W
+      thickness: ضخامت
+      thickness_short: T
+      edges: لبه‌ها
+      faces: رویه‌ها
+    export:
+      title: خروجی گرفتن
+      info_0: |
+        این قابلیت به شما امکان می‌دهد داده‌های *لیست قطعات* را در کلیپ‌بورد یا در یک فایل با قالب [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) یا [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML) خروجی بگیرید.
+      customize_help: |
+        یک ستون را از فهرست بازچینی، پنهان، اضافه، حذف یا انتخاب کنید تا **عنوان** آن و **فرمولی** را که مقادیر هر ردیف خروجی را تولید می‌کند سفارشی کنید.
+      add_column: افزودن ستون
+      add_native_columns: افزودن ستون آماده
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
+      columns: ستون‌ها
+      column_title: عنوان
+      column_title_help: |
+        فیلد **عنوان** به شما امکان می‌دهد عنوان ستون را سفارشی کنید.
+      column_formula: فرمول
+      column_formula_help: |
+        فیلد **فرمول** به شما امکان می‌دهد برای سفارشی‌کردن مقدار ستون، کد *Ruby* بنویسید.
+      options: گزینه‌های خروجی
+      options_customize: سفارشی‌سازی
+      option_source: منبع
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: لیست قطعات
+      option_source_instances_list: لیست نمونه‌ها
+      option_format: قالب
+      option_csv_col_sep: جداکننده
+      option_csv_col_sep_tab: Tab
+      option_csv_col_sep_comma: ویرگول
+      option_csv_col_sep_semicolon: نقطه‌ویرگول
+      option_csv_encoding: کدگذاری
+      # as described in https://www.rfc-editor.org/info/rfc4180/
+      copy_all: سرستون + مقادیر
+      copy_values: فقط مقادیر
+      number: ردیف
+      path: مسیر
+      instance_name: نمونه
+      name: عنوان
+      total_cutting_length: مجموع طول - خام
+      total_cutting_area: مجموع مساحت - خام
+      total_cutting_volume: مجموع حجم - خام
+      total_final_area: مجموع مساحت نهایی
+      cutting_length: طول - خام
+      cutting_width: عرض - خام
+      cutting_thickness: ضخامت - خام
+      edge_cutting_length: لبه‌های طولی - خام
+      edge_cutting_width: لبه‌های عرضی - خام
+      bbox_length: طول نهایی
+      bbox_width: عرض نهایی
+      bbox_thickness: ضخامت نهایی
+      final_area: مساحت نهایی
+      count: تعداد
+      part_count: تعداد قطعات
+      material: متریال
+      material_type: نوع متریال
+      material_name: نام متریال
+      material_description: توضیحات متریال
+      material_url: نشانی اینترنتی متریال
+      material_std_dimension: ابعاد استاندارد
+      entity_names: نام نمونه‌ها
+      description: توضیحات
+      url: نشانی اینترنتی
+      tags: نشان‌ها
+      edge_ymin: لبهٔ طولی ۱
+      edge_ymax: لبهٔ طولی ۲
+      edge_xmin: لبهٔ عرضی ۱
+      edge_xmax: لبهٔ عرضی ۲
+      face_zmin: پشت
+      face_zmax: رو
+      layer: برچسب
+      layers: برچسب‌ها
+      batch: دسته
+      bin: ورق/شاخه
+      component_definition: تعریف کامپوننت
+      component_instance: نمونهٔ کامپوننت
+      component_instances: نمونه‌های کامپوننت
+      filename: نام فایل
+      model_name: نام مدل
+      model_description: توضیحات مدل
+      page_name: نام صحنه
+      page_description: توضیحات صحنه
+      placeholder:
+        no_column_title: یک عنوان وارد کنید
+        no_column_formula_native: مقدار آمادهٔ ستون '{{ col_name }}'
+        no_column_formula: یک فرمول وارد کنید
+      warning:
+        is_group_selection: قطعات موجود در **گروه‌های پنهان** لیست قطعات، خروجی گرفته نمی‌شوند.
+        is_part_selection: خروجی به **قطعات انتخاب‌شده** محدود است.
+    estimate:
+      title: برآورد
+      info_0: |
+        این قابلیت به شما امکان می‌دهد **وزن** و **هزینهٔ** **مواد اولیهٔ** لازم برای تولید قطعات *لیست قطعات* را برآورد کنید.
+      options_general: عمومی
+      total: مجموع
+      total_used: استفاده‌شده
+      total_unused: استفاده‌نشده
+      total_mass: Σ وزن
+      total_cost: Σ هزینه
+      total_count: تعداد
+      total_instance_count: Σ عدد
+      total_volume: Σ حجم
+      total_area: Σ مساحت
+      total_length: Σ طول
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_7: $t(tab.materials.type_7)
+      type_-1: $t(default.cut_plural)
+      tooltip:
+        incompatible_unit: واحد با گزینه‌های برآورد متریال سازگار نیست
+        multiplier_coefficient: ضریب
+      error:
+        no_typed_material_parts: هیچ قطعه‌ای با نوع متریال تعریف‌شده (**$t(tab.materials.type_1)**، **$t(tab.materials.type_2)**، **$t(tab.materials.type_3)**، **$t(tab.materials.type_4)**، **$t(tab.materials.type_6)** یا **$t(tab.materials.type_5)**) برای ایجاد برآورد ارائه نشده است.
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} خطا**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} خطا**."
+      warning:
+        is_group_selection: قطعات موجود در **گروه‌های پنهان** لیست قطعات در نظر گرفته نمی‌شوند.
+        is_part_selection: برآورد به **قطعات انتخاب‌شده** محدود است.
+      tip:
+        not_enough_data: |
+          برای محاسبهٔ صحیح این برآورد:
+          - متریال‌های استفاده‌شده باید دست‌کم چگالی و قیمت داشته باشند.
+          - یراق‌آلات استفاده‌شده باید دست‌کم وزن و قیمت داشته باشند.
+    packing:
+      title: نقشهٔ برش
+      option_problem_type: نوع
+      option_problem_type_rectangle: مستطیلی
+      option_problem_type_rectangleguillotine: گیوتینی
+      option_problem_type_onedimensional: شاخه
+      option_problem_type_irregular: چینش نامنظم
+      options_material: متریال
+      options_config: پیکربندی
+      options_display: نمایش
+      options_tuning: تنظیم دقیق
+      option_std_bin_1d_dimensional: شاخه‌های استاندارد
+      option_std_bin_1d_edge: لبه‌چسبان‌های استاندارد
+      option_std_bin_1d_help: |
+        اندازه‌های شاخه یا لبه‌چسبان استاندارد را انتخاب کنید؛ این اندازه‌ها برای جا دادن همهٔ قطعات تکرار خواهند شد.
+
+        این فهرست در فیلد **$t(tab.materials.edit_material.std_lengths)** متریال تعریف می‌شود.
+
+        *برای به‌روزرسانی این فهرست، ویژگی‌های متریال '{{ material_name }}' را ویرایش کنید.*
+      option_std_bin_1d_add: افزودن یک اندازه
+      option_std_bin_1d_none: هیچ
+      option_scrap_bin_1d_dimensional_sizes: ته‌مانده‌های شاخه
+      option_scrap_bin_1d_edge_sizes: ته‌مانده‌های لبه‌چسبان
+      option_scrap_bin_1d_sizes_placeholder: طول x تعداد ; ...
+      option_scrap_bin_1d_sizes_help: |
+        همهٔ شاخه‌ها یا لبه‌چسبان‌های ته‌ماندهٔ خود را که باید در نقشهٔ برش در نظر گرفته شوند فهرست کنید.
+
+        *اندازه‌های بدون واحد، بر حسب واحد مدل در نظر گرفته می‌شوند.*
+      option_scrap_bin_1d_none: هیچ
+      option_std_bin_2d_sheet_good: ورق‌های استاندارد
+      option_std_bin_2d_veneer: ورق‌های روکش استاندارد
+      option_std_bin_2d_help: |
+        اندازه‌های ورق یا ورق روکش استاندارد را انتخاب کنید؛ این اندازه‌ها برای محاسبهٔ بهترین چیدمان ممکن همهٔ قطعات تکرار خواهند شد.
+
+        این فهرست در فیلد **$t(tab.materials.edit_material.std_sizes)** متریال تعریف می‌شود.
+
+        *برای به‌روزرسانی این فهرست، متریال '{{ material_name }}' را ویرایش کنید.*
+      option_std_bin_2d_add: افزودن یک اندازه
+      option_std_bin_2d_none: هیچ
+      option_scrap_bin_2d_sheet_good_sizes: ته‌مانده‌های ورق
+      option_scrap_bin_2d_veneer_sizes: ته‌مانده‌های روکش
+      option_scrap_bin_2d_sizes_placeholder: طول x عرض x تعداد ; ...
+      option_scrap_bin_2d_sizes_help: |
+        همهٔ ورق‌ها یا روکش‌های ته‌ماندهٔ خود را که باید در نقشهٔ برش در نظر گرفته شوند فهرست کنید.
+
+        *اندازه‌های بدون واحد، بر حسب واحد مدل در نظر گرفته می‌شوند.*
+      option_scrap_bin_2d_none: هیچ
+      option_optimization_mode: حالت بهینه‌سازی
+      option_optimization_mode_help: |
+        حالت بهینه‌سازی را با یا بدون محدودیت زمانی تعیین می‌کند.
+      option_objective: هدف
+      option_objective_help: |
+        هدف چیدمان را تعیین می‌کند.
+      option_rectangleguillotine_cut_type: نوع برش
+      option_rectangleguillotine_cut_type_help: |
+        نوع برش را تعیین می‌کند.
+      option_rectangleguillotine_cut_type_non_exact: غیردقیق
+      option_rectangleguillotine_cut_type_exact: دقیق
+      option_rectangleguillotine_cut_type_homogenous: همگن
+      option_rectangleguillotine_number_of_stages: تعداد مراحل
+      option_rectangleguillotine_number_of_stages_help: |
+        بیشترین تعداد مراحل برش را تعیین می‌کند.
+      option_rectangleguillotine_first_stage_orientation: جهت اولین برش
+      option_rectangleguillotine_first_stage_orientation_help: |
+        جهت اولین برش را مشخص می‌کند.
+      option_rectangleguillotine_first_stage_orientation_horizontal: افقی
+      option_rectangleguillotine_first_stage_orientation_vertical: عمودی
+      option_rectangleguillotine_first_stage_orientation_any: هر جهت
+      option_rectangleguillotine_sort_subplates_criteria: مرتب‌سازی مراحل
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        معیار مرتب‌سازی قطعات در هر مرحله را مشخص می‌کند.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: بر اساس اندازهٔ نزولی
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: بر اساس چگالی نزولی
+      option_rectangleguillotine_keep: حداقل اندازهٔ ته‌مانده‌ها
+      option_rectangleguillotine_keep_help: ته‌مانده‌هایی که هر دو بعدشان از حداقل اندازه بزرگ‌تر باشد با برچسب **نگهداری** علامت‌گذاری می‌شوند.
+      option_rectangle_leftover_mode: جهت پخش
+      option_rectangle_leftover_mode_help: |
+        جهتی را مشخص می‌کند که قطعات در آخرین ورقِ نیمه‌پر در آن پخش می‌شوند.
+      option_rectangle_leftover_mode_area: خودکار
+      option_rectangle_leftover_mode_x: در عرض ورق
+      option_rectangle_leftover_mode_y: در طول ورق
+      option_irregular_allowed_rotations: چرخش‌های مجاز
+      option_irregular_allowed_rotations_help: |
+        گام‌های زاویهٔ چرخش برای جاگذاری قطعات را تعیین می‌کند.
+
+        *متریال‌های الیاف‌دار فقط می‌توانند ۰ و ۱۸۰ درجه بچرخند.*
+      option_irregular_allowed_rotations_0: هیچ
+      option_irregular_allowed_rotations_90: گام‌های ۹۰ درجه
+      option_irregular_allowed_rotations_180: گام‌های ۱۸۰ درجه
+      option_irregular_allowed_rotations_free: آزاد
+      option_irregular_allow_mirroring: قرینه‌سازی مجاز
+      option_irregular_allow_mirroring_help: |
+        مشخص می‌کند آیا قرینه‌کردن قطعه برای جاگذاری مجاز است.
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: جهت پخش
+      option_irregular_leftover_mode_help: |
+        جهتی را مشخص می‌کند که قطعات در آخرین ورقِ نیمه‌پر در آن پخش می‌شوند.
+      option_irregular_leftover_mode_bottom_left: خودکار
+      option_irregular_leftover_mode_left: در عرض ورق
+      option_irregular_leftover_mode_bottom: در طول ورق
+      option_spacing: فاصله
+      option_spacing_help: |
+        حداقل فاصله بین هر دو قطعه.
+        این مقدار می‌تواند برابر با ضخامت تیغه یا ابزار برش باشد.
+      option_trimming: حاشیهٔ پیرایش
+      option_trimming_1d_help: حاشیهٔ پیرایش در هر انتهای شاخه یا لبه‌چسبان که ضایعات به‌حساب می‌آید.
+      option_trimming_2d_help: حاشیهٔ پیرایش اطراف ورق یا ورق روکش خام که ضایعات به‌حساب می‌آید.
+      option_items_formula: فرمول
+      option_items_formula_help: |
+        به شما امکان می‌دهد برای سفارشی‌کردن متن شناسایی قطعات در نقشه، کد *Ruby* بنویسید.
+      option_bin_folding_1d_dimensional: گروه‌بندی شاخه‌های مشابه
+      option_bin_folding_1d_edge: گروه‌بندی لبه‌چسبان‌های مشابه
+      option_bin_folding_2d_sheet_good: گروه‌بندی ورق‌های مشابه
+      option_bin_folding_2d_veneer: گروه‌بندی ورق‌های روکش مشابه
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        شاخه‌ها یا لبه‌چسبان‌هایی را که قطعات و برش‌های یکسان دارند گروه‌بندی می‌کند.
+      option_bin_folding_2d_help: |
+        ورق‌هایی را که قطعات و برش‌های یکسان دارند گروه‌بندی می‌کند.
+      option_bin_folding_warning: |
+        *اگر در فرمول سفارشی‌سازی متن شناسایی از ویژگی‌های نمونه استفاده کنید، این گزینه غیرفعال می‌شود.*
+      option_hide_part_list: لیست قطعات
+      option_hide_part_list_1d_dimensional_0: برای هر شاخه نمایش داده شود
+      option_hide_part_list_1d_edge_0: برای هر لبه‌چسبان نمایش داده شود
+      option_hide_part_list_2d_sheet_good_0: برای هر ورق نمایش داده شود
+      option_hide_part_list_2d_veneer_0: برای هر ورق روکش نمایش داده شود
+      option_hide_part_list_1: پنهان
+      option_hide_part_list_1d_help: نمایش یا پنهان‌کردن لیست قطعات برای هر شاخه یا لبه‌چسبان.
+      option_hide_part_list_2d_help: نمایش یا پنهان‌کردن لیست قطعات برای هر ورق یا ورق روکش.
+      option_part_drawing_type: شکل قطعات
+      option_part_drawing_type_0: پنهان
+      option_part_drawing_type_1: رسم‌شده - نمای رو
+      option_part_drawing_type_2: رسم‌شده - نمای پشت
+      option_part_drawing_type_help: |
+        نمایش یا پنهان‌کردن شکل واقعی قطعات و ماشین‌کاری آن‌ها روی نقشه.
+
+        *برای خروجی گرفتن از شکل‌ها باید این گزینه فعال باشد.*
+      option_colorization: رنگی‌کردن قطعات
+      option_colorization_0: $t(default.no)
+      option_colorization_1: $t(default.yes) - صفحه نمایش
+      option_colorization_2: $t(default.yes) - صفحه نمایش و چاپ
+      option_colorization_help: |
+        مشخص می‌کنید آیا برای تمایز قطعات روی نقشه از رنگ تصادفی استفاده شود.
+      option_origin_corner: موقعیت مبدأ
+      option_origin_corner_0: گوشهٔ بالا سمت چپ
+      option_origin_corner_1: گوشهٔ پایین سمت چپ
+      option_origin_corner_2: گوشهٔ بالا سمت راست
+      option_origin_corner_3: گوشهٔ پایین سمت راست
+      option_origin_corner_help: به شما امکان می‌دهد محل مبدأ دستگاه مختصات را برای نمایش قطعات روی ورق‌ها، ورق‌های روکش، الوارها یا لبه‌چسبان‌ها انتخاب کنید.
+      option_highlight_primary_cuts: برش‌های اصلی
+      option_highlight_primary_cuts_0: فقط هنگام قرارگرفتن نشانگر
+      option_highlight_primary_cuts_1: همیشه قابل‌مشاهده
+      option_highlight_primary_cuts_help: به شما امکان می‌دهد برش‌های اصلی را برجسته کنید تا همیشه دیده شوند.
+      option_hide_edges_preview: نمایش لبه‌چسبان‌ها
+      option_hide_edges_preview_0: در نقشهٔ برش نمایش داده شود
+      option_hide_edges_preview_1: در نقشهٔ برش پنهان شود
+      option_hide_edges_preview_help: نمایش یا پنهان‌کردن نمای بصری لبه‌چسبان‌های هر قطعه در نقشهٔ برش.
+      option_zoom_threshold: آستانهٔ بزرگ‌نمایی
+      # TODO find a better explanation
+      option_zoom_threshold_help: |
+        به شما امکان می‌دهد عرض نقشه‌ای را تعیین کنید که نقشه‌های کوچک‌تر از آن به‌صورت خودکار بزرگ‌نمایی می‌شوند.
+
+        *بزرگ‌نمایی بر اساس عریض‌ترین نقشه محاسبه می‌شود*.
+      option_time_limit: محدودیت زمانی
+      option_time_limit_help: |
+        محدودیت زمانی محاسبه را تعیین می‌کند
+      grain_groups:
+        title: "{{ count }} گروه پیوستگی الیاف"
+        title_plural: "{{ count }} گروه پیوستگی الیاف"
+        name: نام
+        item_count: Σ قطعات
+      tooltip:
+        scroll_to_block_1d: پیمایش به اولین شاخه یا لبه‌چسبان
+        scroll_to_block_2d: پیمایش به اولین ورق یا ورق روکش
+      list:
+        summary: خلاصه
+        cached: از حافظهٔ نهان بارگذاری شد
+        trimming: حاشیهٔ پیرایش
+        settings: تنظیمات
+        stats: آمار
+        time: زمان
+        total_efficiency: بازده کل
+        total_fill_rate: نرخ پرشدگی
+        total_cut_count: تعداد برش‌ها
+        total_cut_length: طول برش‌ها
+        efficiency: بازده
+        count: تعداد
+        length: طول
+        width: عرض
+        total_length: Σ طول
+        total_area: Σ مساحت
+        total_cost: Σ هزینه
+        total_part_count: Σ قطعات
+        total_used: مجموع استفاده‌شده
+        bin_1d_dimensional: شاخه
+        bin_1d_dimensional_type_0: شاخهٔ استاندارد
+        bin_1d_dimensional_type_1: ته‌ماندهٔ شاخه
+        bin_1d_edge: لبه‌چسبان
+        bin_1d_edge_type_0: لبه‌چسبان استاندارد
+        bin_1d_edge_type_1: ته‌ماندهٔ لبه‌چسبان
+        bin_2d_sheet_good: ورق
+        bin_2d_sheet_good_type_0: ورق استاندارد
+        bin_2d_sheet_good_type_1: ته‌ماندهٔ ورق
+        bin_2d_veneer: ورق روکش
+        bin_2d_veneer_type_0: ورق روکش استاندارد
+        bin_2d_veneer_type_1: ته‌ماندهٔ ورق روکش
+        unused: استفاده‌نشده
+        unplaced_parts: قطعهٔ جاگذاری‌نشده
+        unplaced_parts_plural: قطعات جاگذاری‌نشده
+        parts: قطعه
+        parts_plural: قطعات
+        leftovers: ته‌مانده
+        leftovers_plural: ته‌مانده‌ها
+        leftovers_to_keep: ته‌ماندهٔ قابل نگهداری
+        leftovers_to_keep_plural: ته‌مانده‌های قابل نگهداری
+        cut: برش
+        cut_plural: برش‌ها
+        cut_trimming: برش پیرایش
+        cut_primary: برش اصلی
+        cut_primary_plural: برش‌های اصلی
+        cut_none: هیچ
+        cut_depth: سطح {{ depth }}
+      write:
+        title: خروجی نقشهٔ برش
+        info_0: |
+          این ماژول به شما امکان می‌دهد **هندسهٔ** *نقشهٔ برش* را به‌صورت فهرستی از فایل‌ها با قالب [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) یا [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) خروجی بگیرید.
+        option_bin_sheet_good: ورق
+        option_bin_sheet_good_help: |
+          خروجی ورق و انتخاب رنگ را فعال می‌کند.
+        option_bin_veneer: ورق روکش
+        option_bin_veneer_help: |
+          خروجی ورق روکش و انتخاب رنگ را فعال می‌کند.
+        option_bin_dimensional: شاخه
+        option_bin_dimensional_help: |
+          خروجی شاخه و انتخاب رنگ را فعال می‌کند.
+        option_bin_edge: لبه‌چسبان
+        option_bin_edge_help: |
+          خروجی لبه‌چسبان و انتخاب رنگ را فعال می‌کند.
+        option_parts: قطعات
+        option_parts_help: |
+          خروجی قطعات و انتخاب رنگ را فعال می‌کند.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: شناسه‌ها
+        option_texts_help: |
+          به شما امکان می‌دهد خروجی متن شناسایی قطعات را فعال کنید و رنگ آن‌ها را انتخاب کنید.
+        option_leftovers: ته‌مانده‌ها
+        option_leftovers_help: |
+          به شما امکان می‌دهد خروجی ته‌مانده‌ها را فعال کنید و رنگ آن‌ها را انتخاب کنید.
+        option_cuts: برش‌ها
+        option_cuts_help: |
+          به شما امکان می‌دهد از برش‌ها خروجی بگیرید و رنگ آن‌ها را انتخاب کنید.
+        warning:
+          is_bin_selection: "**عناصر پنهان** خروجی گرفته نمی‌شوند."
+        error:
+          overflow_gt_spacing: |
+            اضافه‌اندازهٔ ماشین‌کاری ({{ overflow }}) باید کوچک‌تر یا مساوی فاصلهٔ ({{ spacing }}) پیکربندی‌شده در این نقشهٔ برش باشد.
+      error:
+        no_part: هیچ قطعه‌ای وجود ندارد.
+        no_bin_1d: هیچ شاخه یا لبه‌چسبان استانداردی انتخاب نشده و هیچ ته‌مانده‌ای در دسترس نیست.
+        no_bin_2d: هیچ ورق یا ورق روکش استانداردی انتخاب نشده و هیچ ته‌مانده‌ای در دسترس نبود.
+        invalid_part_shapes: شکل قطعهٔ '{{ name }}' نامعتبر است.
+        no_solution: هیچ راه‌حلی برای جاگذاری **همهٔ قطعات** در متریال موجود پیدا نشد.
+        unplaced_parts: "**۱ قطعه** جاگذاری نشد."
+        unplaced_parts_plural: "**{{ count }} قطعه** جاگذاری نشد."
+        unusable_part_1: قطعه بیش از حد بزرگ است
+        unusable_part_2: گروه پیوستگی الیاف بیش از حد بزرگ است
+      warning:
+        is_part_selection: این نقشهٔ برش به **قطعات انتخاب‌شده** محدود است.
+        cutting_dimensions: این نقشهٔ برش از ابعاد **خام** قطعات استفاده می‌کند.
+        cutting_dimensions_increase_1d: "ابعاد با اضافه‌اندازهٔ طول متریال '{{ material_name }}' افزایش یافته است: اضافه‌اندازهٔ طول (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "ابعاد با اضافه‌اندازهٔ طول و عرض متریال '{{ material_name }}' افزایش یافته است: اضافه‌اندازهٔ طول (**{{ length_increase }}**) و اضافه‌اندازهٔ عرض (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: ابعاد به‌اندازهٔ ضخامت لبه‌چسبان کاهش یافته است. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      title: برچسب‌ها
+      options_layout: چیدمان
+      options_settings: پیکربندی
+      options_part_order_strategy: مرتب‌سازی
+      options_offset: جابه‌جایی آغاز
+      size: اندازهٔ واقعی برچسب
+      add_element: افزودن عنصر
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
+      part_order_strategy_help: |
+        ویژگی‌های زیر را بازچینی کنید تا راهبرد مرتب‌سازی برچسب‌ها تعیین شود.
+        هر ویژگی را می‌توان به‌صورت <i class="ladb-opencutlist-icon-sort-asc"></i> *صعودی* یا <i class="ladb-opencutlist-icon-sort-desc"></i> *نزولی* مرتب کرد.
+      offset_help: |
+        *جابه‌جایی آغاز* موقعیت **اولین برچسب** را که باید در **صفحهٔ اول** چاپ شود تعیین می‌کند.
+        خانه‌ای را که با انتخاب شما مطابقت دارد انتخاب کنید.
+      option_page: اندازهٔ کاغذ
+      option_page_format: قالب
+      option_page_format_portrait: عمودی
+      option_page_format_landscape: افقی
+      option_page_format_custom: سفارشی
+      option_page_width: عرض
+      option_page_height: ارتفاع
+      option_margin: حاشیه‌ها
+      option_margin_top: بالا
+      option_margin_right: راست
+      option_margin_bottom: پایین
+      option_margin_left: چپ
+      option_spacing: اندازهٔ فاصله
+      option_spacing_h: افقی
+      option_spacing_v: عمودی
+      option_grid: برچسب در هر صفحه
+      option_col_count: ستون‌ها
+      option_row_count: ردیف‌ها
+      option_cutting_marks: علامت‌های برش
+      option_cutting_marks_0: هیچ
+      option_cutting_marks_1: چاپ‌شده
+      option_formula: مقدار
+      option_size: اندازه
+      option_custom_formula: فرمول
+      option_anchor: لنگر
+      option_anchor_start: ابتدا - پایین
+      option_anchor_middle: وسط - پایین
+      option_anchor_end: انتها - پایین
+      option_anchor_start_top: ابتدا - بالا
+      option_anchor_middle_top: وسط - بالا
+      option_anchor_end_top: انتها - بالا
+      option_color: رنگ
+      formula:
+        custom: فرمول
+        custom_qr_code: کد QR
+        part_number: شماره
+        part_name: عنوان
+        part_description: توضیحات
+        part_entity_named_path: مسیر نمونه
+        part_entity_name: نام نمونه
+        part_bin: ورق/شاخه
+        part_cutting_size: ابعاد خام
+        part_cutting_length: طول - خام
+        part_cutting_width: عرض - خام
+        part_cutting_thickness: ضخامت - خام
+        part_edge_cutting_size: ابعاد لبه‌ها
+        part_edge_cutting_length: لبه‌های طولی - خام
+        part_edge_cutting_width: لبه‌های عرضی - خام
+        part_size: اندازهٔ نهایی
+        part_length: طول نهایی
+        part_width: عرض نهایی
+        part_thickness: ضخامت نهایی
+        part_tags: نشان‌ها
+        part_batch: دسته
+        part_edge_ymin: لبهٔ طولی ۱
+        part_edge_ymax: لبهٔ طولی ۲
+        part_edge_xmin: لبهٔ عرضی ۱
+        part_edge_xmax: لبهٔ عرضی ۲
+        part_face_zmin: روکش پشت
+        part_face_zmax: روکش رو
+        thumbnail_proportional_drawing: تصویر بندانگشتی (نمای رو)
+        thumbnail_proportional_drawing_bottom: تصویر بندانگشتی (نمای پشت)
+        thumbnail_proportional: تصویر بندانگشتی متناسب
+        thumbnail_square: تصویر بندانگشتی مربعی
+        group_material: متریال / ابعاد
+        group_material_name: نام متریال
+        group_std_dimension: ابعاد استاندارد
+        filename: نام فایل
+        model_name: نام مدل
+        page_name: نام صحنه
+        length_unit: واحد
+        generated_at: تاریخ و زمان
+      error:
+        invalid_size: پارامترهای پیکربندی واردشده اجازه نمی‌دهند اندازهٔ معتبری برای برچسب تعیین شود.
+      warning:
+        is_group_selection: برای قطعات موجود در **گروه‌های پنهان** لیست قطعات برچسبی ایجاد نمی‌شود.
+        is_part_selection: این برچسب‌ها به **قطعات انتخاب‌شده** محدود هستند.
+    layout:
+      title: ترسیم
+      to_layout: خروجی به Layout
+      options_layout: چیدمان
+      options_settings: پیکربندی
+      option_parts: قطعات
+      option_parts_colored: رنگ
+      option_parts_colored_0: بدون رنگ
+      option_parts_colored_1: رنگ متریال
+      option_parts_colored_help: به شما امکان می‌دهد ظاهر قطعات را انتخاب کنید.
+      option_parts_opacity: کدری
+      option_parts_opacity_0: شفاف
+      option_parts_opacity_1: مات
+      option_parts_opacity_help: به شما امکان می‌دهد میزان کدری قطعات را انتخاب کنید.
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
+      option_pins: برچسب‌های اشاره‌گر
+      option_pins_hidden: نمایش
+      option_pins_hidden_0: با برچسب اشاره‌گر
+      option_pins_hidden_1: بدون برچسب اشاره‌گر
+      option_pins_hidden_help: نمایش یا پنهان‌کردن برچسب‌های اشاره‌گر قطعه با شماره یا عنوان.
+      option_pins_colored: رنگ
+      option_pins_colored_0: بدون رنگ
+      option_pins_colored_1: رنگ قطعه
+      option_pins_colored_help: به شما امکان می‌دهد رنگ برچسب اشاره‌گر را انتخاب کنید.
+      option_pins_formula: فرمول
+      option_pins_formula_help: به شما امکان می‌دهد برای سفارشی‌کردن متن برچسب اشاره‌گر، کد *Ruby* بنویسید.
+      option_pins_length: طول
+      option_pins_length_0: بدون خط راهنما
+      option_pins_length_1: کوتاه
+      option_pins_length_2: متوسط
+      option_pins_length_3: بلند
+      option_pins_length_4: $t(default.automatic)
+      option_pins_length_help: به شما امکان می‌دهد طول خط راهنما را انتخاب کنید.
+      option_pins_direction: جهت
+      option_pins_direction_0: در راستای محور قرمز
+      option_pins_direction_1: در راستای محور سبز
+      option_pins_direction_2: در راستای محور آبی
+      option_pins_direction_3: به‌سمت مرکز گروه والد
+      option_pins_direction_4: به‌سمت مرکز انتخاب
+      option_pins_direction_help: به شما امکان می‌دهد برای خوانایی بهتر، جهت خطوط راهنمای برچسب‌های اشاره‌گر را انتخاب کنید.
+      option_page: اندازهٔ کاغذ
+      option_page_format: قالب
+      option_page_format_portrait: عمودی
+      option_page_format_landscape: افقی
+      option_page_format_custom: سفارشی
+      option_page_width: عرض
+      option_page_height: ارتفاع
+      option_page_header: سربرگ
+      option_page_header_0: بدون سربرگ
+      option_page_header_1: با سربرگ
+      option_page_header_help: |
+        به شما امکان می‌دهد انتخاب کنید صفحهٔ چاپی شامل سربرگ با نام سند، توضیحات، تاریخ، واحد و مقیاس باشد یا نه.
+        بدون سربرگ، ترسیم کامل کل صفحه را پر می‌کند.
+      option_camera: دوربین
+      option_camera_view: نما
+      option_camera_view_custom: سفارشی
+      option_camera_zoom: مقیاس
+      option_camera_zoom_auto: خودکار
+      option_camera_zoom_custom: سفارشی
+      option_camera_target: موقعیت
+      option_camera_target_auto: خودکار
+      option_camera_target_custom: سفارشی
+      option_explode: نمای انفجاری
+      error:
+        no_part: قطعه‌ای برای ترسیم وجود ندارد.
+        failed_to_save_as_skp: نوشتن فایل SKP برای ارسال به Layout ناموفق بود.
+        failed_to_layout: |
+          خطا هنگام نوشتن فایل Layout: *{{ error }}*
+
+          **مطمئن شوید فایل در Layout باز نیست.**
+      warning:
+        is_group_selection: قطعات موجود در **گروه‌های پنهان** لیست قطعات ترسیم نمی‌شوند.
+        is_part_selection: این نمای کلی به **قطعات انتخاب‌شده** محدود است.
+      message:
+        adding_new_page: |
+          آیا می‌خواهید صفحهٔ جدیدی اضافه کنید؟
+        incompatible_page_format: |
+          فایل مقصد با همان قالب کاغذ پیکربندی نشده است.
+
+          خوانده‌شده: {{ old_page_format }}
+          خروجی: {{ new_page_format }}
+
+          همهٔ صفحات حذف خواهند شد.
+        changing_units: |
+          فایل مقصد به‌طور پیش‌فرض واحد یکسانی ندارد.
+
+          خوانده‌شده: {{ old_units }}
+          خروجی: {{ new_units }}
+
+          آیا می‌خواهید از واحدهای جدید استفاده کنید؟
+        changing_precision: |
+          فایل مقصد به‌طور پیش‌فرض دقت یکسانی ندارد.
+
+          خوانده‌شده: {{ old_precision }}
+          خروجی: {{ new_precision }}
+
+          آیا می‌خواهید از دقت جدید استفاده کنید؟
+    write:
+      title: خروجی قطعات
+      info_2d: |
+        این ماژول به شما امکان می‌دهد **تصویر دوبعدی** قطعات را به‌صورت فایل‌هایی با قالب [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) یا [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) خروجی بگیرید.
+      info_3d: |
+        این ماژول به شما امکان می‌دهد **هندسهٔ سه‌بعدی** قطعات را به‌صورت فایل‌هایی با قالب [STL](https://wikipedia.org/wiki/STL_(file_format)) یا [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) خروجی بگیرید.
+      option_file_format: قالب
+      option_file_format_help: |
+        به شما امکان می‌دهد قالب فایل خروجی را انتخاب کنید.
+      option_dxf_structure: ساختار DXF
+      option_dxf_structure_1: لایه‌ها
+      option_dxf_structure_2: لایه‌ها + بلوک‌ها
+      option_dxf_structure_help: |
+        به شما امکان می‌دهد ساختار فایل DXF را انتخاب کنید.
+
+        - ساختار **لایه‌ها** همهٔ مسیرها را تخت ترسیم می‌کند و انواع مختلف خط را فقط با لایه‌ها از هم متمایز می‌کند. *این ساختار سازگاری بیشتری با نرم‌افزارهای دیگر دارد.*
+        - ساختار **لایه‌ها + بلوک‌ها** برای هر قطعه یک بلوک می‌سازد و این بلوک‌ها را به تعداد تکرار قطعات درج می‌کند. *این ساختار انعطاف بیشتری برای ویرایش فایل دارد.*
+      option_dxf_depth_to_z: عمق‌ها در Z
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: توزیع عمق لایه‌ها در راستای محور Z
+      option_dxf_depth_to_z_help: |
+        توزیع لایه‌ها در راستای محور Z را بر اساس عمق آن‌ها فعال می‌کند.
+
+        برای خروجی DXF دوبعدی صرف، این گزینه را غیرفعال کنید.
+      option_unit: واحد
+      option_unit_help: |
+        به شما امکان می‌دهد واحد مورد استفاده در فایل خروجی را انتخاب کنید.
+      option_use_count: تعداد
+      option_use_count_0: یک فایل برای هر قطعه
+      option_use_count_1: یک فایل برای هر نمونهٔ قطعه
+      option_use_count_help: |
+        به شما امکان می‌دهد انتخاب کنید آیا تعداد نمونه‌های یک قطعه در نظر گرفته شود.
+      option_part_drawing_type: تصویر
+      option_part_drawing_type_help: |
+        به شما امکان می‌دهد نمایی را که باید خروجی گرفته شود انتخاب کنید.
+      option_faces: سطوح
+      option_faces_0: فقط از سطح هدف استفاده شود
+      option_faces_1: از همهٔ سطوح قطعه استفاده شود
+      option_faces_help: |
+        به شما امکان می‌دهد انتخاب کنید جست‌وجوی شکل قطعه روی همهٔ سطوح آن انجام شود یا فقط روی سطح هدف.
+      option_anchor: نقطهٔ لنگر
+      option_anchor_0: خودکار
+      option_anchor_1: تصویر مبدأ قطعه
+      option_anchor_help: |
+        **خودکار**
+        گوشهٔ پایین سمت چپ جعبهٔ محیطی هندسهٔ خروجی به‌عنوان نقطهٔ لنگر استفاده می‌شود.
+
+        **تصویر مبدأ قطعه**
+        تصویر مبدأ محور قطعه را به‌عنوان نقطهٔ لنگر فعال می‌کند.
+      option_switch_yz: محور عمودی
+      option_switch_yz_0: Z عمودی
+      option_switch_yz_1: Y عمودی
+      option_switch_yz_help: |
+        محورهای Y و Z را جابه‌جا می‌کند تا محور عمودی قطعه تعیین شود.
+      option_smoothing: هموارسازی
+      option_smoothing_0: $t(default.no)
+      option_smoothing_1: هموارسازی دایره‌ها و کمان‌ها (آزمایشی)
+      option_smoothing_help: |
+        تشخیص دایره‌ها و کمان‌ها را فعال می‌کند.
+
+        *این گزینه انواع دیگر منحنی را تشخیص نمی‌دهد.*
+      option_merge_holes: حالت ادغام
+      option_merge_holes_0: ساده
+      option_merge_holes_1: دورخط + سوراخ‌ها + اضافه‌اندازه
+      option_merge_holes_help: |
+        **ساده**
+        شکل قطعه همراه با تصویر هر سطح روی لایه‌ای متناسب با عمق آن خروجی گرفته می‌شود.
+
+        **دورخط + سوراخ‌ها + اضافه‌اندازه**
+        جداسازی دورخط بیرونی قطعات از سوراخ‌هایشان و نیز محاسبهٔ اضافه‌اندازهٔ ماشین‌کاری اعمال‌شده بر سطوح مجاور دورخط و حفره‌ها را فعال می‌کند.
+      option_merge_holes_overflow: اضافه‌اندازهٔ ماشین‌کاری
+      option_merge_holes_overflow_help: |
+        به شما امکان می‌دهد فاصلهٔ اضافه‌اندازهٔ ماشین‌کاری اعمال‌شده بر سطوح لبهٔ دورخط‌ها و حفره‌ها را تعیین کنید.
+      option_include_paths: مسیرها
+      option_include_paths_0: $t(default.no)
+      option_include_paths_1: استفاده از لبه‌های مرتبط‌نبوده با سطح
+      option_include_paths_help: |
+        استفاده از لبه‌هایی را که با هیچ سطحی مرتبط نیستند و در قطعه وجود دارند فعال می‌کند تا به‌صورت مسیر خروجی گرفته شوند.
+      option_parts: قطعات
+      option_parts_help: |
+        به شما امکان می‌دهد رنگ قطعات را انتخاب کنید.
+      option_parts_depths: حفره‌ها
+      option_parts_depths_help: |
+        به شما امکان می‌دهد رنگ حفره‌های قطعه را انتخاب کنید.
+
+        *به‌طور پیش‌فرض، رنگ استفاده‌شده طیفی متناسب با عمق حفره بین رنگ قطعات و رنگ سوراخ‌هاست.*
+      option_parts_holes: سوراخ‌ها
+      option_parts_holes_help: |
+        به شما امکان می‌دهد رنگ سوراخ‌های ایجادشده در قطعات را انتخاب کنید.
+      option_parts_paths: مسیرها
+      option_parts_paths_help: |
+        به شما امکان می‌دهد رنگ مسیرها را انتخاب کنید.
+
+        *رنگ پرکننده فقط برای مسیرهای بسته استفاده می‌شود.*
+      error:
+        no_part: قطعه‌ای برای خروجی گرفتن وجود ندارد.
+      warning:
+        is_group_selection: قطعات موجود در **گروه‌های پنهان** لیست قطعات خروجی گرفته نمی‌شوند.
+        is_part_selection: خروجی به **قطعات انتخاب‌شده** محدود است.
+    snippet:
+      hello: سلام
+      number: شماره
+      name: عنوان
+      number_and_name: شماره و عنوان
+      number_without_hardware: شماره (بدون یراق‌آلات)
+      size: اندازهٔ نهایی
+      area: مساحت نهایی
+      volume: حجم نهایی
+    error:
+      no_model: هیچ مدلی باز نیست. باید کمی بیشتر از این به من بدهید ;)
+      no_entities: مدل شما خالی است. باید کمی بیشتر از این به من بدهید ;)
+      no_component_in_selection: هیچ نمونه‌ای از یک کامپوننت قابل‌مشاهده در انتخاب شما شناسایی نشد.
+      no_component_in_model: هیچ نمونه‌ای از یک کامپوننت قابل‌مشاهده در صحنهٔ شما شناسایی نشد.
+      unknow_part: قطعهٔ انتخاب‌شده در لیست قطعات وجود ندارد.
+      obsolete_cutlist: ممکن نیست، لیست قطعات منسوخ شده است. لطفاً آن را دوباره ایجاد کنید.
+    warning:
+      is_entity_selection: فقط عناصر انتخاب‌شده در مدل شما در نظر گرفته شده‌اند.
+      no_typed_materials_in_model: مدل شما از هیچ متریالی با نوع تعریف‌شده (**$t(tab.materials.type_1)**، **$t(tab.materials.type_2)**، **$t(tab.materials.type_3)** یا **$t(tab.materials.type_5)**) استفاده نمی‌کند.
+      no_typed_materials_in_selection: انتخاب شما از هیچ متریالی با نوع تعریف‌شده (**$t(tab.materials.type_1)**، **$t(tab.materials.type_2)**، **$t(tab.materials.type_3)** یا **$t(tab.materials.type_5)**) استفاده نمی‌کند.
+      export_empty: خروجی شما هیچ قطعه‌ای ندارد.
+    success:
+      part_selected: "{{ count }} قطعه در لیست قطعات انتخاب شد."
+      part_selected_plural: "{{ count }} قطعه در لیست قطعات انتخاب شد."
+    tip:
+      no_component: |
+        قطعاتی که باید در *لیست قطعات* بیایند باید نمونه‌هایی از یک **کامپوننت** باشند.
+        اگر فقط از گروه استفاده می‌کنید، آن‌ها را به کامپوننت تبدیل کنید.
+        استفاده از کامپوننت امکان تکرار قطعات یکسان را بدون کپی‌کردن آن‌ها فراهم می‌کند.
+      no_typed_materials: به قطعاتی که باید در لیست قطعات بیایند یک متریال اعمال کنید و نوع این متریال (**$t(tab.materials.type_1)**، **$t(tab.materials.type_2)**، **$t(tab.materials.type_3)** یا **$t(tab.materials.type_5)**) را در زبانهٔ <i class="ladb-opencutlist-icon-materials"></i> **متریال‌ها** تعریف کنید.
+    obsolete_base: برای همگام‌ماندن، باید لیست قطعات را دوباره ایجاد کنید.
+  materials:
+    label: متریال‌ها
+    title: متریال‌ها
+    type_0: تعریف‌نشده
+    type_1: چوب ماسیو
+    type_2: ورق
+    type_3: شاخه
+    type_4: لبه‌چسبان
+    type_5: یراق‌آلات
+    type_6: روکش
+    type_7: ماشین‌کاری
+    tooltip:
+      type_0: نوع متریال '$t(tab.materials.type_0)'
+      type_1: نوع متریال '$t(tab.materials.type_1)'
+      type_2: نوع متریال '$t(tab.materials.type_2)'
+      type_3: نوع متریال '$t(tab.materials.type_3)'
+      type_4: نوع متریال '$t(tab.materials.type_4)'
+      type_5: نوع متریال '$t(tab.materials.type_5)'
+      type_6: نوع متریال '$t(tab.materials.type_6)'
+      type_7: نوع متریال '$t(tab.materials.type_7)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: جهت الیاف
+      raw_estimated_0: بر اساس حجم مؤثر برآورد شده است
+      colorized: این تُن هنگام رندر در مدل روی بافت اعمال می‌شود
+      texture_load: بارگذاری تصویر جدید
+      texture_export: خروجی گرفتن از تصویر
+      texture_clear: حذف بافت
+      edit: ویرایش ویژگی‌های '{{ name }}'
+      set_current: رنگ‌آمیزی قطعات با '{{ name }}'
+      open_url: باز کردن نشانی اینترنتی متریال
+      import_from_skm: وارد کردن متریال (.skm)
+    menu:
+      purge_unused: پاک‌سازی متریال‌های استفاده‌نشده
+      reset_prices: بازنشانی قیمت همهٔ متریال‌ها
+      reset_prices_confirm: |
+        در حال بازنشانی قیمت همهٔ متریال‌های مدل خود هستید.
+        این عمل نهایی است. **همهٔ قیمت‌ها صفر می‌شوند.**
+        برای ادامه تأیید کنید.
+      reset_prices_success: قیمت همهٔ متریال‌ها بازنشانی شد.
+    new_material:
+      title: ایجاد متریال جدید
+      name: نام
+      name_warning: نام نامعتبر
+      color: رنگ
+      color_warning: رنگ نامعتبر
+      type: نوع
+    edit_material:
+      title: ویژگی‌های متریال '{{ name }}'
+      general: عمومی
+      texture: بافت
+      no_texture: بدون بافت
+      name: نام
+      type: نوع
+      description: توضیحات
+      url: نشانی اینترنتی
+      formats: قالب‌ها
+      cut_options: پارامترهای برش
+      estimate_options: گزینه‌های برآورد
+      export_options: گزینه‌های خروجی
+      attributes: ویژگی‌ها
+      thickness: ضخامت
+      thickness_help: |
+        ضخامت نهایی متریال.
+
+        *اگر واحدی مشخص نشود، واحد مدل اعمال می‌شود.*
+      length_increase: اضافه‌اندازهٔ طول
+      length_increase_help: اضافه‌اندازه‌ای که به طول نهایی قطعه اعمال می‌شود تا **طول خام** آن تعیین شود.
+      length_increase_help_plural: اضافه‌اندازه‌ای که به طول نهایی قطعات اعمال می‌شود تا **طول خام** آن‌ها تعیین شود.
+      width_increase: اضافه‌اندازهٔ عرض
+      width_increase_help: اضافه‌اندازه‌ای که به عرض نهایی قطعه اعمال می‌شود تا **عرض خام** آن تعیین شود.
+      width_increase_help_plural: اضافه‌اندازه‌ای که به عرض نهایی قطعات اعمال می‌شود تا **عرض خام** آن‌ها تعیین شود.
+      thickness_increase: اضافه‌اندازهٔ ضخامت
+      thickness_increase_help: اضافه‌اندازه‌ای که به ضخامت نهایی قطعه اعمال می‌شود تا **ضخامت خام** آن تعیین شود.
+      thickness_increase_help_plural: اضافه‌اندازه‌ای که به ضخامت نهایی قطعات اعمال می‌شود تا **ضخامت خام** آن‌ها تعیین شود.
+      std_lengths: طول‌های استاندارد
+      std_lengths_help: |
+        طول‌های استاندارد موجود برای این متریال.
+
+        *اگر واحدی مشخص نشود، واحد مدل اعمال می‌شود.*
+      std_widths: عرض‌های استاندارد
+      std_widths_help: |
+        عرض‌های استاندارد موجود برای این متریال.
+
+        *اگر واحدی مشخص نشود، واحد مدل اعمال می‌شود.*
+      std_thicknesses: ضخامت‌های استاندارد
+      std_thicknesses_help: |
+        ضخامت‌های **خام** استاندارد موجود برای این متریال.
+
+        *اگر واحدی مشخص نشود، واحد مدل اعمال می‌شود.*
+      std_sections: مقطع‌های استاندارد
+      std_sections_help: |
+        مقطع‌های استاندارد موجود برای این متریال.
+
+        *اگر واحدی مشخص نشود، واحد مدل اعمال می‌شود.*
+      std_sizes: اندازه‌های استاندارد
+      std_sizes_help: |
+        اندازه‌های استاندارد موجود برای این متریال.
+
+        *اگر واحدی مشخص نشود، واحد مدل اعمال می‌شود.*
+      grained: الیاف
+      grained_help: جهت الیاف را نسبت به طول ورق انتخاب می‌کند.
+      grained_0: بدون جهت الیاف
+      grained_1: جهت الیاف در راستای طول است
+      edge_decremented: کاهش ابعاد
+      edge_decremented_help: به شما امکان می‌دهد مشخص کنید آیا ابعاد قطعات باید به‌اندازهٔ ضخامت لبه‌چسبان کاهش یابد.
+      edge_decremented_0: بدون کاهش
+      edge_decremented_1: کاهش به‌اندازهٔ ضخامت لبه‌چسبان
+      raw_estimated: حجم مورد استفاده
+      raw_estimated_help: |
+        به شما امکان می‌دهد حجمی را که برای برآورد وزن و هزینهٔ کل قطعات ساخته‌شده از این متریال استفاده می‌شود تعیین کنید.
+
+        **حجم مؤثر**
+        حجم کل برابر مجموع حجم‌های مؤثر قطعات خواهد بود که همان جعبهٔ محیطی شامل اضافه‌اندازه‌هاست.
+
+        **حجم ماده‌اولیهٔ مورد نیاز**
+        حجم کل برابر مجموع حجم ورق‌ها، شاخه‌ها یا لبه‌چسبان‌های قطعات پس از محاسبهٔ نقشهٔ برش خواهد بود.
+      raw_estimated_0: حجم مؤثر
+      raw_estimated_1: حجم ماده‌اولیهٔ مورد نیاز
+      multiplier_coefficient: ضریب
+      multiplier_coefficient_help: برای تعیین ضریب ضربی که به حجم ناخالص اعمال می‌شود به کار می‌رود.
+      machining_separated: هندسه‌های ماشین‌کاری
+      machining_separated_help: |
+        به شما امکان می‌دهد نحوهٔ خروجی دوبعدی (DXF، SVG) هندسه‌های ماشین‌کاری این متریال را تعیین کنید.
+
+        **$t(tab.materials.edit_material.machining_separated_0)**
+        هندسه‌های ماشین‌کاری از شکل قطعه کسر و با لایه‌های عمقی آن ادغام می‌شوند، گویی عملیات جسم در هندسهٔ قطعه انجام شده است.
+        *هندسه‌های ماشین‌کاری بیرون‌زده بریده می‌شوند.*
+
+        **$t(tab.materials.edit_material.machining_separated_1)**
+        قطعه شکل اصلی خود را حفظ می‌کند. هر هندسهٔ ماشین‌کاری همان‌گونه که هست، بدون ادغام با دیگران، روی یک لایهٔ `MACHININGS` برای هر عمق، به نام متریال خروجی گرفته می‌شود.
+      machining_separated_0: حکاکی‌شده در قطعه
+      machining_separated_1: جدا روی لایه‌های مخصوص خود
+      machining_material_colored: رنگ‌ها برای خروجی
+      machining_material_colored_help: |
+        به شما امکان می‌دهد رنگ عملیات ماشین‌کاری جداشده را در خروجی‌های دوبعدی (DXF، SVG) تعیین کنید.
+
+        **$t(tab.materials.edit_material.machining_material_colored_1)**
+        دورخط ماشین‌کاری‌ها رنگ این متریال را، بدون پرکننده، می‌گیرد.
+
+        **$t(tab.materials.edit_material.machining_material_colored_0)**
+        عملیات ماشین‌کاری رنگ چیزی را می‌گیرند که از قطعه جدا می‌کنند: رنگ سوراخ‌ها اگر سرتاسری باشند، یا در غیر این صورت رنگ حفره‌ها. این برای ماشین‌هایی مفید است که نوع برش را بر اساس رنگ‌ها تشخیص می‌دهند.
+      machining_material_colored_0: خودکار
+      machining_material_colored_1: رنگ متریال
+      std_attributes_dim_placeholder: یک اندازه انتخاب کنید
+      std_volumic_masses: چگالی
+      std_volumic_masses_help: به شما امکان می‌دهد چگالی را برای همهٔ اندازه‌ها و نیز برای هر اندازهٔ استاندارد متریال تعیین کنید.
+      std_prices: قیمت
+      std_prices_help: به شما امکان می‌دهد قیمت را برای همهٔ اندازه‌ها و نیز برای هر اندازهٔ استاندارد متریال تعیین کنید.
+      std_cut_prices: قیمت برش
+      std_cut_prices_help: |
+        به شما امکان می‌دهد قیمت برش متریال را تعیین کنید.
+
+        *این مقدار فقط روی برش‌های مستقیم اثر دارد.*
+      texture_width: عرض
+      texture_height: ارتفاع
+      export_to_skm: خروجی گرفتن (.skm)
+    texture_load:
+      title: بارگذاری تصویر
+    texture_export:
+      title: خروجی گرفتن از تصویر
+    import_from_skm:
+      title: وارد کردن فایل .skm
+      ask_replace: |
+        متریالی با نام "{{ name }}" از قبل وجود دارد.
+        آیا می‌خواهید آن را با متریالی که وارد می‌کنید جایگزین کنید؟
+
+        $t(default.yes) = متریال موجود با متریال واردشده جایگزین شود
+        $t(default.no) = هر دو متریال نگه داشته شوند
+        $t(default.cancel) = لغو عملیات
+    export_to_skm:
+      title: خروجی گرفتن در فایل .skm
+    option:
+      minimize_on_smart_paint: کوچک‌کردن پس از *'رنگ‌آمیزی قطعات با...'*
+      minimize_on_smart_paint_help: اگر این گزینه انتخاب شود، هنگام استفاده از عملکرد *'رنگ‌آمیزی قطعات با...'* پنجرهٔ OpenCutList کوچک می‌شود.
+      general: عمومی
+      material_order_strategy: مرتب‌سازی متریال‌ها
+      material_order_strategy_help: |
+        ویژگی‌های زیر را بازچینی کنید تا راهبرد مرتب‌سازی متریال‌های فهرست تعیین شود.
+        ویژگی‌ها را می‌توان به‌صورت <i class="ladb-opencutlist-icon-sort-asc"></i> *صعودی* یا <i class="ladb-opencutlist-icon-sort-desc"></i> *نزولی* مرتب کرد.
+      property_type: نوع
+      property_name: نام
+    delete:
+      message: |
+        در حال حذف متریال **{{ material_name }}** از مدل خود هستید.
+        برای ادامه تأیید کنید.
+    duplicate:
+      message: |
+        نام متریال جدید را که کپی **{{ material_name }}** است انتخاب کنید.
+    error:
+      no_model: هیچ مدلی باز نیست. باید کمی بیشتر از این به من بدهید ;)
+      no_materials: مدل شما هیچ متریالی ندارد.
+      material_not_found: هیچ متریالی پیدا نشد.
+      no_texture: متریال بافت ندارد.
+      failed_import_skm_file: هنگام وارد کردن از فایل .skm خطایی رخ داد. **{{ error }}**
+      failed_export_skm_file: هنگام خروجی گرفتن در فایل .skm خطایی رخ داد. **{{ error }}**
+      failed_deleting_material: هنگام حذف متریال خطایی رخ داد. **{{ error }}**
+      failed_duplicating_material: هنگام کپی متریال خطایی رخ داد. **{{ error }}**
+      invalid_image_file: تصویر نامعتبر
+    obsolete_base: برای همگام‌ماندن، باید فهرست متریال‌ها را بازآوری کنید.
+  outliner:
+    label: ساختار
+    title: ساختار
+    list: ساختار درختی موجودیت‌ها
+    nodes: نمونه‌ها
+    toggle_hidden: نمونه‌های پنهان
+    type_0: مدل
+    type_1: گروه
+    type_2: کامپوننت
+    type_3: قطعه
+    tooltip:
+      hide_node: پنهان‌کردن
+      unhide_node: نمایش
+      locked_node: قفل‌شده
+      is_active_node: نمونهٔ فعال در مدل
+      set_active_node: ویرایش در مدل
+      edit_node_properties: ویرایش ویژگی‌ها
+      select_active_nodes: انتخاب / لغو انتخاب همهٔ نمونه‌های فعال
+      select_node: انتخاب
+      unselect_node: لغو انتخاب
+      open_node_url: باز کردن نشانی اینترنتی قطعه
+    edit_node:
+      title_model: ویژگی‌های مدل
+      title_instance: ویژگی‌های نمونهٔ **{{ name }}**
+      title_instance_multiple: ویژگی‌های گروه نمونه‌ها
+      multiple_alert: ویژگی‌های مشترک گروهی از {{ node_count }} نمونه.
+      general: عمومی
+      name: نام
+      instance_name: نمونه
+      material: متریال
+      is_grain_group: تعریف به‌عنوان **گروه پیوستگی الیاف**
+      is_grain_group_help: فعال‌کردن این گزینه باعث می‌شود این نمونه برای قطعاتی که شامل می‌شود و *پیوستگی الیاف* در آن‌ها فعال است، به‌عنوان **گروه پیوستگی الیاف** در نظر گرفته شود.
+      definition_name: تعریف
+      description: توضیحات
+      url: نشانی اینترنتی
+      tags: نشان‌ها
+      layer_name: برچسب
+      snapto: اتصال
+      snapto_none: هیچ
+      snapto_0: هر جهت
+      snapto_1: افقی
+      snapto_2: عمودی
+      snapto_3: شیب‌دار
+      cuts_opening: بریدن دهانه
+      always_face_camera: همیشه رو به دوربین
+      shadows_face_sun: سایه رو به خورشید
+      no_scale_mask: مقیاس و کشش
+      no_scale_mask_0: قابل کشش در راستای محور قرمز (X)
+      no_scale_mask_1: قابل کشش در راستای محور سبز (Y)
+      no_scale_mask_2: قابل کشش در راستای محور آبی (Z)
+      no_scale_mask_3: قابل کشش روی صفحهٔ قرمز/آبی (X+Z)
+      no_scale_mask_4: قابل کشش روی صفحهٔ سبز/آبی (Y+Z)
+      no_scale_mask_5: قابل کشش روی صفحهٔ قرمز/سبز (X+Y)
+      no_scale_mask_6: قابل کشش از گوشه‌ها (XYZ)
+      explode: انفجار
+      explode_message: آیا انفجار **{{ name }}** را تأیید می‌کنید؟
+      erase: حذف
+      erase_message: آیا حذف **{{ name }}** را تأیید می‌کنید؟
+    deep_make_unique:
+      title: یکتا کردن
+    deep_rename_parts:
+      title: تغییر نام قطعات
+      info_0: |
+        این قابلیت به شما امکان می‌دهد با اعمال فرمول زیر روی هر نمونه، نام قطعات موجود در مجموعهٔ انتخاب‌شده را تغییر دهید.
+      formula: فرمول
+      old_name: نام اصلی
+      new_name: نام جدید
+      count: تعداد
+    create_container:
+      title_group: ایجاد گروه
+      title_component: ایجاد کامپوننت
+    option:
+      general: عمومی
+      show_hidden_instances: نمایش نمونه‌های پنهان
+      show_hidden_instances_help: اگر این گزینه انتخاب شود، نمونه‌های پنهان‌شده در مدل در درخت ساختار نمایش داده می‌شوند.
+      hide_descriptions: پنهان‌کردن توضیحات
+      hide_descriptions_help: اگر این گزینه انتخاب شود، **توضیحات** درج‌شده روی قطعات نمایش داده نمی‌شود.
+      hide_tags: پنهان‌کردن نشان‌ها
+      hide_tags_help: اگر این گزینه انتخاب شود، **نشان‌های** درج‌شده روی قطعات نمایش داده نمی‌شود.
+      minimize_on_set_active: کوچک‌کردن پس از '$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: اگر این گزینه انتخاب شود، هنگام استفاده از عملکرد *'$t(tab.outliner.tooltip.set_active_node)'* پنجرهٔ OpenCutList کوچک می‌شود.
+    snippet:
+      name_size: عنوان - اندازه
+    error:
+      no_model: هیچ مدلی باز نیست. باید کمی بیشتر از این به من بدهید ;)
+      no_entities: مدل شما خالی است!
+      node_not_found: گره پیدا نشد
+      entity_not_found: نمونه پیدا نشد
+      invalid_target: این عملیات توسط نمونهٔ هدف پشتیبانی نمی‌شود
+      obsolete_outliner: ممکن نیست، ساختار ایجادشده منسوخ شده است. لطفاً آن را دوباره ایجاد کنید.
+    tip:
+      no_node: |
+        مدل شما در حال حاضر نمونه‌ای برای نمایش در اینجا ندارد.
+        نمونه یک **گروه** یا **کامپوننت** است که در صحنه قرار گرفته است.
+    obsolete_base: برای همگام‌ماندن، باید ساختار را بازآوری کنید.
+  importers:
+    default:
+      open_file: باز کردن فایل {{ extension }}
+      import_to_model: وارد کردن به مدل
+      error:
+        no_data: داده‌ای برای وارد کردن وجود ندارد.
+        no_model: هیچ مدلی باز نیست. وارد کردن قطعات به خلأ ممکن نیست ;)
+        file_not_found: "فایل پیدا نشد: **{{ filename }}**"
+        bad_extension: فایل *{{ filename }}* پسوند مورد نیاز (**{{ extensions }}**) را ندارد.
+        failed_to_import: وارد کردن ناموفق بود.
+      success:
+        imported_title: وارد کردن انجام شد
+    csv:
+      label: CSV
+      title: وارد کردن قطعات
+      help: |
+        این صفحه به شما امکان می‌دهد قطعات (تعریف‌شده با یک جعبهٔ محیطی مستطیلی) را از یک فایل [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) به مدل خود وارد کنید.
+        به این ترتیب با تولید قطعات خود در نرم‌افزارهایی غیر از *SketchUp* می‌توانید از قابلیت قدرتمند لیست قطعات در *OpenCutList* بهره ببرید.
+
+        برای شروع، روی دکمهٔ **باز کردن فایل CSV** کلیک کنید.
+      load:
+        title: بارگذاری فایل CSV
+        info_0: |
+          گزینه‌های لازم برای خواندن صحیح فایل را انتخاب کنید:
+          **{{ filename }}**.
+        info_1: |
+          *واحد تنظیم‌شده در مدل: **{{ unit }}** است.
+          این واحد برای ابعاد بدون واحد مشخص استفاده خواهد شد*.
+        options: گزینه‌های بارگذاری
+        option_col_sep: جداکننده
+        option_col_sep_tab: Tab
+        option_col_sep_comma: ویرگول
+        option_col_sep_semicolon: نقطه‌ویرگول
+        option_first_line_headers: سطر سرستون
+        option_first_line_headers_0: داده
+        option_first_line_headers_1: عنوان ستون‌ها
+      import:
+        title: وارد کردن قطعات به مدل
+        info_0: |
+          در حال وارد کردن **{{ count }} قطعه** به مدل هستید.
+          این قطعه در یک گروه در مبدأ صحنهٔ اصلی قرار می‌گیرد.
+        info_0_plural: |
+          در حال وارد کردن **{{ count }} قطعه** به مدل هستید.
+          این قطعات در یک گروه، با شروع از مبدأ صحنهٔ اصلی روی هم چیده می‌شوند.
+        info_1: برای تأیید عملیات روی **وارد کردن** کلیک کنید.
+        options: |
+          مدل از قبل شامل *قطعات*، *تعریف‌ها* یا *متریال‌ها* است.
+          گزینه‌های مورد نظر برای وارد کردن را انتخاب کنید.
+        option_remove_all_?: چه کار کنم؟
+        option_remove_all_false: قطعات به قطعات موجود اضافه شوند
+        option_remove_all_true: همه‌چیز حذف شود!
+        option_keep_definitions_settings: تنظیمات تعریف‌ها حفظ شود
+        option_keep_materials_settings: تنظیمات متریال‌ها حفظ شود
+      column:
+        unused: استفاده‌نشده
+        mandatory: فیلدهای الزامی
+        optional: فیلدهای اختیاری
+        name: عنوان
+        count: تعداد
+        bbox_length: طول نهایی
+        bbox_width: عرض نهایی
+        bbox_thickness: ضخامت نهایی
+        material: متریال
+        tags: نشان‌ها
+      tooltip:
+        errors: این قطعه وارد نخواهد شد زیرا خطاهای زیر را ایجاد کرده است
+        warnings: این قطعه وارد خواهد شد اما هشدارهای زیر را ایجاد کرده است
+      error:
+        failed_to_load_csv_file: |
+          بارگذاری فایل CSV ممکن نیست: **{{ error }}**
+          *بررسی کنید که جداکنندهٔ فیلد مناسب را انتخاب کرده باشید.*
+        empty_file: به نظر می‌رسد فایل خالی است یا به‌درستی خوانده نمی‌شود.
+        no_importable_part: هیچ قطعه‌ای قابل وارد شدن نیست. فیلدهای الزامی را به ستون‌های متناظر اختصاص دهید.
+        invalid_name: عنوان نامعتبر
+        invalid_length: طول نامعتبر
+        invalid_width: عرض نامعتبر
+        invalid_thickness: ضخامت نامعتبر
+      warning:
+        invalid_count: تعداد نامعتبر
+        invalid_material: متریال نامعتبر
+      success:
+        imported_body: "{{ count }} قطعه با موفقیت وارد شد!"
+        imported_body_plural: "{{ count }} قطعه با موفقیت وارد شد!"
+      obsolete_base: برای همگام‌ماندن، باید فایل CSV را دوباره بارگذاری کنید.
+    bxf2:
+      label: BXF2
+      title: وارد کردن پیکربندی Blum
+      help: |
+        این صفحه به شما امکان می‌دهد یک پیکربندی را از فایل BXF2 به مدل خود وارد کنید.
+        فایل‌های BXF2 را می‌توان با [Cabinet Configurator](https://e-services.blum.com/) از [Blum](https://www.blum.com) ایجاد کرد.
+
+        برای شروع روی دکمهٔ **باز کردن فایل BXF2** کلیک کنید.
+      load:
+        title: بارگذاری فایل BXF2
+      import:
+        title: وارد کردن پیکربندی به مدل
+        info_0: |
+          در حال وارد کردن پیکربندی **{{ count }} کابینت** به مدل هستید.
+        info_0_plural: |
+          در حال وارد کردن پیکربندی **{{ count }} کابینت** به مدل هستید.
+        info_1: می‌توانید محل آن را در مدل فعال مشخص کنید.
+        materials: متریال‌ها
+        layers: برچسب‌ها
+        geometry: هندسه
+        option_parts_formula: فرمول
+        option_parts_formula_help: فرمول به شما امکان می‌دهد نام قطعات واردشده را سفارشی کنید.
+        option_part_wood_material_name: چوب
+        option_part_wood_material_name_help: متریالی که باید به قطعات **چوبی** اعمال شود.
+        option_part_aluminium_material_name: آلومینیوم
+        option_part_aluminium_material_name_help: متریالی که باید به قطعات **آلومینیومی** اعمال شود.
+        option_part_glass_material_name: شیشه
+        option_part_glass_material_name_help: متریالی که باید به قطعات **شیشه‌ای** اعمال شود.
+        option_front_part_layer_name: درها
+        option_front_part_layer_name_help: برچسبی که باید به قطعات جلو (درها) اعمال شود.
+        option_back_part_layer_name: پشت
+        option_back_part_layer_name_help: برچسبی که باید به قطعات پشت کابینت‌ها اعمال شود.
+        option_machining_material_name: ماشین‌کاری
+        option_machining_material_name_help: متریالی که باید به **ماشین‌کاری‌ها** اعمال شود.
+        option_machining_layer_name: ماشین‌کاری
+        option_machining_layer_name_help: برچسبی که باید به ماشین‌کاری‌ها اعمال شود.
+        option_hardware_material_name: یراق‌آلات
+        option_hardware_material_name_help: متریالی که باید به **اتصالات** اعمال شود.
+        option_hardware_layer_name: یراق‌آلات
+        option_hardware_layer_name_help: برچسبی که باید به اتصالات اعمال شود.
+        option_no_material_help: "*برای نادیده گرفتن اعمال متریال، این فیلد را خالی بگذارید*."
+        option_default_material_help: "*اگر این فیلد خالی بماند، یک متریال پیش‌فرض ایجاد می‌شود*."
+        option_no_layer_help: "*برای نادیده گرفتن برچسب، این فیلد را خالی بگذارید.*"
+        option_subtract_machinings: حکاکی ماشین‌کاری‌ها در قطعات
+        option_subtract_machinings_help: "**شیارها**، **کام‌ها** و **پخ‌های** قطعات، از جمله موارد مرتبط با یراق‌آلات، به‌جای ترسیم شدن از حجم آن‌ها کسر می‌شوند. سوراخ‌ها همچنان ترسیم می‌شوند."
+        warning:
+          subtract_machinings_failed: "ویژگی‌های ماشین‌کاری در این قطعات حکاکی نشد؛ به‌جای آن ترسیم شدند: {{ names }}"
+        old_name: نام اصلی
+        new_name: نام جدید
+        count: تعداد
+        formula:
+          part: قطعه
+          project: پروژه
+          cabinet: کابینت
+      model:
+        author: نویسنده
+        date: تاریخ
+      cabinet:
+        list: فهرست کابینت‌ها
+        description: نام
+        width: عرض
+        height: ارتفاع
+        depth: عمق
+      article:
+        list: فهرست اقلام
+        total_quantity: تعداد
+        article_number: شناسه
+        description: توضیحات
+        material: متریال
+      error:
+        failed_to_load_bxf2_file: |
+          بارگذاری فایل BXF2 ممکن نیست: **{{ error }}**
+      warning:
+        partial_support: |
+          برای استفاده از همهٔ قابلیت‌ها به **SketchUp 2021.1** یا نسخهٔ جدیدتر نیاز دارید.
+          هندسه‌های سه‌بعدی قطعات یراق‌آلات **قابل وارد شدن نیستند**.
+      obsolete_base: برای همگام‌ماندن، باید فایل BXF2 را دوباره بارگذاری کنید.
+  tutorials:
+    label: آموزش‌ها
+    title: آموزش‌ها
+    help: |
+      در اینجا فهرستی غیرجامع از ویدیوهای ساخته‌شده توسط جامعهٔ کاربران دربارهٔ استفاده از *OpenCutList* را می‌یابید.
+    submit: ارسال ویدیو
+    submit_info: |
+      آیا ویدیویی دربارهٔ استفاده از **OpenCutList** ساخته‌اید و می‌خواهید در اینجا نمایش داده شود؟
+      با نوشتن به **opencutlist@lairdubois.fr** به ما اطلاع دهید!
+
+      *ویدیو باید عمومی و در YouTube میزبانی شده باشد.*
+    error:
+      fail_to_load_list: بارگذاری فهرست ویدیوها ممکن نیست.
+  news:
+    label: اخبار
+    title: اخبار
+    help: |
+      آخرین اخبار *OpenCutList*.
+    comment: نظر
+    error:
+      fail_to_load_list: بارگذاری فهرست اخبار ممکن نیست.
+  forum:
+    label: انجمن
+    title: انجمن
+    help: |
+      این تالار گفتگو به شما امکان می‌دهد با جامعهٔ کاربران و تیم *OpenCutList* تبادل نظر کنید.
+    create_conversation: شروع گفتگو
+    reply: پاسخ
+    tags: برچسب‌ها
+    redirection: |
+      شما به پلتفرم **Open Collective** که میزبان این انجمن گفتگوست هدایت خواهید شد.
+      برای *شروع گفتگو* یا *پاسخ‌دادن* باید یک حساب کاربری بسازید و وارد شوید.
+      *رایگان است، بدون هیچ تعهدی و فقط یک نشانی ایمیل کافی است.*
+
+      برای ادامه تأیید کنید.
+    error:
+      fail_to_load_list: بارگذاری فهرست موضوعات ممکن نیست.
+  sponsor:
+    label: حمایت
+    title: حمایت
+    description: |
+      **OpenCutList** نرم‌افزاری *متن‌باز* است که توسط کاربرانش از طریق پلتفرم <a href="https://opencollective.com/" target="_blank">Open Collective</a> حمایت می‌شود.
+      با مشارکت مالی از این پروژه حمایت کنید!
+    contribute: مشارکت
+    backers: "{{ count }} حامی مالی"
+    backers_plural: "{{ count }} حامی مالی"
+    ad: OpenCutList رایگان نیست
+    objective: هدف
+    objective_slogan: OpenCutList متعلق به همهٔ ماست
+    objective_title:
+      default: اهداف
+    objective_details:
+      default: |
+        بهبود مداوم *OpenCutList* برای ما مهم است و این پروژه برای به‌روزرسانی بعدی خود همچنان به کمک شما نیاز دارد!
+    objective_crowdfunding: |
+      توسعهٔ قابلیت‌های جدید از طریق **جمع‌آوری کمک مالی** انجام خواهد شد و با رسیدن به **هدف مالی** آغاز می‌شود.
+    objective_thanks: |
+      از مشارکت شما سپاسگزاریم!
+    objective_funded_progress: تأمین‌شده به میزان {{ progress }}٪
+  settings:
+    label: تنظیمات
+    title: تنظیمات
+    global_settings: تنظیمات سراسری
+    language: زبان
+    language_auto: خودکار
+    font_size: اندازهٔ قلم
+    font_size_auto: $t(default.automatic)
+    font_size_normal: معمولی
+    font_size_small: کوچک
+    font_size_tiny: خیلی کوچک
+    print_margin: حاشیه‌های چاپ
+    print_margin_normal: معمولی
+    print_margin_small: کوچک
+    table_row_size: ارتفاع ردیف‌های جدول
+    table_row_size_normal: معمولی
+    table_row_size_compact: فشرده
+    size_and_position: اندازه و موقعیت پنجره
+    model_settings: تنظیمات مدل
+    length_unit: واحد طول
+    length_format: قالب
+    length_format_0: $t(default.decimal)
+    length_format_1: معماری
+    length_format_2: مهندسی
+    length_format_3: $t(default.fractional)
+    length_precision: دقت
+    suppress_units_display: نمایش واحد طول برای هر مقدار
+    mass_unit: واحد وزن
+    mass_precision: دقت
+    currency_symbol: نماد واحد پول
+    currency_precision: دقت
+    presets:
+      export_global_presets: خروجی گرفتن از پیش‌تنظیم‌ها
+      export_global_presets_help: |
+        این قابلیت به شما امکان می‌دهد پیش‌تنظیم‌های خود را در یک فایل **.json** خروجی بگیرید.
+        پیش‌تنظیم‌هایی را که می‌خواهید خروجی بگیرید انتخاب کنید.
+        اگر پیش‌تنظیم‌های انتخاب‌شده به فایل‌های **.skp** یا **.skm** ارجاع دهند، این فایل‌ها در یک آرشیو **.oclp** گنجانده می‌شوند تا خروجی بتواند همان‌گونه که هست به اشتراک گذاشته شود.
+      export_global_presets_success: پیش‌تنظیم‌ها با موفقیت خروجی گرفته شدند.
+      export_global_presets_success_with_assets: پیش‌تنظیم‌ها همراه با {{ count }} فایل مرتبط با موفقیت خروجی گرفته شدند.
+      import_global_presets: وارد کردن پیش‌تنظیم‌ها
+      import_global_presets_help: |
+        پیش‌تنظیم‌هایی را که می‌خواهید وارد کنید از فایل **.json** یا **.oclp** انتخاب کنید.
+        توجه کنید: اگر پیش‌تنظیمی با همین نام از قبل وجود داشته باشد، با نسخهٔ واردشده جایگزین می‌شود.
+        فایل‌های موجود در آرشیو **.oclp** در همان مکانی که در کتابخانهٔ فرستنده داشتند، در کتابخانهٔ شما کپی می‌شوند.
+      open_library_dir: باز کردن پوشهٔ کتابخانه
+      import_global_presets_success: |
+        پیش‌تنظیم‌های *OpenCutList* با موفقیت وارد شدند.
+        برای اعمال تغییرات باید پنجرهٔ OpenCutList را **ببندید** و **دوباره باز کنید**.
+      dump_global_presets: تخلیهٔ پیش‌تنظیم‌ها
+      dump_model_presets: تخلیهٔ تنظیمات مدل
+      reset_global_presets: بازنشانی پیش‌تنظیم‌ها
+      reset_global_presets_confirm: |
+        در حال بازنشانی همهٔ پیش‌تنظیم‌های ذخیره‌شدهٔ *OpenCutList* خود هستید.
+        این عمل نهایی است. **همهٔ پیش‌تنظیم‌ها از بین خواهند رفت.**
+        برای ادامه تأیید کنید.
+      reset_global_presets_success: |
+        پیش‌تنظیم‌های *OpenCutList* بازنشانی شدند.
+        برای اعمال تغییرات باید پنجرهٔ OpenCutList را **ببندید** و **دوباره باز کنید**.
+      reset_model_presets: بازنشانی تنظیمات مدل
+      reset_model_presets_confirm: |
+        در حال بازنشانی همهٔ تنظیمات *OpenCutList* برای مدل فعلی هستید.
+        این عمل نهایی است. **همهٔ تنظیمات به مقادیر پیش‌فرض بازگردانده می‌شوند.**
+        برای ادامه تأیید کنید.
+      reset_model_presets_success: |
+        تنظیمات *OpenCutList* برای مدل فعلی بازنشانی شد.
+        برای اعمال تغییرات باید پنجرهٔ OpenCutList را **ببندید** و **دوباره باز کنید**.
+      error:
+        no_preset_to_export: هیچ پیش‌تنظیمی برای خروجی گرفتن وجود ندارد.
+        no_preset_to_import: هیچ پیش‌تنظیمی برای وارد کردن وجود ندارد.
+        failed_to_export: "خروجی گرفتن از پیش‌تنظیم‌ها ممکن نیست: **{{ error }}**."
+        failed_to_open_library_dir: "باز کردن پوشهٔ کتابخانه ممکن نیست: **{{ error }}**."
+        failed_to_import: "وارد کردن پیش‌تنظیم‌ها ممکن نیست: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: این فایل تغییر کرده است. نمی‌توان آن را وارد کرد.
+        failed_to_import_bad_file_format: قالب فایل نامعتبر است.
+  about:
+    label: دربارهٔ افزونه
+    title: دربارهٔ افزونه
+    version: نسخه
+    credits: اعتبارات فنی
+    credits_authors: |
+      *OpenCutList* توسط [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) و [Martin Müller](https://www.lairdubois.fr/@mobilarte) توسعه یافته است. *فهرست همهٔ [مشارکت‌کنندگان](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: ترجمه‌ها
+    credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*انگلیسی*، *آلمانی*)
+      - Gildas Boureau (مستندات *فرانسوی*)
+      - Vladimir Badulya (*روسی*)
+      - Pierluigi Colombo, Massimo Risca (*ایتالیایی*)
+      - Nayton Sanches Barbosa, corrected and revised by Carlos Maciel ELT, Henny Silva Ferreira (*پرتغالی*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*اسپانیایی*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*چکی*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*لهستانی*)
+      - Sergey Isupov (*عبری*)، رابط راست‌به‌چپ هنوز پشتیبانی نمی‌شود
+      - Soul Issam (*عربی*)، رابط راست‌به‌چپ هنوز پشتیبانی نمی‌شود
+      - Nguyen Ngoc Tan (*ویتنامی*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*اوکراینی*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*چینی ساده‌شده*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*هلندی*)
+      - Zoltán Nagy, Roland Kovács (*مجاری*)
+      - Milan Divovic (*صربی*)
+      - Erhan Kutslev (*بلغاری*)
+      - (*فارسی*)، رابط راست‌به‌چپ هنوز پشتیبانی نمی‌شود
+    credits_description: |
+      توسعهٔ این افزونه به پروژهٔ پلتفرم اشتراک‌گذاری [L'Air du Bois](https://www.lairdubois.fr) مرتبط است.
+      این افزونه نیز *متن‌باز* است و با مجوز [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) در [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) در دسترس است.
+    credits_runtime: زمان اجرا
+    credits_development: محیط توسعه
+    credits_vendors: |
+      این ماجرا بدون کار سازندگان مؤلفه‌های *متن‌باز* زیر ممکن نبود:
+    credits_thanks: |
+      تشکر ویژه از:
+      - [JetBrains](https://www.jetbrains.com) به‌خاطر حمایت از این پروژه با [مجوز رایگان متن‌باز](https://www.jetbrains.com/buy/opensource/) خود.
+      - [Transifex](https://www.transifex.com) به‌خاطر حمایت از پروژه‌های متن‌باز.
+      - [GitBook](https://www.gitbook.com) به‌خاطر حمایت از پروژه‌های متن‌باز.
+tool:
+  default:
+    transparency: شفافیت
+    zoom_extents: نمایش همه
+    toggle_depth: قطعات پس‌زمینه
+    more: بیشتر
+    end_point: نقطهٔ انتهایی
+    middle_point: نقطهٔ میانی
+    third_point: نقطهٔ یک‌سوم
+    vcb_length: طول
+    vcb_thickness: ضخامت
+    vcb_size: ابعاد
+    vcb_radius: شعاع
+    vcb_diameter: قطر
+    vcb_distance: فاصله
+    vcb_spacings: فاصله‌ها
+    vcb_angle: زاویه
+    locked_on_last_measure_status: قفل روی آخرین اندازه‌گیری
+    library_choose: یک کتابخانه انتخاب کنید
+    modal_only_help: تنظیمی که فقط در این پنجره در دسترس است، نه در نوار ابزار
+    error:
+      no_direction: لطفاً با ماوس یک جهت مشخص کنید
+      invalid_length: طول {{ value }} نامعتبر است
+      invalid_thickness: ضخامت {{ value }} نامعتبر است
+      invalid_multiplicator: ضریب {{ value }} نامعتبر است
+      invalid_divider: مقسوم‌علیه {{ value }} نامعتبر است
+      invalid_offset: انحراف {{ value }} نامعتبر است
+      invalid_angle: زاویهٔ {{ value }} نامعتبر است
+      invalid_segment_count: تعداد قطعه‌های {{ value }} نامعتبر است. باید بین ۳ و ۹۹۹ باشد.
+      syntax_error: "خطای نحوی: {{ error }}"
+      unexpected_close_parenthesis: پرانتز بستهٔ غیرمنتظره
+      missing_close_parenthesis: پرانتز بسته وجود ندارد
+      missing_operand: عملوند وجود ندارد
+      zero_division: تقسیم بر صفر
+      invalid_argument_count: توابع min، max، floor یا ceil دست‌کم به دو مقدار نیاز دارند
+      comma_argument_separator: "مقادیر را با نقطه‌ویرگول «;» جدا کنید: ویرگول به‌عنوان جداکنندهٔ اعشار نیز استفاده می‌شود"
+      invalid_dimension: "یک طول را فقط می‌توان با طول دیگری جمع کرد: عدد بدون واحد یک ضریب است"
+      no_matching_value: هیچ‌یک از مقادیر پیشنهادی مناسب نیست
+      lt_min_distance: فاصلهٔ {{ value1 }} کمتر از حداقل فاصلهٔ {{ value2 }} است
+      gt_max_distance: فاصلهٔ {{ value1 }} بیشتر از حداکثر فاصلهٔ {{ value2 }} است
+      locked_part: این قطعه قفل است
+      not_sibling_part: این قطعه در همان گروه یا کامپوننتِ بقیهٔ انتخاب نیست
+      selection_contains_locked_entities: انتخاب شامل موجودیت‌های قفل‌شده است
+      wrong_material_type: قطعهٔ هدف باید از نوع '{{ type }}' باشد
+  smart_select:
+    state_0_status: برای انتخاب یک قطعه روی آن کلیک کنید
+    state_0_to_6_status: یک عنصر والد انتخاب کنید
+    state_0_to_7_status: انتخاب چندگانه
+    state_4_status: برای افزودن به انتخاب، روی قطعهٔ یکسانی با همان والد بکشید و برای ادامه رها کنید
+    state_5_status: برای افزودن به انتخاب بکشید و برای ادامه رها کنید
+    state_6_status: یک عنصر از فهرست انتخاب کنید
+    state_7_status: برای افزودن یا کسر یک قطعه از انتخاب روی آن کلیک کنید
+    warning:
+      no_active_part: ابتدا باید نشانگر را روی یک قطعه ببرید
+      no_parent_group: قطعهٔ زیر نشانگر گروه یا کامپوننت والد ندارد
+  smart_draw:
+    title: رسم
+    action_0: رسم مستطیل
+    action_0_status: رسم حجم بر پایهٔ شکل مستطیلی
+    action_0_state_0_status: برای تعیین اولین نقطهٔ مستطیل کلیک کنید
+    action_0_state_1_status: برای تعیین گوشهٔ مقابل کلیک کنید یا طول و عرض را وارد کنید
+    action_1: رسم دایره
+    action_1_state_0_status: برای تعیین مرکز دایره کلیک کنید
+    action_1_status: رسم حجم بر پایهٔ شکل دایره‌ای
+    action_1_state_1_radius_status: برای تعیین شعاع کلیک کنید یا فاصله را وارد کنید
+    action_1_state_1_diameter_status: برای تعیین قطر کلیک کنید یا فاصله را وارد کنید
+    action_2: رسم چندضلعی
+    action_2_state_0_status: برای تعیین اولین نقطهٔ چندضلعی کلیک کنید
+    action_2_status: رسم حجم بر پایهٔ شکل چندضلعی
+    action_2_state_1_status: برای تعریف نقطهٔ جدید کلیک کنید یا فاصله را وارد کنید
+    action_x_state_2_status: برای تعیین ارتفاع کلیک کنید یا فاصله را وارد کنید
+    action_option_group_offset: انحراف
+    action_option_group_segments: قطعه‌ها
+    action_option_group_options: گزینه‌ها
+    action_option_offset_shape_offset: انحراف
+    action_option_offset_shape_offset_status: به شما امکان می‌دهد انحرافی را روی دورخط شکل رسم‌شده اعمال کنید
+    action_option_segments_segment_count: تعداد قطعه‌ها
+    action_option_segments_segment_count_status: به شما امکان می‌دهد تعداد قطعه‌های دایره را تعیین کنید
+    action_option_options_construction: خطوط ساختمانی
+    action_option_options_construction_status: رسم به‌صورت خطوط ساختمانی
+    action_option_options_rectangle_centered: مستطیل با مرکزیت
+    action_option_options_rectangle_centered_status: مرکز کردن مستطیل روی اولین نقطه
+    action_option_options_smoothing: هموارسازی
+    action_option_options_smoothing_status: هموارسازی منحنی‌ها
+    action_option_options_measure_from_vertex_status: اندازه‌گیری نسبت به نزدیک‌ترین رأس
+    action_option_options_measure_from_diameter: اندازه‌گیری
+    action_option_options_measure_from_diameter_status: اندازه‌گیری دایره با قطر آن
+    action_option_options_measure_from_radius_status: اندازه‌گیری دایره با شعاع آن
+    action_option_options_measure_reversed: اندازه‌گیری معکوس
+    action_option_options_measure_reversed_status: معکوس‌کردن اندازه‌گیری
+    action_option_options_pull_centered: مرکزیت ارتفاع
+    action_option_options_pull_centered_status: مرکز کردن ارتفاع روی اولین نقطه
+    action_option_options_pull_locked_status: قفل‌کردن ارتفاع روی یک محور
+    action_option_options_draw_in: رسم در
+    action_option_options_draw_in_0: رسم در عنصر فعال
+    action_option_options_draw_in_1: رسم در والد قطعهٔ اولین نقطه
+    action_option_options_draw_in_status: رسم در والد قطعه‌ای که اولین نقطه به آن اشاره دارد
+    action_option_options_pick_material: انتخاب‌گر رنگ
+    action_option_options_pick_material_status: اعمال متریال قطعه‌ای که اولین نقطه به آن اشاره دارد به قطعهٔ تازه‌ساخته‌شده
+    action_option_options_ask_name: نام‌گذاری قطعه
+    action_option_options_ask_name_status: وارد کردن دستی نام قطعات
+    action_toggle_move_copy_status: جابه‌جایی بین کپی/انتقال
+    action_change_move_anchor_status: تغییر نقطهٔ لنگر
+    success:
+      part_created: "قطعهٔ جدید ایجاد شد: {{ name }}"
+      part_created_plural: "{{ count }} قطعهٔ جدید ایجاد شد: {{ name }}"
+  smart_build:
+    title: ساخت
+    action_0: قرار دادن ماژول
+    action_0_status: قرار دادن ماژولِ واردشده از فایل SKP، با مقیاس ابعاد جعبهٔ رسم‌شده
+    action_0_state_0_status: یک فایل ماژول از کتابخانه انتخاب کنید
+    action_0_state_1_status: برای تعیین مبدأ ماژول کلیک کنید
+    action_0_state_2_status: برای تعیین عرض ماژول (محور X) کلیک کنید
+    action_0_state_2_lock_status: قفل روی عرض فایل مبدأ
+    action_0_state_2_arrows_status: قفل روی یک محور
+    action_0_state_3_status: برای تعیین عمق ماژول (محور Y) کلیک کنید
+    action_0_state_3_lock_status: قفل روی عمق فایل مبدأ
+    action_0_state_3_arrows_status: قفل‌کردن نرمال صفحهٔ XY روی یک محور
+    action_0_state_4_status: برای تعیین ارتفاع ماژول (محور Z) کلیک کنید
+    action_0_state_4_lock_status: قفل روی ارتفاع فایل مبدأ
+    action_0_state_5_status: روی نمونه‌ای که می‌خواهید اضافه کنید کلیک کنید
+    action_0_state_6_status: روی سمت جلوی ماژول کلیک کنید
+    action_0_state_7_status: روی سطح بالای ماژول کلیک کنید
+    action_0_add_title: افزودن ماژول
+    action_0_add_name: نام فایل
+    action_0_add_overwrite: فایل «{{ name }}.skp» از قبل وجود دارد. آیا می‌خواهید آن را جایگزین کنید؟
+    action_0_add_front_label: جلو
+    action_0_add_up_label: بالا
+    action_0_flip_status: جابه‌جایی جلو و پشت
+    action_0_flip_up_status: جابه‌جایی بالا و پایین
+    action_1: ساخت جداکننده
+    action_1_status: ساخت جداکننده در حفره‌ای که از گروهی از قطعات موجود تشکیل شده است
+    action_1_state_0_status: برای ساخت جداکننده روی یک دیواره کلیک کنید
+    action_1_state_1_status: برای ساخت جداکننده‌ها روی یک دیواره کلیک کنید
+    action_2: ساخت درِ جلو
+    action_2_status: ساخت درِ جلو در حفره‌ای که از گروهی از قطعات موجود تشکیل شده است
+    action_2_state_0_status: برای ساخت درِ جلو روی دهانهٔ یک حفره، داخل آن کلیک کنید
+    action_2_state_0_merge_status: برای ایجاد درِ جلوی مشترک، به حفره‌های مجاور بکشید
+    action_3: ساخت پشت
+    action_3_status: ساخت پشت در حفره‌ای که از گروهی از قطعات موجود تشکیل شده است
+    action_3_state_0_status: برای ساخت دیوارهٔ پشت در دهانهٔ مقابل نما، داخل یک حفره کلیک کنید
+    action_3_state_0_merge_status: برای ایجاد پشت مشترک، به حفره‌های مجاور بکشید
+    action_option_group_groove: شیار
+    action_2_option_group_offset: لقی
+    action_option_group_thickness: ضخامت
+    action_option_group_overlay: نصب
+    action_option_group_axes: محورها
+    action_option_group_measure_type: اندازه‌گیری
+    action_option_group_measure_origin: مبدأ
+    action_option_group_anchor: لنگر
+    action_option_group_options: گزینه‌ها
+    action_option_offset_front_panel_offset: لقی
+    action_option_offset_front_panel_offset_status: لقی باقی‌مانده در هر طرف درِ جلو را تعیین می‌کند
+    action_option_groove_groove_depth: عمق شیار
+    action_option_groove_groove_depth_status: عمق شیاری را که پشت در آن قرار می‌گیرد تعیین می‌کند
+    action_option_groove_groove_panel_reduction: کاهش پنل
+    action_option_groove_groove_panel_reduction_status: تعیین می‌کند پشت در هر لبه‌ای که در شیار قرار می‌گیرد چقدر کوچک شود تا این لقی در ته شیار بماند
+    action_option_groove_groove_width_clearance: لقی عرض
+    action_option_groove_groove_width_clearance_status: تعیین می‌کند شیار چقدر عریض‌تر از ضخامت پشت ماشین‌کاری شود، کاملاً در سمت بیرونی کابینت
+    action_option_groove_groove_setback: عقب‌نشینی
+    action_option_groove_groove_setback_status: تعیین می‌کند پشت تا چه اندازه به‌سمت داخل کابینت عقب می‌نشیند و بنابراین شیار کجا ماشین‌کاری می‌شود
+    action_option_groove_groove_through: شیار سرتاسری
+    action_option_groove_groove_through_status: شیار را تا انتهای قطعاتی که روی همسایگان خود می‌افتند ادامه می‌دهد، وقتی شیار در آنجا بدون دیده‌شدن باز می‌شود
+    action_option_thickness_thickness: ضخامت
+    action_option_thickness_thickness_status: ضخامت پنل‌ها را تعیین می‌کند
+    action_option_overlay_inset_status: "توکار کامل: داخل دهانه و هم‌سطح با سطح جلو نصب می‌شود"
+    action_3_option_overlay_inset_status: "نصب در شیار: در شیاری قرار می‌گیرد که روی قطعات مجاور دهانه ماشین‌کاری شده است"
+    action_option_overlay_full_overlay_status: "روکار کامل: جلوی سطح جلو نصب می‌شود، کناره‌ها را تا لبهٔ بیرونی کابینت می‌پوشاند و تا نیمی از ضخامت پنل‌های داخلی ادامه می‌یابد"
+    action_3_option_overlay_full_overlay_status: "پشت روکار: پشت کابینت نصب می‌شود، پنل‌ها را تا لبهٔ بیرونی می‌پوشاند و تا نیمی از ضخامت پنل‌های داخلی ادامه می‌یابد، بدون هیچ ماشین‌کاری"
+    action_option_overlay_against_protrusions_status: "درِ جلوی روکار بین برآمدگی‌ها: روکار و هم‌سطح با چارچوب دهانه و چسبیده به پنل‌های برجسته نصب می‌شود"
+    action_3_option_overlay_against_protrusions_status: "پشت روکار بین برآمدگی‌ها: روکار و هم‌سطح با چارچوب دهانه و بین پنل‌های برجسته (کناره‌های بلندشده) بدون هیچ ماشین‌کاری نصب می‌شود"
+    action_option_measure_type_inside_status: قرار دادن ضخامت در داخل نقطهٔ هدف
+    action_option_measure_type_centered_status: مرکز کردن ضخامت روی نقطهٔ هدف
+    action_option_measure_type_outside_status: قرار دادن ضخامت در بیرون نقطهٔ هدف
+    action_option_measure_origin_wall_status: اندازه‌گیری از دیواره‌های داخلی حفره
+    action_option_measure_origin_overall_status: اندازه‌گیری از سطوح بیرونی قطعاتی که حفره را می‌بندند
+    action_option_axes_active_status: کار در راستای محورهای فعال
+    action_option_axes_context_status: کار در راستای محورهای گروه یا کامپوننت میزبان
+    action_option_options_measure_reversed: اندازه‌گیری معکوس
+    action_option_options_measure_reversed_status: معکوس‌کردن اندازه‌گیری
+    action_option_options_reduce_envelope: قطعات فرورفته
+    action_option_options_reduce_envelope_status: قطعات فرورفته در نظر گرفته شوند
+    action_option_options_reuse_definition: استفادهٔ مجدد از قطعات
+    action_option_options_reuse_definition_status: به‌جای ایجاد قطعهٔ جدید، از قطعهٔ موجودی که شکل یکسان دارد و در همان ناحیه قرار گرفته استفاده مجدد شود
+    action_option_options_mirror: چیدمان قرینه
+    action_option_options_mirror_status: هر درِ جلوی زوج به‌صورت تصویر آینه‌ای همسایه‌اش قرار داده می‌شود
+    action_option_options_pick_material: انتخاب‌گر رنگ
+    action_option_options_pick_material_status: متریال قطعهٔ زیر نشانگر به قطعات ایجادشده اعمال می‌شود
+    action_option_options_face_camera: رو به دوربین
+    action_option_options_face_camera_status: درِ جلوی ماژول به‌صورت خودکار به‌سمت دوربین چرخانده می‌شود
+    action_option_options_top_up: بالا به‌سمت Z+
+    action_option_options_top_up_status: بالای ماژول به‌صورت خودکار طوری جهت‌دهی می‌شود که رو به بالا (Z+) باشد
+    action_option_options_ask_name: نام‌گذاری قطعه
+    action_option_options_ask_name_status: وارد کردن دستی نام قطعات
+    action_option_options_layer_name: برچسب
+    action_option_options_layer_name_status: نام برچسبی که قطعات روی آن قرار می‌گیرند
+    action_option_anchor_center_x_status: مرکز روی X
+    action_option_anchor_center_y_status: مرکز روی Y
+    action_option_anchor_center_z_status: مرکز روی Z
+    action_option_anchor_origin_status: مبدأ کامپوننت
+    action_option_no_layer_help: "*برای نادیده گرفتن برچسب، این فیلد را خالی بگذارید.*"
+    detecting_cavities: تشخیص حفره...
+    error:
+      invalid_divider_seed: این نوع قطعه اجازهٔ ساخت جداکننده را نمی‌دهد
+      invalid_divider_container: "این قطعه منزوی است: هیچ گروه یا کامپوننتی را با قطعات دیگر مشترک ندارد"
+      invalid_divider_cavity: در این موقعیت حفره‌ای وجود ندارد
+      no_divider_cavity: هیچ حفره‌ای در این گروه یا کامپوننت شناسایی نشد
+      invalid_front_panel_seed: این نوع قطعه اجازهٔ ساخت درِ جلو را نمی‌دهد
+      invalid_front_panel_container: "این قطعه منزوی است: هیچ گروه یا کامپوننتی را با قطعات دیگر مشترک ندارد"
+      invalid_front_panel_cavity: در این موقعیت هیچ حفره‌ای رو به شما باز نیست
+      no_front_panel_cavity: هیچ حفره‌ای در این گروه یا کامپوننت شناسایی نشد
+      invalid_back_panel_seed: این نوع قطعه اجازهٔ ساخت پشت را نمی‌دهد
+      invalid_back_panel_container: "این قطعه منزوی است: هیچ گروه یا کامپوننتی را با قطعات دیگر مشترک ندارد"
+      invalid_back_panel_cavity: در این موقعیت هیچ حفره‌ای در سمت مقابل نما باز نیست
+      no_back_panel_cavity: هیچ حفره‌ای در این گروه یا کامپوننت شناسایی نشد
+      too_complex_cavity: هندسه برای تشخیص حفره در آن بیش از حد پیچیده است
+      closed_front_panel_opening: این دهانه از قبل با یک درِ جلو بسته شده است
+      closed_back_panel_opening: این دهانه از قبل با یک پشت بسته شده است
+      divider_number_overflow: قرار دادن {{ number }} جداکننده در این حفره ممکن نیست
+      front_panel_number_overflow: توزیع {{ number }} درِ جلو در این دهانه ممکن نیست
+      back_panel_number_overflow: توزیع {{ number }} پشت در این دهانه ممکن نیست
+      back_panel_severs_parts: "شیار این قطعات را کاملاً می‌برد: {{ names }}. عمق آن را کم کنید"
+      module_file_not_found: "فایل ماژول پیدا نشد: {{ file }}"
+      module_file_invalid: "بارگذاری فایل ماژول ممکن نیست: {{ file }}"
+      module_file_invalid_name: "نام فایل نامعتبر: {{ name }}"
+      module_file_save_failed: "ذخیرهٔ فایل ماژول ممکن نیست: {{ name }}.skp"
+      module_stretch_failed: کشیدن ماژول به این ابعاد ممکن نیست
+    warning:
+      no_back_panel_machining: "هیچ شیاری قابل ماشین‌کاری نبود: در این عمق هیچ قطعهٔ مجاور پشت وجود ندارد"
+      no_module_file: هیچ فایل .skp در این پوشه نیست
+      module_axis_no_scale: "ماژول در راستای {{ axis }} مقیاس‌پذیر نیست: رفتار کامپوننت آن را مسدود کرده است"
+      module_axis_curve_intersect: "ماژول در راستای {{ axis }} غیرمقیاس‌پذیر است: یکی از صفحات برش از منحنی غیرمقیاس‌پذیر می‌گذرد"
+    success:
+      part_created: "قطعهٔ جدید ایجاد شد: {{ name }}"
+      part_created_plural: "{{ count }} قطعهٔ جدید ایجاد شد: {{ name }}"
+      part_reused: "نمونهٔ جدید از قطعهٔ موجود: {{ name }}"
+      part_reused_plural: "{{ count }} نمونهٔ جدید از قطعهٔ موجود: {{ name }}"
+      module_file_saved: "ماژول ذخیره شد: {{ name }}.skp"
+      module_created: "ماژول جدید قرار گرفت: {{ name }}"
+  smart_handle:
+    title: مدیریت
+    action_0: انتخاب
+    action_0_status: انتخاب یک قطعه
+    action_1: کپی در راستای خط
+    action_1_status: کپی یک قطعه در راستای یک محور
+    action_1_state_2_status: برای قرار دادن کپی قطعه کلیک کنید یا فاصله را وارد کنید
+    action_2: کپی در شبکه
+    action_2_status: کپی یک قطعه در یک شبکه
+    action_2_state_2_status: برای قرار دادن کپی‌های قطعه کلیک کنید یا دو فاصله را وارد کنید
+    action_3: انتقال
+    action_3_status: انتقال یک قطعه در راستای یک محور
+    action_3_state_1_status: برای تعیین اولین نقطهٔ اندازه‌گیری کلیک کنید
+    action_3_state_2_status: برای قرار دادن قطعه کلیک کنید یا فاصله را وارد کنید
+    action_4: توزیع
+    action_4_status: توزیع یک قطعه در راستای یک محور
+    action_4_state_1_status: برای تعیین اولین نقطهٔ اندازه‌گیری کلیک کنید
+    action_4_state_2_status: برای تعیین دومین نقطهٔ اندازه‌گیری کلیک کنید یا فاصله را وارد کنید
+    action_5: تعامل
+    action_5_status: باز یا بسته کردن یک در
+    action_5_state_0_status: برای باز یا بسته کردن در روی آن کلیک کنید یا برای تنظیم میزان بازشدن آن را بکشید
+    action_5_state_0_amend_status: برای تنظیم بازشدن یک زاویه وارد کنید یا برای باز یا بسته کردن روی در کلیک کنید
+    action_5_state_20_status: برای تنظیم بازشدن در بکشید و برای تأیید رها کنید
+    action_option_group_copy_measure_type: اندازه‌گیری
+    action_option_group_move_measure_type: اندازه‌گیری
+    action_option_group_axes: محورها
+    action_option_group_options: گزینه‌ها
+    action_option_copy_measure_type_outside_status: اندازه‌گیری لبه تا لبه
+    action_option_copy_measure_type_centered_status: اندازه‌گیری مرکز تا مرکز
+    action_option_copy_measure_type_inside_status: اندازه‌گیری بین قطعات
+    action_option_axes_active_status: کار در راستای محورهای فعال
+    action_option_axes_context_status: کار در راستای محورهای گروه یا کامپوننتِ شامل قطعه
+    action_option_axes_entity_status: کار در راستای محورهای قطعه
+    action_option_options_mirror_status: کپی قرینه
+    action_toggle_raytest_status: تصویر روی نقطهٔ بعدی
+    warning:
+      copies_disable_mirror: کپی‌های چندگانه گزینهٔ '$t(tool.smart_handle.action_option_options_mirror_status)' را غیرفعال می‌کنند
+    error:
+      not_door: این قطعه دری با لولا نیست
+      incoherent_door: لولاهای این در حول یک محور واحد نمی‌چرخند
+  smart_reshape:
+    title: تغییر شکل
+    action_0: کشیدن
+    action_0_status: کشیدن یک قطعه
+    action_0_state_1_status: برای کشیدن روی یک دستگیره کلیک کنید
+    action_0_state_1a_status: برای جابه‌جایی یک صفحهٔ برش روی آن کلیک کنید
+    action_0_state_1b_status: افزودن صفحهٔ برش
+    action_0_state_1c_status: حذف صفحهٔ برش
+    action_0_state_1d_status: برای جابه‌جایی هندسهٔ بین دو صفحهٔ برش کلیک کنید
+    action_0_state_10_status: صفحهٔ برش را برای جابه‌جایی بکشید
+    action_0_state_11_status: برای افزودن صفحهٔ برش کلیک کنید
+    action_0_state_12_status: برای حذف یک صفحهٔ برش روی آن کلیک کنید
+    action_0_state_2_status: برای تأیید کشیدن کلیک کنید یا فاصله را وارد کنید
+    action_1: پنل‌بندی
+    action_1_status: ایجاد مجموعه‌ای از قطعات از یک جسم بسته یا از یک طرح خطوط ساختمانی
+    action_1_state_0_status: برای تعریف هندسهٔ مرجع روی یک جسم بسته یا گروهی از خطوط ساختمانی کلیک کنید
+    action_1_state_1_status: سطوحی را که باید اکسترود شوند انتخاب کنید
+    action_1_rollover_face_status: سطح زیر نشانگر
+    action_1_select_similar_status: انتخاب همهٔ سطوح با شکل یکسان
+    action_1_select_all_edges_status: انتخاب همهٔ لبه‌های مجاور
+    action_2: جوش دادن
+    action_2_status: جوش دادن چند قطعه به یک قطعه
+    action_2_state_0_status: قطعهٔ A را انتخاب کنید
+    action_2_state_1_status: قطعهٔ B را انتخاب کنید
+    action_3: برش‌زدن
+    action_3_status: برش یک قطعه با قطعهٔ دیگر
+    action_3_state_0_status: قطعهٔ A را انتخاب کنید
+    action_3_state_1_status: قطعهٔ B را انتخاب کنید
+    action_4: اشتراک
+    action_4_status: ایجاد قطعه‌ای معادل اشتراک چند قطعه
+    action_4_state_0_status: قطعهٔ A را انتخاب کنید
+    action_4_state_1_status: قطعهٔ B را انتخاب کنید
+    action_5: برش با صفحه
+    action_5_status: برش یک یا چند قطعه با یک صفحه
+    action_5_state_1_status: روی سطح مرجع، در هر جای مدل کلیک کنید
+    action_5_state_1_arrows_status: برش عمود بر یک محور از انتهای انتخاب
+    action_5_state_1b_status: برای قرار دادن نقطهٔ {{ index }} از ۳ صفحهٔ مرجع، در هر جای مدل کلیک کنید
+    action_5_state_1b_arrows_status: قفل روی یک محور
+    action_5_state_1c_status: برای تأیید صفحهٔ مرجع کلیک کنید یا برای حذف آخرین نقطه Esc را بزنید
+    action_5_state_2_status: برای برش قطعات کلیک کنید یا فاصله را وارد کنید
+    action_5_state_2a_status: برای قرار دادن صفحهٔ برش کلیک کنید یا فاصله را وارد کنید
+    action_5_state_2_arrows_status: تغییر محور
+    action_5_state_3_status: روی سمتی از قطعه که باید بماند کلیک کنید
+    action_5_state_4_status: برای برش قطعات به {{ number }} تکه کلیک کنید یا فاصله‌ها را وارد کنید
+    action_option_group_thickness: ضخامت
+    action_option_group_stretch_measure_type: اندازه‌گیری
+    action_option_group_axes: محورها
+    action_option_group_paneling_joint_type: اتصال
+    action_option_group_paneling_direction: جهت
+    action_option_group_csg_operation: عملیات
+    action_option_group_slice_mode: حالت
+    action_option_group_slice_reference: مرجع
+    action_option_group_options: گزینه‌ها
+    action_option_thickness_thickness: ضخامت
+    action_option_thickness_thickness_status: ضخامت پنل‌ها را تعیین می‌کند
+    action_option_stretch_measure_type_outside_status: اندازه‌گیری لبه تا لبه
+    action_option_stretch_measure_type_offset_status: اندازه‌گیری تفاوت
+    action_option_axes_active_status: کار در راستای محورهای فعال
+    action_option_axes_context_status: کار در راستای محورهای گروه یا کامپوننتِ شامل قطعه
+    action_option_axes_entity_status: کار در راستای محورهای قطعه
+    action_option_paneling_joint_type_flat_status: اتصال تخت
+    action_option_paneling_joint_type_miter_status: اتصال ۴۵ درجه (میتر)
+    action_option_paneling_direction_inward_status: جهت به‌سمت داخل
+    action_option_paneling_direction_outward_status: جهت به‌سمت بیرون
+    action_option_slice_mode_slice_status: قطعات را ببر و همهٔ تکه‌ها را نگه دار
+    action_option_slice_mode_cut_status: قطعات را ببر و فقط یک تکه را نگه دار
+    action_option_slice_reference_face_status: صفحهٔ مرجع از یک سطح گرفته می‌شود
+    action_option_slice_reference_points_status: صفحهٔ مرجع از ۳ نقطه
+    action_option_options_centered_status: مرکز روی عناصر کشیده‌شده
+    action_option_options_make_unique_status: یکتا کردن عناصر تغییر شکل‌یافته
+    action_option_options_keep_a: نگه‌داشتن A
+    action_option_options_keep_a_status: نمونه‌های A پس از عملیات نگه داشته می‌شوند و نتیجه در یک قطعهٔ جدید قرار می‌گیرد
+    action_option_options_keep_b: نگه‌داشتن B
+    action_option_options_keep_b_status: نمونه‌های B پس از عملیات نگه داشته می‌شوند
+    action_option_options_remove_unused_definitions_status: تعریف‌های کامپوننتی که پس از عملیات دیگر استفاده نمی‌شوند حذف می‌شوند
+    action_option_options_reuse_definition: استفادهٔ مجدد از قطعات
+    action_option_options_reuse_definition_status: یک تعریف کامپوننت بین قطعات با شکل یکسان به اشتراک گذاشته می‌شود
+    action_option_options_reuse_definition_mirrored: چیدمان قرینه
+    action_option_options_reuse_definition_mirrored_status: چیدمان قرینه برای قطعات هم‌شکلی که روبه‌روی هم قرار دارند
+    notify:
+      validate_a: برای رفتن به انتخاب B تأیید کنید
+      validate_b: برای اعمال عملیات تأیید کنید
+    error:
+      curve_intersect: یکی از صفحات برش از منحنی غیرقابل کشش عبور می‌کند
+  smart_paint:
+    title: رنگ‌آمیزی
+    default_material: بدون متریال
+    filters: فیلترها
+    filter_0: بدون نوع
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
+    filter_7: $t(tab.materials.type_7)
+    action_0: رنگ‌آمیزی قطعات
+    action_0_status: برای اعمال متریال به نمونهٔ یک قطعه روی آن کلیک کنید
+    action_1: رنگ‌آمیزی لبه‌ها
+    action_1_status: برای اعمال متریال '$t(tab.materials.type_4)' روی لبهٔ یک قطعهٔ ورقی کلیک کنید
+    action_2: رنگ‌آمیزی سطوح
+    action_2_status: برای اعمال متریال '$t(tab.materials.type_6)' روی سطح یک قطعهٔ ورقی کلیک کنید
+    action_3: نمونه‌برداری
+    action_3_status: برای نمونه‌برداری از متریال یک سطح روی آن کلیک کنید
+    action_4: پاک‌سازی
+    action_4_status: برای حذف همهٔ متریال‌ها از تعریف یک قطعه و همهٔ نمونه‌هایش روی آن کلیک کنید
+    action_option_group_instances: تعداد نمونه‌ها
+    action_option_group_edges: تعداد لبه‌چسبان‌ها
+    action_option_group_faces: تعداد سطوح
+    action_option_instances_0_status: فقط نمونهٔ قطعهٔ هدف رنگ شود
+    action_option_instances_1_status: همهٔ نمونه‌های قطعهٔ هدف رنگ شوند
+    action_option_edges_0_status: فقط لبهٔ هدف رنگ شود
+    action_option_edges_1_status: لبهٔ هدف و لبهٔ مقابل قطعه رنگ شوند
+    action_option_edges_2_status: ۴ لبهٔ قطعهٔ هدف رنگ شوند
+    action_option_faces_0_status: فقط سطح هدف رنگ شود
+    action_option_faces_1_status: ۲ سطح قطعهٔ هدف رنگ شوند
+    state_8_status: متریال‌هایی را که باید جایگزین شوند علامت بزنید، سپس تأیید کنید
+    select_filter_title: متریال‌هایی که باید جایگزین شوند
+    edges: "{{ count }} لبه"
+    edges_plural: "{{ count }} لبه"
+    edge_ymin: طولی ۱
+    edge_ymax: طولی ۲
+    edge_xmin: عرضی ۱
+    edge_xmax: عرضی ۲
+    faces: "{{ count }} سطح"
+    faces_plural: "{{ count }} سطح"
+    face_zmin: پشت
+    face_zmax: رو
+    warning:
+      no_material: بدون متریال
+      no_material_type: هیچ متریالی از نوع '{{ type }}' وجود ندارد
+      selection_disable_instances_all: انتخاب مستطیلی گزینهٔ '$t(tool.smart_paint.action_option_instances_1_status)' را غیرفعال می‌کند
+    error:
+      not_part: شیء هدف یک قطعه (کامپوننت) نیست
+      not_edge: سطح هدف لبهٔ ورق نیست
+      not_face: سطح هدف سطح ورق نیست
+  smart_axes:
+    title: جهت‌دهی
+    action_0: وارونه‌کردن
+    action_0_status: برای وارونه‌کردن نمونهٔ یک قطعه در راستای یکی از ابعادش روی آن کلیک کنید
+    action_1: جابه‌جایی طول ↔ عرض
+    action_1_status: برای جابه‌جایی طول و عرض یک قطعه روی آن کلیک کنید
+    action_2: جابه‌جایی رو ↔ پشت
+    action_2_status: برای جابه‌جایی رو و پشت یک قطعه روی آن کلیک کنید
+    action_3: تطبیق محورها
+    action_3_status: یک سطح از قطعه را هدف بگیرید و برای تطبیق محورهایش روی یک لبه کلیک کنید
+    action_4: جابه‌جایی مبدأ
+    action_4_status: یک سطح از قطعه را هدف بگیرید و برای قرار دادن مبدأ آن روی یک نقطه کلیک کنید
+    action_5: پیکربندی پیوستگی الیاف
+    action_5_status: برای فعال یا غیرفعال کردن تشخیص پیوستگی الیاف روی یک قطعه کلیک کنید
+    action_5_to_state_10_status: انتخاب گروه پیوستگی الیاف
+    action_5_state_10_status: برای ویرایش وضعیت گروه پیوستگی الیاف یک مورد را از فهرست انتخاب کنید
+    action_option_group_direction: جهت
+    action_option_direction_0: L
+    action_option_direction_1: W
+    action_option_direction_2: T
+    action_option_direction_0_status: برگرداندن قطعه در راستای طول
+    action_option_direction_1_status: برگرداندن قطعه در راستای عرض
+    action_option_direction_2_status: برگرداندن قطعه در راستای ضخامت
+    warning:
+      more_entities: "{{ count_used }} نمونه که تعریف یکسان دارند تغییر خواهند کرد"
+    error:
+      not_part: شیء هدف یک قطعه (کامپوننت) نیست
+      not_orientable: نوع این قطعه اجازهٔ جهت‌دهی را نمی‌دهد
+      not_grained: قطعهٔ هدف جهت الیاف ندارد
+      not_single_thickness_layer: قطعهٔ هدف باید از یک لایه تشکیل شده باشد
+  smart_export:
+    title: خروجی گرفتن
+    action_0: خروجی قطعهٔ سه‌بعدی
+    action_0_status: روی یک قطعه کلیک کنید
+    action_1: خروجی قطعهٔ دوبعدی
+    action_1_status: روی سطح یک قطعه کلیک کنید
+    action_2: خروجی سطح
+    action_2_status: روی یک سطح کلیک کنید
+    action_3: خروجی مسیر
+    action_3_status: روی یک لبه کلیک کنید
+    action_option_group_file_format: قالب
+    action_option_group_unit: واحد
+    action_option_group_faces: سطوح
+    action_option_group_options: گزینه‌ها
+    action_option_file_format_dxf_status: خروجی در فایل DXF
+    action_option_file_format_stl_status: خروجی در فایل STL
+    action_option_file_format_obj_status: خروجی در فایل OBJ
+    action_option_file_format_svg_status: خروجی در فایل SVG
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: سوراخ‌های سرتاسری جدا و عمق‌ها برای هر حفره ادغام می‌شوند
+    action_option_options_include_paths_status: لبه‌های موجود در قطعه که با سطحی مرتبط نیستند به‌صورت مسیر خروجی گرفته می‌شوند
+    error:
+      not_part: این سطح به هیچ قطعه (کامپوننت) تعلق ندارد
+      not_flat_face: این رویه تخت نیست
+      incompatible_active_path: مسیر فعال اجازهٔ خروجی گرفتن از این قطعه را نمی‌دهد
+  smart_importers_bxf2:
+    title: وارد کردن
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: قرار دادن پیکربندی

@@ -140,7 +140,7 @@ core:
       smart_export: Export dílů
   messagebox:
     dir_override: |
-      « {{ target }} » již existuje. Chcete ho vyměnit?
+      „{{ target }}“ již existuje. Chcete ho vyměnit?
 
       Složka se stejným názvem se již nachází ve složce {{ parent }}. Pokud ji nahradíte, původní obsah bude ztracen.
   savepanel:
