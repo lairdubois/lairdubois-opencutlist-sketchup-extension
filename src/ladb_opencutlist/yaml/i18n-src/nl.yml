@@ -2182,7 +2182,7 @@ tool:
     action_0_state_7_status: Klik op de BOVENZIJDE van de module
     action_0_add_title: Een module toevoegen
     action_0_add_name: Bestandsnaam
-    action_0_add_overwrite: Het bestand '{{ name }}.skp' bestaat al. Wilt u het vervangen?
+    action_0_add_overwrite: Het bestand « {{ name }}.skp » bestaat al. Wilt u het vervangen?
     action_0_add_front_label: VOORZIJDE
     action_0_add_up_label: BOVENZIJDE
     action_0_flip_status: Voorzijde en achterzijde omwisselen

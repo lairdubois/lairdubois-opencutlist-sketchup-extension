@@ -1644,7 +1644,7 @@ tab:
         If you use only groups, convert them into components.
         The use of components makes it possible to replicate identical parts without duplicating them.
       no_typed_materials: Apply a material to the parts to be included in the parts list and define the type of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
-    obsolete_base: To stay in sync, you need to regenerate the parts list.
+    obsolete_base: To stay in sync, you need to regenerate the Parts List.
   materials:
     label: Materials
     title: Materials
@@ -1732,7 +1732,7 @@ tab:
         *If no unit is specified, the model's unit will be applied.*
       std_thicknesses: Standard Thicknesses
       std_thicknesses_help: |
-        Standard **raw** thicknesses available for this material.
+        Standard **rough** thicknesses available for this material.
 
         *If no unit is specified, the model unit's will be applied.*
       std_sections: Standard Cross Sections
@@ -1749,7 +1749,7 @@ tab:
       grained_help: Selects the grain orientation in relation to the length of the panel.
       grained_0: No grain orientation
       grained_1: The grain direction runs lengthwise
-      edge_decremented: Reduce Dimensions
+      edge_decremented: Reduce
       edge_decremented_help: Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
@@ -1833,7 +1833,7 @@ tab:
         Confirm to continue.
     duplicate:
       message: |
-        Choose a name of the new material, which is a copy of **{{ material_name }}**.
+        Choose the name of the new material, which is a copy of **{{ material_name }}**.
     error:
       no_model: No model is open. You'll have to give me a bit more than that ;)
       no_materials: Your model does not contain any material.
@@ -2055,7 +2055,7 @@ tab:
         option_front_part_layer_name: Fronts
         option_front_part_layer_name_help: Tag to be applied to front parts.
         option_back_part_layer_name: Back
-        option_back_part_layer_name_help: Tag to be applied to back parts cabinets.
+        option_back_part_layer_name_help: Tag to be applied to cabinet back parts.
         option_machining_material_name: Machining
         option_machining_material_name_help: Material to be applied to **machining**.
         option_machining_layer_name: Machining
@@ -2579,7 +2579,7 @@ tool:
     action_1_select_similar_status: Select all faces of the same shape
     action_1_select_all_edges_status: Select all adjacent edges
     action_2: Weld
-    action_2_status: Weld multiple parts into a single part
+    action_2_status: Weld multiple parts to a single part
     action_2_state_0_status: Select part A
     action_2_state_1_status: Select part B
     action_3: Cut out

@@ -672,7 +672,9 @@ tab:
       filters_warning_plural: Ovaj filter prikazuje samo **{{ count }}** deo od ukupno {{ total }}.
       edge_material_names_filter: Filtriraj prema materijalu za kant trake
       veneer_material_names_filter: Filtriranje materijala za furniranje
+      names_filter: Opisi za filtriranje
       tags_filter: Filtriraj po oznakama
+      tags_filter_any: Svi bedževi
       dimensions_help: Razumevanje dimenzija
       summary: Sažetak
       material_type: Tip
@@ -890,8 +892,18 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontalno
       option_rectangleguillotine_first_stage_orientation_vertical: Vertikalno
       option_rectangleguillotine_first_stage_orientation_any: Bilo koji
+      option_rectangleguillotine_sort_subplates_criteria: Sortiranje nivoa
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Određuje kriterijume sortiranja delova na svakom nivou.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: Po opadajućoj veličini
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: Po opadajućoj gustini
       option_rectangleguillotine_keep: Minimalna veličina otpada
       option_rectangleguillotine_keep_help: Ostaci veći od minimalne veličine biće za **čuvanje**.
+      option_rectangle_leftover_mode: Smer raspoređivanja
+      option_rectangle_leftover_mode_help: |
+        Određuje smer raspoređivanja delova na poslednjem nepopunjenom panelu.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: Po širini panela
       option_irregular_allowed_rotations: Dozvoljene rotacije
       option_irregular_allowed_rotations_help: |
         Određuje korak uglova rotacije dela pri njegovom raspoređivanju.

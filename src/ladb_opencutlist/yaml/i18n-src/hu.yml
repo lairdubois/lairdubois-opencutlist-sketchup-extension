@@ -140,7 +140,7 @@ core:
       smart_export: Alkatrészek Exportálása
   messagebox:
     dir_override: |
-      A(z) « {{ target }} » már létezik. Szeretné felülírni?
+      A(z) „{{ target }}” már létezik. Szeretné felülírni?
 
       Egy azonos nevű mappa már létezik a(z) {{ parent }} mappában. Ha felülírja, az eredeti tartalom elvész.
   savepanel:

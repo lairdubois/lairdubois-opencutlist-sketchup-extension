@@ -392,7 +392,7 @@ tab:
       edit_parts_properties: Редактиране на свойствата на частите
       edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Разгъване / Сгъване
-      material_origin_1: Материалът, който се взема предвид за тази част, се определя в instances
+      material_origin_1: Материалът, който се взема предвид за тази част, се определя в екземпляр
       material_origin_2: Материалът, разглеждан за тази част, в момента е наследен от един от своите родителски елементи
       material_origin_3: Материалът, разглеждан за тази част, в момента се извлича от своите дъщерни елементи
       orientation_locked_on_axis: Ориентацията на този детайл е заключена спрямо осите му
@@ -2362,12 +2362,26 @@ tool:
     action_4_status: Създаване на детайл, съответстващ на сечението на няколко детайла
     action_4_state_0_status: Изберете детайл A
     action_4_state_1_status: Изберете детайл B
+    action_5: Разрязване
+    action_5_status: Разрязване на един или няколко детайла с равнина
+    action_5_state_1_status: Щракнете върху референтната повърхност, където и да е в модела
+    action_5_state_1_arrows_status: Разрязване перпендикулярно на ос от края на селекцията
+    action_5_state_1b_status: Щракнете, за да поставите точка {{ index }} от 3 на референтната равнина, където и да е в модела
+    action_5_state_1b_arrows_status: Заключване към ос
+    action_5_state_1c_status: Щракнете, за да потвърдите референтната равнина, или натиснете Esc, за да премахнете последната точка
+    action_5_state_2_status: Щракнете, за да разрежете детайлите, или въведете разстояние
+    action_5_state_2a_status: Щракнете, за да поставите режещата равнина, или въведете разстояние
+    action_5_state_2_arrows_status: Смяна на оста
+    action_5_state_3_status: Щракнете от страната на частта, която да се запази
+    action_5_state_4_status: Щракнете, за да разрежете детайлите на {{ number }} части, или въведете разстояния
     action_option_group_thickness: Дебелина
     action_option_group_stretch_measure_type: Измерване
     action_option_group_axes: Оси
     action_option_group_paneling_joint_type: Съединение
     action_option_group_paneling_direction: Посока
     action_option_group_csg_operation: Операция
+    action_option_group_slice_mode: Режим
+    action_option_group_slice_reference: Референция
     action_option_group_options: Настройки
     action_option_thickness_thickness: Дебелина
     action_option_thickness_thickness_status: Определя дебелината на плоскостите
@@ -2380,6 +2394,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Съединение под ъгъл (на фаска)
     action_option_paneling_direction_inward_status: Посока навътре
     action_option_paneling_direction_outward_status: Посока навън
+    action_option_slice_mode_slice_status: Разрязване на детайлите и запазване на всички части
+    action_option_slice_mode_cut_status: Отрязване на детайлите и запазване само на една част
+    action_option_slice_reference_face_status: Референтна равнина, взета от повърхност
+    action_option_slice_reference_points_status: Референтна равнина през 3 точки
     action_option_options_centered_status: Центриране спрямо разтегнатите елементи
     action_option_options_make_unique_status: Уникализиране на преоформените елементи
     action_option_options_keep_a: Запазване на A

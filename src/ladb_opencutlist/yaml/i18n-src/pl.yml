@@ -431,7 +431,7 @@ tab:
       is_instance_name: Oznaczenie tej części pochodzi z nazwy instancji grupy
       is_dynamic_attributes_name: Oznaczenie tej części pochodzi z atrybutu 'Name' elementu dynamicznego
       has_edges: Ta część zawiera {{ count }} oklejone obrzeże
-      has_edges_plural: Ten kawałek zawiera {{ count }} formirowane krawędzie
+      has_edges_plural: Ten element zawiera {{ count }} fornirowane krawędzie
       has_faces: Ta część zawiera {{ count }} powierzchnię fornirowaną
       has_faces_plural: Ta część zawiera {{ count }} powierzchni fornirowanych
       size_increased_0: |
@@ -614,7 +614,7 @@ tab:
       part_number_sequence_by_group_help: Jeśli ta opcja jest wybrana, numeracja części jest ponownie inicjowana do 1 (lub A) dla każdej grupy (lista elementów o tym samym typie materiału i grubości).
       part_folding: Grupuj identyczne części
       part_folding_help: |
-        Jeśli ta opcja jest włączona, części wykonane z **drewna litego, arkuszy lub wymiarowych**, mające **ten sam przybliżony rozmiar**, z **tymi samymi plakietkami** i **taką samą wykończoną powierzchnią** *( jeśli wyświetlanie tej powierzchni nie jest ukryte)* będą grupowane w jednej linii w *arkuszu rozkroju*.
+        Jeśli ta opcja jest włączona, części wykonane z **drewna litego, arkuszy lub wymiarowych**, mające **ten sam rozmiar**, z **tymi samymi plakietkami** i **taką samą wykończoną powierzchnią** *( jeśli wyświetlanie tej powierzchni nie jest ukryte)* będą grupowane w jednej linii w *arkuszu rozkroju*.
 
         Elementy pozostaną traktowane jako różne przy generowaniu etykiet i układzie elementów.
       hide_entity_names: Ukryj nazwy instancji
@@ -743,8 +743,8 @@ tab:
       cutting_length: Długość - wstępna
       cutting_width: Szerokość - wstępna
       cutting_thickness: Grubość - wstępna
-      edge_cutting_length: Długość linii cięcia
-      edge_cutting_width: Grubość linii cięcia
+      edge_cutting_length: Długość wstępna obrzeży
+      edge_cutting_width: Szerokość wstępna obrzeży
       bbox_length: Długość
       bbox_width: Szerokość
       bbox_thickness: Grubość
@@ -770,7 +770,7 @@ tab:
       layer: Tag
       layers: Tagi
       batch: Partia
-      bin: Kosz
+      bin: Pojemnik
       component_definition: Definicja komponentu
       component_instance: Instancja komponentu
       component_instances: Instancje komponentów
@@ -813,7 +813,7 @@ tab:
         incompatible_unit: Jednostka niezgodna z opcjami szacowania materiału
         multiplier_coefficient: Współczynnik mnożnika
       error:
-        no_typed_material_parts: Brak elementów o zdefiniowanym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ani **$t(tab.materials.type_5)**) została użyta do wygenerowania wyceny.
+        no_typed_material_parts: Żadna część o określonym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ani **$t(tab.materials.type_5)**) nie została podana do wygenerowania wyceny.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
@@ -823,7 +823,7 @@ tab:
         not_enough_data: |
           Aby to oszacowanie zostało poprawnie obliczone:
           - użyte materiały muszą mieć co najmniej gęstość i cenę.
-          - użyte akcesoria muszą mieć co najmniej gęstość i cenę.
+          - użyte akcesoria muszą mieć co najmniej masę i cenę.
     packing:
       title: Schemat cięcia
       option_problem_type: Rodzaj
@@ -838,9 +838,9 @@ tab:
       option_std_bin_1d_dimensional: Wymiary standardowe
       option_std_bin_1d_edge: Okleiny standardowe
       option_std_bin_1d_help: |
-        Wybierz tutaj rozmiary standardowej płyty lub okleiny, które będą powielane w celu jak najlepszego pomieszczenia wszystkich elementów.
+        Wybierz tutaj rozmiary standardowej płyty lub okleiny, które będą powielane w aby jak najlepiej rozmieścić wszystkie elementy.
 
-        Ta lista jest definiowana przez pole **$t(tab.materials.edit_material.std_lengths)** materiału.
+        Lista ta jest definiowana przez pole **$t(tab.materials.edit_material.std_lengths)** materiału.
 
         *Edytuj właściwości materiału '{{ material_name }}', aby zaktualizować tę listę.*
       option_std_bin_1d_add: Dodaj rozmiar
@@ -849,9 +849,9 @@ tab:
       option_scrap_bin_1d_edge_sizes: Odpady obrzeży
       option_scrap_bin_1d_sizes_placeholder: długość x ilość ; ...
       option_scrap_bin_1d_sizes_help: |
-        Podaj listę swoich resztek płyt lub oklein do uwzględnienia w rozkroju.
+        W tym miejscu należy podać listę swoich resztek płyt lub oklein do uwzględnienia w rozkroju.
 
-        *Jeśli nie określono jednostki, zostanie zastosowana jednostka modelu.*
+        *Jeśli nie określono jednostki miary, zostanie zastosowana jednostka modelu.*
       option_scrap_bin_1d_none: Brak
       option_std_bin_2d_sheet_good: Panele standardowe
       option_std_bin_2d_veneer: Arkusze forniru standardowe
@@ -930,19 +930,19 @@ tab:
         Minimalna odległość między każdym elementem.
         Ta wartość może odpowiadać szerokości ostrza lub narzędzia tnącego.
       option_trimming: Rozmiar przycinania
-      option_trimming_1d_help: Margines czyszczący na każdym końcu płyty lub okleiny do potraktowania jako odpad.
+      option_trimming_1d_help: Naddatek na obróbkę na każdym końcu płyty lub okleiny do potraktowania jako odpad.
       option_trimming_2d_help: Margines czyszczący wokół surowego panelu lub arkusza forniru do potraktowania jako odpad.
       option_items_formula: Wzór
       option_items_formula_help: |
         Umożliwia pisanie kodu *Ruby* w celu dostosowania tekstu identyfikacyjnego elementów na diagramie.
-      option_bin_folding_1d_dimensional: Grupuj podobne płyty
+      option_bin_folding_1d_dimensional: Grupuj identyczne płyty
       option_bin_folding_1d_edge: Grupuj podobne obrzeża
       option_bin_folding_2d_sheet_good: Grupuj podobne arkusze
       option_bin_folding_2d_veneer: Grupuj podobne arkusze forniru
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
       option_bin_folding_1d_help: |
-        Grupuj płyty lub obrzeża zawierające takie same części i cięcia.
+        Umożliwia grupowanie płyty lub obrzeża zawierające takie same elementy i te same przekroje.
       option_bin_folding_2d_help: |
         Grupuj panele lub arkusze mające te same części i cięcia.
       option_bin_folding_warning: |
@@ -1060,7 +1060,7 @@ tab:
           Umożliwia włączenie eksportu formatki oraz wybór jej kolorów.
         option_bin_dimensional: Wymiarowy
         option_bin_dimensional_help: |
-          Umożliwia włączenie eksportu kreski/linii oraz wybór jej koloru.
+          Umożliwia włączenie eksportu okleiny oraz wybór jej koloru.
         option_bin_edge: Pasek
         option_bin_edge_help: |
           Umożliwia włączenie eksportu paska oraz wybór jego koloru.
@@ -1165,9 +1165,9 @@ tab:
         part_cutting_length: Długość - wstępna
         part_cutting_width: Szerokość - wstępna
         part_cutting_thickness: Grubość - wstępna
-        part_edge_cutting_size: Wymiar linii cięcia
-        part_edge_cutting_length: Długość linii cięcia
-        part_edge_cutting_width: Grubość linii cięcia
+        part_edge_cutting_size: Wymiar wstępna obrzeży
+        part_edge_cutting_length: Długość wstępna obrzeży
+        part_edge_cutting_width: Grubość wstępna obrzeży
         part_size: Wymiar
         part_length: Długość
         part_width: Szerokość
@@ -1415,8 +1415,8 @@ tab:
       no_typed_materials_in_selection: Wybrane elementy nie używają żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**).
       export_empty: Twój wybór do eksportu nie zawiera żadnych części.
     success:
-      part_selected: "{{ count }} kwota wybrana na karcie debetowej."
-      part_selected_plural: "{{ count }} monet wybranych na karcie debetowej."
+      part_selected: "{{ count }} część zaznaczona na liście części."
+      part_selected_plural: "{{ count }} sztuk wybranych na liście części."
     tip:
       no_component: |
         Części które mają być na *liście części* muszą być instancjami **komponentu**.
@@ -1432,7 +1432,7 @@ tab:
     type_2: Arkusz
     type_3: Wymiarowy
     type_4: Okleina
-    type_5: Dopasowywanie
+    type_5: Okucia
     type_6: Fornir
     type_7: Obróbka
     tooltip:
@@ -1447,7 +1447,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Kierunek wzoru
-      raw_estimated_0: Szacowane na podstawie dostarczonej objętości
+      raw_estimated_0: Szacowane na podstawie rzeczywistej objętości wstępnej
       colorized: Ten odcień zostanie zastosowany do tekstury tego materiału podczas renderowania w modelu
       texture_load: Załaduj nowy obraz
       texture_export: Eksportuj obraz
@@ -2537,7 +2537,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Izoluj otwory przelotowe i łącz głębokości dla każdego otworu
-    action_option_options_include_paths_status: Eksportuj jako wykres krawędzie niezwiązane z powierzchnią zawartą w części
+    action_option_options_include_paths_status: Eksportuj jako ścieżkę krawędzie niezwiązane z powierzchnią zawartą w części
     error:
       not_part: Ta ściana nie jest częścią części (komponentu)
       not_flat_face: Ta powierzchnia nie jest płaska
